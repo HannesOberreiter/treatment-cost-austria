@@ -1,0 +1,70 @@
+---
+title: "Treatment Cost in Austria"
+subtitle: 'University of Graz, Institut for Biology'
+author: "Hannes Oberreiter & Robert Brodschneider"
+date: "2020"
+header-includes:
+    - \usepackage{hyperref}
+    - \usepackage{float}
+    - \usepackage{caption}
+    - \captionsetup[figure]{font=small}
+output:
+  html_document
+bibliography: bib.bibtex
+biblio-style: authoryear
+link-citations: true
+urlcolor: blue
+abstract: Summary of Stats and Statistics for Treatment Costs Varroa
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(fig.pos = "H", out.extra = "", fig.align="center", out.width = "100%")
+
+# Our Libraries
+VLIBS <- c("tidyverse", "here", "readxl", "bookdown")
+
+F_LoadLibs <- function(x){
+  print(x)
+  if(!require(x, character.only = TRUE)) install.packages(x); library(x, character.only = TRUE);
+  return(T)
+}
+
+sapply(VLIBS, F_LoadLibs)
+rm(VLIBS, F_LoadLibs)
+```
+
+# Standard Params
+
+```{r, include=FALSE, echo=FALSE}
+source("partials/files.R", local = knitr::knit_global())
+
+RAW_REPORTS <- RAW %>% group_by(year) %>% summarize(
+  n = n()
+)
+
+DATA <- RAW[!is.na(RAW$costs),]
+
+DATA_REPORTS <- DATA %>% group_by(year) %>% summarize(
+  n = n()
+)
+
+REPORTS <- tibble(
+  Year = RAW_REPORTS$year,
+  Total = RAW_REPORTS$n,
+  Cost = DATA_REPORTS$n,
+  Percent = round(DATA_REPORTS$n/RAW_REPORTS$n*100,1)
+)
+rm(DATA_REPORTS, RAW_REPORTS)
+```
+
+The number of reports which did include costs was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]` \@ref(tab:reports).
+
+```{r reports, echo=FALSE}
+cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
+knitr::kable(
+  REPORTS,
+  booktabs = TRUE, row.names = FALSE,
+  col.names = cn, format = "markdown"
+)
+```
+
