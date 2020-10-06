@@ -53,8 +53,8 @@ material_cost["Andere biotechnische Methode"] <- mean(
 #### Formic Acid ####
 
 # Long term ~ 200ml
-# Short term ~ 20ml
-as_st <- 0.02
+# Short term ~ 20ml * 2
+as_st <- 0.04
 as_lt <- 0.2
 
 # AMO Varroxal Ameisensäure 85%
@@ -86,6 +86,13 @@ as_lt <- 0.2
 material_cost["Ameisensäure - Langzeit"] <- mean(
   c(
     6.90, 19.90, 8.20
+  )
+)
+
+# small amount material cost for short time treatment (eg. cleaning sponge)
+material_cost["Ameisensäure - Kurzzeit"] <- mean(
+  c(
+    1
   )
 )
 

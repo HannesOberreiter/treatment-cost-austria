@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
   )
 
 # Our Libraries
-VLIBS <- c("tidyverse", "here", "readxl", "bookdown", "summarytools")
+VLIBS <- c("tidyverse", "here", "readxl", "bookdown", "pander")
 
 F_LoadLibs <- function(x){
   print(x)
@@ -128,7 +128,7 @@ rm(DATA_REPORTS, RAW_REPORTS)
 
 The number of reports which did include costs and after cleanup of invalid or illogical answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]` \@ref(tab:reports).
 
-```{r reports}
+```{r reports, include=T}
 cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
 knitr::kable(
   REPORTS,
@@ -138,16 +138,43 @@ knitr::kable(
 rm(REPORTS, cn)
 ```
 
+```{r summary, include=T}
+cap = "Table the total descriptive statistics for costs in our survey and estimates based on our standard cost estimates, see table x."
+
+cs <- summary(DATA$costs)
+es <- summary(DATA$t_estimated)
+
+ct <- tibble(
+  Type = c("Survey", "Estimated"),
+  min  = c(cs[1], es[1]),
+  Q1   = c(cs[2], es[2]),
+  Median = c(cs[3], es[3]),
+  Mean = round(c(cs[4], es[4]), 2),
+  Q3 = round(c(cs[5], es[5]), 2),
+  Max = c(cs[6], es[6])
+)
+
+
+knitr::kable(
+  ct,
+  booktabs = TRUE, row.names = FALSE,
+  format = "markdown",
+  caption = cap
+)
+
+rm(cap, cs, es, ct)
+
+```
+
 # Standard Cost Estimation
 
 To calculate a standard value for data cleaning, we researched the official price in 2020 for several products and average usage amount, see table \@ref(tab:standard-cost).
 
-```{r standard-cost}
+```{r standard-cost, include=T}
 c <- "Our calculated estimates for treatment. Investments can be used long term (we calculate 5 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (~ 3 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid, 50ml)."
 knitr::kable(
   treatmentList[-1, c(3, 5:7)],
   booktabs = TRUE, row.names = FALSE,
-  format = "markdown",
   caption = c
 )
 rm(c)
