@@ -14,14 +14,21 @@ bibliography: bib.bibtex
 biblio-style: authoryear
 link-citations: true
 urlcolor: blue
-abstract: Summary of Stats and Statistics for Treatment Costs Varroa
+abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis is that the costs have an influence or correlated to the winter losses. H0 = Costs have no influence on survival rate, H1 = Costs have an influence on the survival rate.
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(fig.pos = "H", out.extra = "", fig.align="center", out.width = "100%")
+knitr::opts_chunk$set(
+  fig.pos   = "H", 
+  out.extra = "", 
+  fig.align = "center", 
+  out.width = "100%",
+  echo      = FALSE,
+  include   = FALSE
+  )
 
 # Our Libraries
-VLIBS <- c("tidyverse", "here", "readxl", "bookdown")
+VLIBS <- c("tidyverse", "here", "readxl", "bookdown", "summarytools")
 
 F_LoadLibs <- function(x){
   print(x)
@@ -33,16 +40,78 @@ sapply(VLIBS, F_LoadLibs)
 rm(VLIBS, F_LoadLibs)
 ```
 
-# Standard Params
-
-```{r, include=FALSE, echo=FALSE}
+```{r load-files, warning = FALSE}
 source("partials/files.R", local = knitr::knit_global())
 
+# Extract only answers with valid answer for costs
+DATA <- RAW[!is.na(RAW$costs),]
+```
+
+# Cleanup
+
+## No Treatment Answers
+
+```{r}
+# Extract No Treatment Answers
+NO_TREATMENT <- DATA[DATA$varroa_treated != "Ja",]
+NO_TREATMENT <- NO_TREATMENT[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+DATA <- DATA[!(DATA$id %in% NO_TREATMENT$id),]
+```
+
+In our survey `r nrow(NO_TREATMENT)` did answer "No Treatment against Varroa" and did give no answers for any treatment method, but included costs for varroa treatment. These `r nrow(NO_TREATMENT)` illogical entries were removed from our data analysis.
+
+```{r}
+rm(NO_TREATMENT)
+```
+
+## Zero Cost Answers
+
+```{r}
+# Entries with zero costs
+COST_ZERO <- DATA[DATA$costs == 0,]
+COST_ZERO <- COST_ZERO[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+# sponsorship (e.g. Imkereiförderung, Gemeinde)
+id_sponsor <- c(353, 752, 855, 1624)
+# biotechnical & hyperthermie
+id_keep <- c(1750)
+id_remove <- COST_ZERO$id[!(COST_ZERO$id %in% id_keep)]
+DATA <- DATA[!(DATA$id %in% id_remove),]
+```
+
+In total `r nrow(COST_ZERO)` participants said their treatment costs were zero. Only `r length(id_keep)` answers were kept, as the treatment was a combination of hyperthermia and biotechnical. We have no assumption. Ofcourse the equipment for the hyperthermia do costs something, but we don't know more details. `r length(id_remove)-length(id_sponsor)` were removed as they said zero costs but actually did treatment with organic acids. In addition `r length(id_sponsor)` participants got a sponsorship (eg from beekeeping club or local community) for their treatment costs, which were also removed from the cost analysis dataset.
+
+```{r}
+rm(COST_ZERO, id_sponsor, id_remove, id_keep)
+```
+
+## High Cost Answers
+
+```{r}
+csum <- summary(DATA$costs)
+upper_limit <- csum[5] * 10
+COST_UPPER <- DATA[DATA$costs > upper_limit,]
+COST_UPPER <- COST_UPPER[,c("id", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+
+# Remove these entries, as they make sense
+id_nochange <- c(3030, 3959)
+COST_UPPER <- COST_UPPER %>% filter(!(id %in% id_nochange))
+
+# Calculate new prices
+COST_UPPER$new <- COST_UPPER$costs / COST_UPPER$hives_winter
+DATA$costs[(DATA$id %in% COST_UPPER$id)] <- COST_UPPER$new
+```
+
+We defined upper limit cost outliner with 3rd quantile and multiplied by 10 which resulted in a cost limit of `r upper_limit`. In total `r nrow(COST_UPPER)` participants did answers above this limit. Upon investigating the `r nrow(COST_UPPER)` answers, we found out that most of them did answer a total cost and no cost by colony. Therefore, we divided the costs by the number of colonies going into winter. Only `r length(id_nochange)` participants were not changed, as one only had one colony and did hyperthermia treatment and the second one did explicit explain the high costs as comment.
+
+```{r}
+rm(id_nochange, upper_limit, COST_UPPER, csum)
+```
+# Standard Params
+
+```{r calc-n, include=FALSE}
 RAW_REPORTS <- RAW %>% group_by(year) %>% summarize(
   n = n()
 )
-
-DATA <- RAW[!is.na(RAW$costs),]
 
 DATA_REPORTS <- DATA %>% group_by(year) %>% summarize(
   n = n()
@@ -57,14 +126,51 @@ REPORTS <- tibble(
 rm(DATA_REPORTS, RAW_REPORTS)
 ```
 
-The number of reports which did include costs was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]` \@ref(tab:reports).
+The number of reports which did include costs and after cleanup of invalid or illogical answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]` \@ref(tab:reports).
 
-```{r reports, echo=FALSE}
+```{r reports}
 cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
 knitr::kable(
   REPORTS,
   booktabs = TRUE, row.names = FALSE,
   col.names = cn, format = "markdown"
 )
+rm(REPORTS, cn)
 ```
+
+# Standard Cost Estimation
+
+To calculate a standard value for data cleaning, we researched the official price in 2020 for several products and average usage amount, see table \@ref(tab:standard-cost).
+
+```{r standard-cost}
+c <- "Our calculated estimates for treatment. Investments can be used long term (we calculate 5 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (~ 3 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid, 50ml)."
+knitr::kable(
+  treatmentList[-1, c(3, 5:7)],
+  booktabs = TRUE, row.names = FALSE,
+  format = "markdown",
+  caption = c
+)
+rm(c)
+```
+
+
+```{r}
+# TODO my AS-KZ is too low
+d <- DATA %>% group_by(t_short) %>% summarise(
+  c_mean = mean(costs),
+  e_mean = mean(t_estimated),
+  n = n()
+)
+
+
+```
+
+
+
+
+# Colonies and Costs Linear Modell
+
+
+
+
 
