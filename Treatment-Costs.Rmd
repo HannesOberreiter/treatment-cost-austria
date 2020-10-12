@@ -1,20 +1,31 @@
 ---
 title: "Treatment Cost in Austria"
-subtitle: 'University of Graz, Institut for Biology'
 author: "Hannes Oberreiter & Robert Brodschneider"
-date: "2020"
-header-includes:
-    - \usepackage{hyperref}
-    - \usepackage{float}
-    - \usepackage{caption}
-    - \captionsetup[figure]{font=small}
+date: '2020'
+github-repo: "https://github.com/HannesOberreiter/treatment-cost-austria"
 output:
-  html_document
+  bookdown::gitbook:
+    config:
+      fontsettings:
+        theme: night
+        family: sans
+        size: 2
+  bookdown::pdf_document2:
+    keep_tex: true
+header-includes:
+- \usepackage{hyperref}
+- \usepackage{float}
+- \usepackage{caption}
+- \captionsetup[figure]{font=small}
+subtitle: University of Graz, Institut for Biology
 bibliography: bib.bibtex
 biblio-style: authoryear
-link-citations: true
+link-citations: yes
 urlcolor: blue
-abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis is that the costs have an influence or correlated to the winter losses. H0 = Costs have no influence on survival rate, H1 = Costs have an influence on the survival rate.
+abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis
+  is that the costs have an influence or correlated to the winter losses. H0 = Costs
+  have no influence on survival rate, H1 = Costs have an influence on the survival
+  rate.
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -28,13 +39,20 @@ knitr::opts_chunk$set(
   )
 
 # Our Libraries
-VLIBS <- c("tidyverse", "here", "readxl", "bookdown", "pander")
+VLIBS <- c("tidyverse", "here", "readxl", "bookdown", "BlandAltmanLeh")
+
+# Use Colors in Plots
+# https://stackoverflow.com/questions/42458412/plotting-data-by-color-variable-with-ggplot2-in-r#comment72062654_42458412
+colorBlindBlack8  <- c("#000000", "#E69F00", "#56B4E9", "#009E73", 
+                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 F_LoadLibs <- function(x){
   print(x)
   if(!require(x, character.only = TRUE)) install.packages(x); library(x, character.only = TRUE);
   return(T)
 }
+# https://stackoverflow.com/questions/62140483/how-to-interpret-dplyr-message-summarise-regrouping-output-by-x-override
+options(dplyr.summarise.inform=F) 
 
 sapply(VLIBS, F_LoadLibs)
 rm(VLIBS, F_LoadLibs)
@@ -64,16 +82,31 @@ In our survey `r nrow(NO_TREATMENT)` did answer "No Treatment against Varroa" an
 rm(NO_TREATMENT)
 ```
 
+## No Treatment Methods
+
+```{r}
+# Extract Participants which did answer costs but did give no answer on what treatment
+NO_METHOD <- DATA[is.na(DATA$t_short),]
+NO_METHOD <- NO_METHOD[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+DATA <- DATA[!(DATA$id %in% NO_METHOD$id),]
+```
+
+Because we want to analyze treatment methods in combination with the costs, we did also remove `r nrow(NO_METHOD)` participants which did answer treatment cost in the survey, but were not specific which methods they used. 
+
+```{r}
+rm(NO_METHOD)
+```
+
 ## Zero Cost Answers
 
 ```{r}
 # Entries with zero costs
 COST_ZERO <- DATA[DATA$costs == 0,]
-COST_ZERO <- COST_ZERO[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+COST_ZERO <- COST_ZERO[,c("id", "id_original", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
 # sponsorship (e.g. Imkereiförderung, Gemeinde)
-id_sponsor <- c(353, 752, 855, 1624)
+id_sponsor <- c(1672, 2003, 2446, 1930)
 # biotechnical & hyperthermie
-id_keep <- c(1750)
+id_keep <- c(2534)
 id_remove <- COST_ZERO$id[!(COST_ZERO$id %in% id_keep)]
 DATA <- DATA[!(DATA$id %in% id_remove),]
 ```
@@ -88,12 +121,14 @@ rm(COST_ZERO, id_sponsor, id_remove, id_keep)
 
 ```{r}
 csum <- summary(DATA$costs)
-upper_limit <- csum[5] * 10
-COST_UPPER <- DATA[DATA$costs > upper_limit,]
-COST_UPPER <- COST_UPPER[,c("id", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+upper_limit <- csum[5] * 2
+COST_UPPER <- DATA[DATA$costs > upper_limit & DATA$costs > DATA$t_estimated*2,]
+
+COST_UPPER <- COST_UPPER[,c("id", "id_original", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
 
 # Remove these entries, as they make sense
-id_nochange <- c(3030, 3959)
+id_nochange <- c(751)
+
 COST_UPPER <- COST_UPPER %>% filter(!(id %in% id_nochange))
 
 # Calculate new prices
@@ -106,15 +141,20 @@ We defined upper limit cost outliner with 3rd quantile and multiplied by 10 whic
 ```{r}
 rm(id_nochange, upper_limit, COST_UPPER, csum)
 ```
+
 # Standard Params
 
 ```{r calc-n, include=FALSE}
 RAW_REPORTS <- RAW %>% group_by(year) %>% summarize(
-  n = n()
-)
+  n = n(),
+  mean_colonies = round(mean(hives_winter),2),
+  median_colonies = median(hives_winter)
+  )
 
 DATA_REPORTS <- DATA %>% group_by(year) %>% summarize(
-  n = n()
+  n = n(),
+  mean_colonies = round(mean(hives_winter),2),
+  median_colonies = median(hives_winter)
 )
 
 REPORTS <- tibble(
@@ -126,20 +166,42 @@ REPORTS <- tibble(
 rm(DATA_REPORTS, RAW_REPORTS)
 ```
 
-The number of reports which did include costs and after cleanup of invalid or illogical answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]` \@ref(tab:reports).
+The number of reports which did include costs and after cleanup of invalid or illogical answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]`, see table \@ref(tab:reports).
 
 ```{r reports, include=T}
 cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
+c = "Number of participants answering the question for estimated costs per colony in the survey two survey years."
 knitr::kable(
   REPORTS,
   booktabs = TRUE, row.names = FALSE,
-  col.names = cn, format = "markdown"
+  col.names = cn, format = "markdown", caption = c
 )
 rm(REPORTS, cn)
 ```
 
+# Costs and Estimation
+
+## Standard Costs
+
+To calculate a standard value for data cleaning, we researched the official price in 2020 for several products and average usage amount by common beekeeping practices, see table \@ref(tab:standard-cost).
+
+```{r standard-cost, include=T}
+c <- "Our calculated estimates for treatment. Investments can be used long term (we calculate 10 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (~ 7 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid Long Term, 200ml)."
+cn = c("Methode", "Investment", "Material", "Consumables")
+knitr::kable(
+  treatmentList[-1, c(3, 5:7)],
+  booktabs = TRUE, row.names = FALSE, format="markdown",
+  caption = c, col.names = cn
+)
+rm(c, cn)
+```
+
+## Compare Survey and Estimate
+
+If we look at the results of the treatment costs in our survey and the with the estimates above, we can compare the results, see table \@ref(tab:summary). 
+
 ```{r summary, include=T}
-cap = "Table the total descriptive statistics for costs in our survey and estimates based on our standard cost estimates, see table x."
+c = "Table the total descriptive statistics for costs in our survey and estimates based on our standard cost estimates"
 
 cs <- summary(DATA$costs)
 es <- summary(DATA$t_estimated)
@@ -148,7 +210,7 @@ ct <- tibble(
   Type = c("Survey", "Estimated"),
   min  = c(cs[1], es[1]),
   Q1   = c(cs[2], es[2]),
-  Median = c(cs[3], es[3]),
+  Median = round(c(cs[3], es[3]), 2),
   Mean = round(c(cs[4], es[4]), 2),
   Q3 = round(c(cs[5], es[5]), 2),
   Max = c(cs[6], es[6])
@@ -159,45 +221,138 @@ knitr::kable(
   ct,
   booktabs = TRUE, row.names = FALSE,
   format = "markdown",
-  caption = cap
-)
-
-rm(cap, cs, es, ct)
-
-```
-
-# Standard Cost Estimation
-
-To calculate a standard value for data cleaning, we researched the official price in 2020 for several products and average usage amount, see table \@ref(tab:standard-cost).
-
-```{r standard-cost, include=T}
-c <- "Our calculated estimates for treatment. Investments can be used long term (we calculate 5 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (~ 3 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid, 50ml)."
-knitr::kable(
-  treatmentList[-1, c(3, 5:7)],
-  booktabs = TRUE, row.names = FALSE,
   caption = c
 )
-rm(c)
+
+rm(c, cs, es, ct)
+
 ```
 
+The most common treatment methods in our survey can be seen in table \@ref(tab:common).
 
-```{r}
-# TODO my AS-KZ is too low
-d <- DATA %>% group_by(t_short) %>% summarise(
-  c_mean = mean(costs),
-  e_mean = mean(t_estimated),
-  n = n()
+```{r common, include=T}
+# Get median number of colonies to calculate an estimate
+m_colonies = median(DATA$hives_winter)
+
+col <- DATA %>% 
+    select(!!(paste0(treatmentList$ttotal, "12")))
+# Get number of participates using the single treatment methods
+sin <- col %>% 
+    mutate(across(.cols = everything(), as.logical)) %>% colSums()
+# get the average amount for number of months
+nu <- col %>% na_if(0) %>% colMeans(na.rm=T)
+
+common_single <- tibble(
+  tname = treatmentList$tname,
+  n = sin,
+  p = round(sin*100/nrow(DATA),2),
+  nu = round(nu, 2),
+  est = round(treatmentList$investment / m_colonies + treatmentList$material + treatmentList$consumables*nu, 2)
+) %>% arrange(desc(p))
+
+c <- paste0("Most used Methods in the two survey years, average months indicating the average of months this methods was used. Estimated costs are calculated with ", m_colonies, " colonies, which represents the median number of colonies in our survey, and the average months of usage.")
+
+cn = c("Method", "Total [n]", "Percent [%]", "Average Months[n]", "Estimated Costs")
+knitr::kable(
+  common_single,
+  booktabs = TRUE, row.names = FALSE, format = "markdown",
+  col.names = cn,
+  caption = c
 )
-
-
+rm(cn, c, common_single, nu, sin, col, m_colonies)
 ```
 
+The most common combinations, without Varroa Control and Drone Brood removal can be seen in table 
+\@ref(tab:common-comb). The estimated costs are calculated for each beekeeper in the survey and then the average was taken as with the survey costs.
 
+```{r common-comb, include=T, message=F}
 
+DATA$t_desc_od <- str_replace(DATA$t_desc, "Drohnenbrutentnahme & ", "")
+DATA$t_short_od <- str_replace(DATA$t_short, "Drohne & ", "")
 
-# Colonies and Costs Linear Modell
+d <- DATA %>% 
+  group_by(t_short_od) %>% summarise(
+  n = n(),
+  p = round(n()*100/nrow(DATA),2),
+  mc = round(mean(costs), 2),
+  medc = round(median(costs), 2),
+  me = round(mean(t_estimated), 2),
+  mede = round(median(t_estimated), 2),
 
+) %>% filter(n >= 30) %>% arrange(desc(n))
 
+c <- paste0("Most used combination with at least 30 participants, Mean and Median Costs from the survey and Estimated Costs in Euro.")
 
+cn = c("Method", "Total [n]", "Percent [%]", "Cost Mean", "Cost Median", "Estimate Mean", "Estimate Median")
 
+knitr::kable(
+  d,
+  booktabs = TRUE, row.names = FALSE,
+  digits = 2,
+  col.names = cn,
+  caption = c,
+)
+rm(c, d)
+```
+
+## Linear Equation
+
+To generate survey costs of treatments without combinations we used Linear Equation to solve for each single treatment. Did not work!
+
+```{r linear-equation, include=T, warning = FALSE}
+
+source("code-junks/LinearEquation.R", local = knitr::knit_global())
+print(y)
+rm(y)
+````
+
+## Bland-Altmann Plot
+
+To check if our estimated in range with the survey, we use can use a bland-altmann plot, which compares the differences and shows if they are between our set confidence intervall (95%). For these plot we only use the mean prices with combinations of at least 15 beekeepers, see figure \@ref(fig:estimates-bland).
+
+```{r estimates-bland, include=T, fig.cap="Bland-Altmann Plot with 95% Confidence Intervall, Mean difference between estimates and survey costs of the treatment combinations with at least 15 beekeepers." }
+d <- DATA %>% 
+  group_by(t_short_od) %>% summarise(
+    n = n(),
+    p = round(n()*100/nrow(DATA),2),
+    mc = round(mean(costs), 2),
+    medc = round(median(costs), 2),
+    me = round(mean(t_estimated), 2),
+    mede = round(median(t_estimated), 2),
+    
+  ) %>% filter(n >= 15) %>% arrange(desc(n))
+
+ba.stats <- bland.altman.stats(d$mc, d$me)
+
+limit_y = round( ifelse( max(ba.stats$diffs) > (-1*min(ba.stats$diffs)), max(ba.stats$diffs), -1*min(ba.stats$diffs) ) + 0.5, digits = 1)
+
+ggplot() +
+  geom_point(aes(x = ba.stats$means, y = ba.stats$diffs, size = d$n)) +
+  geom_abline(
+    aes(
+      intercept = ba.stats$lines, 
+      colour = I(c(colorBlindBlack8[3], colorBlindBlack8[2], colorBlindBlack8[3])), 
+      slope = c(rep(0, 3))),
+    show.legend = F
+    ) +
+  geom_abline(
+    aes(
+      intercept = ba.stats$CI.lines, 
+      color = I(c(rep(colorBlindBlack8[3], 2), rep(colorBlindBlack8[2], 2), rep(colorBlindBlack8[3], 2))),
+      slope = c(rep(0, 6))
+      ),
+    linetype = "dashed",
+    alpha = 0.5,
+    show.legend = F
+  ) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+
+  xlab("Means [Euro]") + ylab("Differences [Euro]") +
+  labs(size = "Answers [n]") + 
+  ylim(c( -1*limit_y, limit_y )) +
+  theme_classic()
+
+rm(d, ba.stats, limit_y)
+
+```
 
