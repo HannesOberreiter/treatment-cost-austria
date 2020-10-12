@@ -42,8 +42,6 @@ investment_cost["Hyperthermie"] <- mean(c(2475, 799))
 material_cost["Andere biotechnische Methode"] <- mean(
   c(
     23.50, 
-    28.90, 
-    33, 
     12.00,
     7.50
   )
@@ -53,8 +51,8 @@ material_cost["Andere biotechnische Methode"] <- mean(
 #### Formic Acid ####
 
 # Long term ~ 200ml
-# Short term ~ 20ml * 2
-as_st <- 0.04
+# Short term ~ 40ml * 3 Repeats
+as_st <- 0.12
 as_lt <- 0.2
 
 # AMO Varroxal Ameisensäure 85%
