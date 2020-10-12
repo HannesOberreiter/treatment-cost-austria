@@ -13,6 +13,10 @@ D1819 <- tibble::as_tibble(
 RAW <- rbind(D1920, D1819)
 rm(D1920, D1819)
 
+# We add our own ID because the given IDs could be double (2018/19, 2019/20)
+RAW$id_original <- RAW$id
+RAW$id <- 1:nrow(RAW)
+
 seasons <- tibble(
   name = c("spring", "summer", "winter"),
   rcol = c("0[1-2]", "0[3-7]", "0[8-9]"),
@@ -46,13 +50,12 @@ for(i in 1:nrow(seasons)){
       !!(colnameyn) := ifelse(rsums > 0, 1, 0)
     )
     
-    
     # Combination
     if(j == 1) next # dont add vcontrol to combination
     vlogical <- as.logical(rsums)
     colshort <- paste(seasons$short[i], treatmentList$tshort[j], sep="-")
-    coldesc <- paste(seasons$desc[i], treatmentList$tname[j], sep=" ")
-    
+    coldesc  <- paste(seasons$desc[i], treatmentList$tname[j], sep=" ")
+
     RAW$c_short[vlogical] <- paste(
       RAW$c_short[vlogical],
       colshort, 
@@ -63,7 +66,7 @@ for(i in 1:nrow(seasons)){
       coldesc, 
       sep = " & "
     )
-    
+
   }
 }
 
@@ -78,6 +81,7 @@ rm(seasons, colname, colnameyn, i, j, rsums, treatmentexp, x, vlogical, colshort
 RAW$t_short      <- NA
 RAW$t_desc       <- NA
 RAW$t_estimated  <- 0
+RAW$t_short_number <- NA
 
 # Loop through our Treatment Types
 for(i in 1:nrow(treatmentList)){
@@ -134,10 +138,20 @@ for(i in 1:nrow(treatmentList)){
     sep = " & "
   )
   
+  if(i == 2) next # dont add to number combination
+  
+  RAW$t_short_number[vlogical] <- paste(
+    RAW$t_short_number[vlogical],
+    paste(rsum12[vlogical], treatmentList$tshort[i], sep="-"), 
+    sep = " & "
+  )
+  
 }
 
 RAW$t_short <- stringr::str_replace(RAW$t_short, "NA &", "")
 RAW$t_desc  <- stringr::str_replace(RAW$t_desc, "NA &", "")
+RAW$t_short_number  <- stringr::str_replace(RAW$t_short_number, "NA &", "")
+
 RAW$t_estimated <- round(RAW$t_estimated, 2)
 
 rm(colnameyn, i, rsum10, rsum12, treatmentexp10, treatmentexp12, x10, x12, estimated, vlogical)
