@@ -15,6 +15,7 @@
 *_cache/
 /cache/
 /libs/
+/Treatment-Costs_files/
 
 # Temporary files created by R markdown
 *.utf8.md
