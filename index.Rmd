@@ -1,0 +1,42 @@
+---
+title: "Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa Destructor*"
+author: "Hannes Oberreiter & Robert Brodschneider"
+site: bookdown::bookdown_site
+date: '2020'
+#rmd_files: ['index.Rmd', '01-intro.Rmd', '10-biblo.Rmd']
+output:
+  bookdown::gitbook:
+    lib_dir: "thesis_assets"
+    split_bib: FALSE
+    config:
+      fontsettings:
+        theme: night
+        family: sans
+        size: 2
+  bookdown::pdf_document2:
+    keep_tex: true
+header-includes:
+- \usepackage{hyperref}
+- \usepackage{float}
+- \usepackage{caption}
+- \captionsetup[figure]{font=small}
+- \usepackage{siunitx}
+subtitle: University of Graz, Institut for Biology
+bibliography: bib.bibtex
+biblio-style: authoryear
+link-citations: yes
+urlcolor: blue
+abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis
+  is that the costs have an influence or correlated to the winter losses. H0 = Costs
+  have no influence on survival rate, H1 = Costs have an influence on the survival
+  rate.
+---
+
+```{r load-files, warning=F, echo=F, include=F}
+source("partials/setup.R", local = knitr::knit_global())
+source("partials/files.R", local = knitr::knit_global())
+```
+
+# Preface {-}
+
+In this book, we will introduce an interesting method.

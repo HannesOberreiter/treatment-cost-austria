@@ -1,211 +1,3 @@
----
-title: "Treatment Cost in Austria"
-author: "Hannes Oberreiter & Robert Brodschneider"
-date: '2020'
-github-repo: "https://github.com/HannesOberreiter/treatment-cost-austria"
-output:
-  bookdown::gitbook:
-    config:
-      fontsettings:
-        theme: night
-        family: sans
-        size: 2
-  bookdown::pdf_document2:
-    keep_tex: true
-header-includes:
-- \usepackage{hyperref}
-- \usepackage{float}
-- \usepackage{caption}
-- \captionsetup[figure]{font=small}
-subtitle: University of Graz, Institut for Biology
-bibliography: bib.bibtex
-biblio-style: authoryear
-link-citations: yes
-urlcolor: blue
-abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis
-  is that the costs have an influence or correlated to the winter losses. H0 = Costs
-  have no influence on survival rate, H1 = Costs have an influence on the survival
-  rate.
----
-
-```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(
-  fig.pos   = "H", 
-  out.extra = "", 
-  fig.align = "center", 
-  out.width = "100%",
-  echo      = FALSE,
-  include   = FALSE
-  )
-
-# Our Libraries
-VLIBS <- c("tidyverse", "patchwork", "here", "readxl", "bookdown", "BlandAltmanLeh", "boot", "ggsignif", "lme4")
-
-# Use Colors in Plots
-# https://stackoverflow.com/questions/42458412/plotting-data-by-color-variable-with-ggplot2-in-r#comment72062654_42458412
-colorBlindBlack8  <- c("#464343", "#E69F00", "#56B4E9", "#009E73", 
-                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-
-F_LoadLibs <- function(x){
-  print(x)
-  if(!require(x, character.only = TRUE)) install.packages(x); library(x, character.only = TRUE);
-  return(T)
-}
-# https://stackoverflow.com/questions/62140483/how-to-interpret-dplyr-message-summarise-regrouping-output-by-x-override
-options(dplyr.summarise.inform=F) 
-# https://stackoverflow.com/questions/13286531/how-to-suppress-warnings-when-plotting-with-ggplot
-options(warn=-1)
-
-
-sapply(VLIBS, F_LoadLibs)
-rm(VLIBS, F_LoadLibs)
-
-
-#### Base Function and Data
-
-# Beekeeper and Colonies in Austria based on 
-# https://www.biene-oesterreich.at/daten-und-zahlen+2500++1000247
-stats_aut <- tibble(
-  year = c(2018, 2019),
-  beekeeper = c(28432, 30237),
-  colonies = c(373412, 390607)
-)
-
-
-
-# Bootstrap Functions for Median and Mean
-fBootMedian <- function(d, i) {
-  median(d[i])
-}
-fBootMean <- function(d, i) {
-  mean(d[i])
-}
-
-```
-
-```{r load-files, warning = FALSE}
-source("partials/files.R", local = knitr::knit_global())
-
-# Extract only answers with valid answer for costs
-DATA <- RAW[!is.na(RAW$costs),]
-```
-
-# Cleanup
-
-## No Treatment Answers
-
-```{r}
-# Extract No Treatment Answers
-NO_TREATMENT <- DATA[DATA$varroa_treated != "Ja",]
-NO_TREATMENT <- NO_TREATMENT[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-DATA         <- DATA[!(DATA$id %in% NO_TREATMENT$id),]
-```
-
-In our survey `r nrow(NO_TREATMENT)` did answer "No Treatment against Varroa" and did give no answers for any treatment method, but included costs for varroa treatment. These `r nrow(NO_TREATMENT)` illogical entries were removed from our data analysis.
-
-```{r}
-rm(NO_TREATMENT)
-```
-
-## No Treatment Methods
-
-```{r}
-# Extract Participants which did answer costs but did give no answer on what treatment
-NO_METHOD <- DATA[is.na(DATA$t_short),]
-NO_METHOD <- NO_METHOD[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-DATA      <- DATA[!(DATA$id %in% NO_METHOD$id),]
-```
-
-Because we want to analyze treatment methods in combination with the costs, we did also remove `r nrow(NO_METHOD)` participants which did answer treatment cost in the survey, but were not specific which methods they used. 
-
-```{r}
-rm(NO_METHOD)
-```
-
-## Zero Cost Answers
-
-```{r}
-# Entries with zero costs
-COST_ZERO  <- DATA[DATA$costs == 0,]
-COST_ZERO  <- COST_ZERO[,c("id", "id_original", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-# sponsorship (e.g. Imkereiförderung, Gemeinde)
-id_sponsor <- c(1672, 2003, 2446, 1930)
-# biotechnical & hyperthermie
-id_keep    <- c(2534)
-id_remove  <- COST_ZERO$id[!(COST_ZERO$id %in% id_keep)]
-DATA       <- DATA[!(DATA$id %in% id_remove),]
-```
-
-In total `r nrow(COST_ZERO)` participants said their treatment costs were zero. Only `r length(id_keep)` answers were kept, as the treatment was a combination of hyperthermia and biotechnical. We have no assumption. Ofcourse the equipment for the hyperthermia do costs something, but we don't know more details. `r length(id_remove)-length(id_sponsor)` were removed as they said zero costs but actually did treatment with organic acids. In addition `r length(id_sponsor)` participants got a sponsorship (eg from beekeeping club or local community) for their treatment costs, which were also removed from the cost analysis dataset.
-
-```{r}
-rm(COST_ZERO, id_sponsor, id_remove, id_keep)
-```
-
-## High Cost Answers
-
-```{r}
-csum <- summary(DATA$costs)
-upper_limit <- csum[5] * 2
-COST_UPPER <- DATA[DATA$costs > upper_limit & DATA$costs > DATA$t_estimated*2,]
-
-COST_UPPER <- COST_UPPER[,c("id", "id_original", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-
-# Remove these entries, as they make sense
-id_nochange <- c(751)
-
-COST_UPPER <- COST_UPPER %>% filter(!(id %in% id_nochange))
-
-# Calculate new prices
-COST_UPPER$new <- COST_UPPER$costs / COST_UPPER$hives_winter
-DATA$costs[(DATA$id %in% COST_UPPER$id)] <- COST_UPPER$new
-```
-
-We defined upper limit cost outliner with 3rd quantile and multiplied by 10 which resulted in a cost limit of `r upper_limit`. In total `r nrow(COST_UPPER)` participants did answers above this limit. Upon investigating the `r nrow(COST_UPPER)` answers, we found out that most of them did answer a total cost and no cost by colony. Therefore, we divided the costs by the number of colonies going into winter. Only `r length(id_nochange)` participants were not changed, as one only had one colony and did hyperthermia treatment and the second one did explicit explain the high costs as comment.
-
-```{r}
-rm(id_nochange, upper_limit, COST_UPPER, csum)
-```
-
-# Standard Params
-
-```{r calc-n, include=FALSE}
-RAW_REPORTS <- RAW %>% group_by(year) %>% 
-  summarize(
-    n = n(),
-    mean_colonies   = round(mean(hives_winter),2),
-    median_colonies = median(hives_winter)
-  )
-
-DATA_REPORTS <- DATA %>% group_by(year) %>% 
-  summarize(
-    n = n(),
-    mean_colonies   = round(mean(hives_winter),2),
-    median_colonies = median(hives_winter)
-  )
-
-REPORTS <- tibble(
-  Year    = RAW_REPORTS$year,
-  Total   = RAW_REPORTS$n,
-  Cost    = DATA_REPORTS$n,
-  Percent = round(DATA_REPORTS$n/RAW_REPORTS$n*100,1)
-)
-rm(DATA_REPORTS, RAW_REPORTS)
-```
-
-The number of reports which did include costs and after cleanup of invalid or illogical answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]`, see table \@ref(tab:reports).
-
-```{r reports, include=T}
-cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
-c = "Number of participants answering the question for estimated costs per colony in the survey two survey years."
-knitr::kable(
-  REPORTS,
-  booktabs = TRUE, row.names = FALSE,
-  col.names = cn, format = "markdown", caption = c
-)
-rm(REPORTS, cn)
-```
-
 ## Data Distribution
 
 The distribution of the costs looks right skewed, with some outliers into the extreme highs. The two survey years look comparable, see fig. \@ref(fig:distr-year).  
@@ -261,7 +53,10 @@ ggplot(DATA) +
     hjust = "right"
   ) + 
   theme_classic() +
-  ylim(0, 50)
+  scale_y_continuous(
+    limits = c(0,50),
+    breaks = c(seq(0,50,5))
+      )
 
 ```
 
@@ -608,6 +403,8 @@ costs_size_pairwise <-
   drop_na(value) %>% 
   filter(value < .05)
 
+costs_size_pairwise$y <- max(size_gsm_plot$upper)+ seq(0.5,nrow(costs_size_pairwise), 1)
+
 ```
 
 
@@ -623,8 +420,8 @@ ggplot(size_gsm_plot,
   geom_point() + geom_errorbar(aes(ymin = lower,
                                    ymax = upper)) + 
   theme_classic() + ylab("Costs [Euro]") + xlab("Operation Size [Number Colonies]") +
-  geom_text(aes(x = 3, y = 12.3, label="italic(p) < 0.05"), color = "gray", parse=T) + 
-  geom_text(aes(x = 6, y = 10.3, label=paste("mean =", round(mean(DATA$costs),2))), color = "gray") + 
+  #geom_text(aes(x = 3, y = 12.3, label="italic(p) < 0.05"), color = "gray", parse=T) + 
+  annotate("text", x = 6, y = 10.3, label=paste("mean =", round(mean(DATA$costs),2)), color = "gray") + 
     geom_text(
       aes(
         x=c(1:6), y = 0, 
@@ -635,13 +432,13 @@ ggplot(size_gsm_plot,
     axis.text.x = element_text(size = 14)
   ) +
   scale_y_continuous(
-    limits = c(0,max(size_gsm_plot$upper)*1.1),
-    breaks = c(0:round(max(size_gsm_plot$upper)*1.1))
+    limits = c(0,max(size_gsm_plot$upper)*1.3),
+    breaks = c(0:round(max(size_gsm_plot$upper)*1.3))
       ) +
   geom_signif(
     data=costs_size_pairwise,
-    aes(xmin=name, xmax=compare, annotations="", y_position = 12),
-    textsize = 3, vjust = -0.2, color = "gray", manual=TRUE)
+    aes(xmin=name, xmax=compare, annotations="italic(p) < 0.05", y_position = y),
+    textsize = 3, vjust = -0.2, color = "gray", manual=TRUE, parse=TRUE)
 rm(costs_size_pairwise, size_gsm_plot, sum_size_gaussian, glm_size_gaussian, xy)
 ```
 
@@ -653,15 +450,15 @@ A trend can be seen, could be due to some high costs answers from very small bee
 
 ## Generate Bootstrap CI
 
-To generate a better estimate we use a confidence interval. The confidence interval is calculated with bootstrap method and 10000 replicas. With the bootstrap samples we calculate a confidence interval based on Bca.
+To generate a better estimate we use a confidence interval. The confidence interval is calculated with bootstrap method and 10.000 replicas. With the bootstrap samples we calculate a confidence interval based on Bca.
 
-The Distribution of the bootstrap mean and median can be seen in fig. \@ref(fig:boot-mean)-\@ref(fig:boot-median).
+The Distribution of the bootstrap mean can be seen in fig. \@ref(fig:boot-mean).
 
 ```{r}
 # Generate Bootstrap Dataset
-boot_median <- boot::boot(DATA$costs, fBootMedian, R=10000)
+#boot_median <- boot::boot(DATA$costs, fBootMedian, R=10000)
 boot_mean   <- boot::boot(DATA$costs, fBootMean, R=10000)
-ci_median <- boot::boot.ci(boot_median, conf=0.95, type="bca")
+#ci_median <- boot::boot.ci(boot_median, conf=0.95, type="bca")
 ci_mean   <- boot::boot.ci(boot_mean, conf=0.95, type="bca")
 
 fBootPlot <- function(x, t){
@@ -690,10 +487,6 @@ fBootPlot <- function(x, t){
 p <- fBootPlot(boot_mean, "Mean")
 p
 ```
-```{r boot-median, include=T, warning = F, fig.cap="Boostrap Median"}
-p <- fBootPlot(boot_median, "Median")
-p
-```
 
 ## Generating Regression CI
 
@@ -707,6 +500,9 @@ confint(one.lm)
 
 
 ## Estimated Total Values in Austria
+
+Marktwirtschaftlich müsste ich Kosten der Bienenvölker bzw. irgendwie die Volkanzahl * die Kosten
+
 
 
 # Treatment

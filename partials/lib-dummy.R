@@ -10,3 +10,8 @@ library("BlandAltmanLeh")
 library("boot")
 library("ggsignif")
 library("lme4")
+library("ggstatsplot")
+# Maps
+library( "rgeos" )
+library( "maptools" )
+library( "rgdal" )

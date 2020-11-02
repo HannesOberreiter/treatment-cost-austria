@@ -1,0 +1,41 @@
+
+
+
+We need to understand what the underlying principle of not random survey means for us.
+
+
+Read:
+Lessler and Kalsbeek 1992 non response bias and missing data
+
+
+In our citizien science survey we probably have a potential selection biases and survey erros (cite applied survey data analysis).
+Read Baker et al. 2013 for nonprobability samples.
+
+
+Eine Stichprobe sollte repräsentativ für die Grundgesamtheit sein, damit ihre Ergebnisse deren Eigenschaften wahrheitsgemäß wiedergeben. Eine repräsentative Stichprobe lässt sich unter anderem dadurch erstellen, dass die Elemente der Stichprobe zufällig aus der Grundgesamtheit ausgewählt werden (van der Zee et al., 2013). Dies hieße im Falle des Virenmonitorings, dass die teilnehmenden Bienenstände zufällig aus einer Liste aller in Österreich vorhandenen Bie- nenstände gezogen werden. Ein solches Bienenstandregister liegt in Österreich seit dem Jahr 2017 im Rahmen des Veterinärinformationssystems (VIS) vor. Diese VIS-Aufzeichnungen dürfen jedoch ausschließlich zum Zwecke der Überwachung und Bekämpfung von Tierseuchen und der Überwachung der Lebensmittelsicherheit verwendet werden (TSG § 8 Abs. 6). Daher war es nicht möglich, diese Daten zur Auswahl der TeilnehmerInnen des Virenmonitorings heranzuziehen. Stattdessen wurde in der Imkerschaft für die Teilnahme am „Virenmonitoring“ geworben.
+
+
+Berechnung der notwendigen Stichprobengröße, um bei einer binomialen Verteilung der unter- schiedlichen zu erwartenden Prävalenzen ein 95% Konfidenzintervall von ±5%, ±6% und ±7% zu erreichen. Basis der Berechnung ist das Wilson-Konfidenzintervall, Berechnung durchgeführt in R mit der Version 3.4.1 (R Core Team, 2020) mit dem package „binomSamSize“ (Höhle, 2017). Die gewählte Stichprobengröße von 200 Ständen ist als rote Linie eingezeichnet. Überschreitet der graue Balken die rote Linie, wäre eine höhere Anzahl an Stichproben als die gewählten 200 notwendig um die gewünschte Schwankungsbreite des Konfidenzintervalls zu erreichen (fast immer bei ±5%, nie bei ±7%).
+
+
+Multivariates Modell (GLM mit quasibinomialer Verteilung): Einfluss auf die Wintersterblich- keit von Bienenvölkern. Prädiktoren: Virustiter von DWV-B im September vor der Einwinterung (Vergleichskategorie: negativ, K = Konzentration), Symptom „Varroamilben auf Bienen“ im Sep- tember gesehen (Vergleichskategorie: Symptom nicht gesehen) und Gesamtanzahl der Völker des
+Imkereibetriebes (Anzahl Völker). n=390 Proben.
+ Prädiktor
+DWV-B geringe K DWV-B mittlere K DWV-B hohe K
+Varroa - gesehen Varroa - keine Angabe
+Anzahl Völker
+Schätzer Standardfehler
+-0,039 0,360 0,502 0,337 1.204 0,355
+0,680 0,212 0,057 0,317
+-0,003 0,002
+P-Wert
+0,913
+0,137 <0,001
+0,001 0,858
+0,050
+
+
+
+Wert des Honigs: Die Bestäubung der blütenpflazen durch bienen, 2000 Pickhardt schweizer zentrum bienenforschung
+
+

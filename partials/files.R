@@ -3,11 +3,13 @@ source("partials/standard-cost.R")
 
 # Importing our files, we have two survey years
 # first row is original names, we want to keep it in the xls file
+col_types = rep("guess", 271) 
+col_types[3] = "text" # we need to define text here as our ID field is a little bit problematic
 D1920 <- tibble::as_tibble(
-  readxl::read_xlsx("data/19-20.xlsx", skip=1)
+  readxl::read_xlsx("data/19-20.xlsx", skip=1, col_types = col_types)
   ) %>% add_column(year = "19/20")
 D1819 <- tibble::as_tibble(
-  readxl::read_xlsx("data/18-19.xlsx", skip=1)
+  readxl::read_xlsx("data/18-19.xlsx", skip=1, col_types = col_types)
   ) %>% add_column(year = "18/19")
 
 RAW <- rbind(D1920, D1819)
