@@ -1,6 +1,6 @@
-# Treatment Costs Analysis for Survey 18/19 and 19/20
+# Austria Beekeeping Treatment Expenses Analysis
 
-Statistical analysis of the treatment costs against **Varroa Desctructor** with the survey data set of COLOSS winter losses in Austria for the winters 2018/19 and 2019/20.
+Statistical analysis of the treatment expenses against **Varroa Desctructor** with the survey data set of COLOSS winter losses in Austria for the winters 2018/19 and 2019/20.
 
 ## Build Book
 
