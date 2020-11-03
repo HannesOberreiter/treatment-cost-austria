@@ -39,6 +39,7 @@ rm(VLIBS, F_LoadLibs)
 # https://www.biene-oesterreich.at/daten-und-zahlen+2500++1000247
 stats_aut <- tibble(
   year = c(2018, 2019),
+  year2 = c("18/19", "19/20"),
   beekeeper = c(28432, 30237),
   colonies = c(373412, 390607)
 )
