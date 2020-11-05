@@ -19,34 +19,34 @@ treatmentList = tibble(
   ),
   ttotal = NA,
   tname = c(
-    "Varroa Kontrolle",
-    "Drohnenbrutentnahme",
-    "Hyperthermie",
-    "Andere biotechnische Methode",
-    "Ameisensäure - Kurzzeit",
-    "Ameisensäure - Langzeit",
-    "Milchsäure",
-    "Oxalsäure - Pure",
-    "Oxalsäure - sub.",
-    "Oxalsäure - Mix",
+    "Varroa monitoring",
+    "Drone brood removal",
+    "Hyperthermia",
+    "Another biotechnical method",
+    "Formic acid - short term",
+    "Formic acid - long term",
+    "Lactic acid",
+    "Oxal acid - pure",
+    "Oxal acid - sublimation",
+    "Oxal acid - mixture",
     "Thymol",
-    "Anderes chem. Produkt",
-    "Andere Methode"
+    "Synthetic methods",
+    "Another methods"
   ),
   tshort = c(
     "V-check",
-    "Drohne",
+    "Drone",
     "Hyp.",
     "Biot.",
-    "AS-KZ",
-    "AS-LZ",
-    "Milchs.",
+    "Fa-ST",
+    "Fa-LT",
+    "Lactic",
     "Ox-pure",
     "Ox-sub",
     "Ox-mix",
     "Thy",
-    "chem. Pr.",
-    "Andere"
+    "chem. Meth.",
+    "Another"
   )
 )
 

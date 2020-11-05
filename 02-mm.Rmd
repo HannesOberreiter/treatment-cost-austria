@@ -14,7 +14,53 @@ As we analyzed two continuous survey years and the survey is anonymous we have n
 
 ## Expenses Estimation
 
-Expenses estimation was carried out for data control of given answers in the survey and to check if a logical expenses estimation of products yield the same result as the participants answers. To calculate estimates we researched online store prices in 2020 in Austria for official registered medication^[Austrian medicinal product index: https://aspregister.basg.gv.at/, accessed November 2020] and used common application amount and methods in Austria from beekeeping school materials and experience from previous survey to calculate an estimate for each treatment method an expenses per colony. After that for each survey participants an estimate was calculated with the given answer for treatment method (or combination), number of colonies and number of months used.
+Expenses estimation was carried out for data control of given answers in the survey and to check if a logical expenses estimation of products yield the same result as the participants answers. To calculate estimates we researched online store prices in 2020 in Austria for official registered medication^[Austrian medicinal product index: https://aspregister.basg.gv.at/, accessed November 2020] and used common application amount and methods in Austria from beekeeping school materials and experience from previous surveys to calculate an estimate for each treatment method an expenses per colony, see table \@ref(tab:standard-cost) for our calculated estimate. The calculation with average month of usage and estimated 11 colonies can be seen in \@ref(tab:common). After that for each survey participants an estimate was calculated with the given answer for treatment method (or combination), number of colonies and number of months used.
+
+```{r standard-cost, include=T}
+c <- "Our calculated estimates for treatment expenses per method. Investments can be used long term (we calculate 10 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (7 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid Long Term, 200ml)."
+cn = c("Methode", "Investment", "Material", "Consumables")
+kable(
+  treatmentList[-1, c(3, 5:7)],
+  booktabs = TRUE, row.names = FALSE,
+  caption = c, col.names = cn
+) %>%
+  footnote(general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods'; Other biotechnical methods do not include drone brood removal or hypothermia; and Another method excludes synthetic methods.")
+
+rm(c, cn)
+```
+
+```{r common, include=T}
+# Get median number of colonies to calculate an estimate
+m_colonies = median(DATA$hives_winter)
+
+col <- DATA %>% 
+    select(!!(paste0(treatmentList$ttotal, "12")))
+# Get number of participates using the single treatment methods
+sin <- col %>% 
+    mutate(across(.cols = everything(), as.logical)) %>% colSums()
+# get the average amount for number of months
+nu <- col %>% na_if(0) %>% colMeans(na.rm=T)
+
+common_single <- tibble(
+  tname = treatmentList$tname,
+  n = sin,
+  p = round(sin*100/nrow(DATA),2),
+  nu = round(nu, 2),
+  est = round(treatmentList$investment / m_colonies + treatmentList$material + treatmentList$consumables*nu, 2)
+) %>% arrange(desc(p))
+
+c <- paste0("Most used Methods in the two survey years, average months indicating the average of months this methods was used. Estimated costs are calculated with ", m_colonies, " colonies, which represents the median number of colonies in our survey, and the average months of usage.")
+
+cn = c("Method", "Total [n]", "Percent [%]", "Average Months[n]", "Estimated Costs")
+kable(
+  common_single[-1,],
+  booktabs = TRUE, row.names = FALSE,
+  col.names = cn,
+  caption = c
+) # %>%   kable_classic()
+rm(cn, c, common_single, nu, sin, col, m_colonies)
+```
+
 
 ## Data Cleanup
 

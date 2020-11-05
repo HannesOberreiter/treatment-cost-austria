@@ -25,7 +25,7 @@ names(ongoing_cost)    <- treatmentList$tname
 # Varroa Kill 2, 799
 # https://www.bienenladen.at/de/produktdetails/produkt.varroa-kill.html
 # 05.10.2020
-investment_cost["Hyperthermie"] <- mean(c(2475, 799))
+investment_cost["Hyperthermia"] <- mean(c(2475, 799))
 
 #### Other Biotechnical Method ####
 
@@ -39,7 +39,7 @@ investment_cost["Hyperthermie"] <- mean(c(2475, 799))
 # https://www.legaitaly.com/en/products/hives-and-accessories/queen-excluder/secluder-shaped-brood-frame-lateral.133
 # 05.10.2020
 
-material_cost["Andere biotechnische Methode"] <- mean(
+material_cost["Another biotechnical method"] <- mean(
   c(
     23.50, 
     12.00,
@@ -81,27 +81,27 @@ as_lt <- 0.2
 # https://www.wachs-hoedl.com/navi.php?qs=ameisens%E4ure&search=
 # 05.10.2020
 
-material_cost["Ameisensäure - Langzeit"] <- mean(
+material_cost["Formic acid - long term"] <- mean(
   c(
     6.90, 19.90, 8.20
   )
 )
 
 # small amount material cost for short time treatment (eg. cleaning sponge)
-material_cost["Ameisensäure - Kurzzeit"] <- mean(
+material_cost["Formic acid - short term"] <- mean(
   c(
     1
   )
 )
 
 # x 2 because you would do more than 2 times ?
-ongoing_cost["Ameisensäure - Langzeit"] <- mean(
+ongoing_cost["Formic acid - long term"] <- mean(
   c(
     16.15, 16.50, 13.50
   )*as_lt
 )
 
-ongoing_cost["Ameisensäure - Kurzzeit"] <- mean(
+ongoing_cost["Formic acid - short term"] <- mean(
   c(
     16.15, 16.50, 13.50
   )*as_st
@@ -116,7 +116,7 @@ rm(as_lt, as_st)
 # https://www.imkereibedarf-bienenweber.de/Milchsaeure-15-ad-us-vet-1-Liter-Flasche-zur-Varroabekaempfung
 # 05.10.2020
 
-ongoing_cost["Milchsäure"] <- mean(9.80*0.160)
+ongoing_cost["Lactic acid"] <- mean(9.80*0.160)
 
 #### Oxalic Acid Mixture Pure ####
 # Api Bioxal
@@ -137,7 +137,7 @@ ongoing_cost["Milchsäure"] <- mean(9.80*0.160)
 # https://www.holtermann-shop.de/Varroa---Reinigung/Varroabehandlung/Oxybee-9643-9783.html
 # 05.10.2020
 
-ongoing_cost["Oxalsäure - Pure"] <- mean(
+ongoing_cost["Oxal acid - pure"] <- mean(
   14.50/10,
   10.65/15,
   39/888*50,
@@ -165,12 +165,12 @@ ongoing_cost["Oxalsäure - Pure"] <- mean(
 # https://imkershop-wien.at/produkt/sublimox-oxalsaeureverdampfer/
 # 05.10.2020
 
-investment_cost["Oxalsäure - sub."] <- mean(
+investment_cost["Oxal acid - sublimation"] <- mean(
   139, 390, 120, 395
 )
 
 # multiply by 2 becuse in summer its probably used more often and in winter only once
-ongoing_cost["Oxalsäure - sub."] <- mean(
+ongoing_cost["Oxal acid - sublimation"] <- mean(
   14.50/15 * 2
 )
 
@@ -189,7 +189,7 @@ ongoing_cost["Oxalsäure - sub."] <- mean(
 # https://imkershop-wien.at/produkt/bienenwohl-10-liter/
 # 05.10.2020
 
-ongoing_cost["Oxalsäure - Mix"] <- mean(
+ongoing_cost["Oxal acid - mixture"] <- mean(
   26 / 555 * 45,
   36.90 * 0.05
 )
@@ -234,7 +234,7 @@ ongoing_cost["Thymol"] <- mean(
 # https://agrocenter.it/Apivar-500mg-10-Streifen
 # 05.10.2020
 
-ongoing_cost["Anderes chem. Produkt"] <- mean(
+ongoing_cost["Synthetic methods"] <- mean(
   30 / 10,
   35 / 5,
   33.80 / 10

@@ -177,4 +177,9 @@ RAW$T_amount <- rowSums(RAW[, x], na.rm = TRUE)
 RAW$varroa_checked[RAW$varroa_checked != "Ja" & RAW$T_vcount_total12 > 0] <- "Ja"
 RAW$varroa_treated[RAW$varroa_treated != "Ja" & RAW$T_amount > 0]         <- "Ja"
 
+### Generate Cols without Drone Brood Removal
+RAW$t_desc_od  <- str_replace(RAW$t_desc, "Drone brood removal & ", "")
+RAW$t_short_od <- str_replace(RAW$t_short, "Drone & ", "")
+
+
 rm(t, x)

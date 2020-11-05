@@ -13,7 +13,7 @@ VLIBS <- c(
   "readxl", "bookdown", "BlandAltmanLeh", 
   "boot", "ggsignif", "lme4", 
   "rgeos", "maptools", "rgdal",
-  "ggstatsplot"
+  "ggstatsplot", "kableExtra"
   )
 
 # Use Colors in Plots

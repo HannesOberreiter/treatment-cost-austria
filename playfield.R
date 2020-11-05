@@ -2,6 +2,137 @@ dplyr::glimpse(DATA)
 str(DATA)
 
 
+K.SEQ <- c( seq( 0, 100, 20 ), Inf )
+K.SEQ2 <- c( seq( 20, 120, 20 ), Inf )
+
+V.LABEL <- paste(K.SEQ, K.SEQ2, sep = "-")
+V.LABEL <- V.LABEL[1:6]
+V.LABEL[6] <- "> 100"
+V.LABEL[1] <- "1-20"
+
+DATA$size_group <- cut( DATA$hives_winter, K.SEQ, labels=V.LABEL, include.lowest = TRUE, right = TRUE )
+
+
+
+
+#DATA2 = DATA %>% mutate(tri_size = factor(tri_size, labels = c("1-10", "21-50", ">50")))
+
+ggplot(DATA, aes(sample=costs)) + 
+  geom_qq() + geom_qq_line(color="red") + 
+  theme_classic() + 
+  facet_wrap(
+    ~tri_size, ncol = 3,
+    labeller = labeller(
+      tri_size = function(x){return(paste(x, "Colonies"))}
+    )
+  )
+
+# https://www.datanovia.com/en/lessons/kruskal-wallis-test-in-r/
+# https://towardsdatascience.com/a-gentle-guide-to-statistics-in-r-ccb91cc1177e
+# library("rstatix")
+DATA$tri_size <- "1-20"
+DATA$tri_size[DATA$hives_winter > 20] <- "21-50"
+#DATA$tri_size[DATA$hives_winter > 31] <- "31-50"
+DATA$tri_size[DATA$hives_winter > 50] <- ">50"
+DATA = DATA %>% mutate(tri_size = factor(tri_size, levels = c("1-20", "21-50", ">50")))
+
+n_p = DATA %>% group_by(tri_size, year) %>% summarise(
+  hives = sum(hives_winter),
+  participants = n(),
+  mean_costs = mean(costs),
+  median_costs = median(costs)
+) %>% ungroup()
+n_p
+res.kruskal1819 <- DATA %>% filter(year == "18/19") %>% kruskal_test(costs ~ 0 + tri_size)
+res.kruskal1920 <- DATA %>% filter(year == "19/20") %>% kruskal_test(costs ~ 0 + tri_size)
+res.kruskal1819
+res.kruskal1920
+# The interpretation values commonly in published literature are: 0.01- < 0.06 (small effect), 0.06 - < 0.14 (moderate effect) and >= 0.14 (large effect).
+DATA %>% kruskal_effsize(costs ~ 0 + tri_size)
+# https://www.stata-journal.com/article.html?article=st0381
+# https://rcompanion.org/rcompanion/d_06.html
+pwc1819 <- DATA %>% filter(year == "18/19") %>% rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") 
+pwc1920 <- DATA %>% filter(year == "19/20") %>% rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") 
+pwc1819
+pwc1920
+#pwc <- pwc %>% add_xy_position(x = "tri_size") %>% mutate(y.position = c(80, 100, 120))
+pwc1819 <- pwc1819 %>% rstatix::add_xy_position(x = "tri_size")
+pwc1920 <- pwc1920 %>% rstatix::add_xy_position(x = "tri_size")
+
+p1819 <- DATA %>% filter(costs < 200 & year == "18/19") %>% 
+ggplot(.,
+       aes(
+         y = costs,
+         x = tri_size
+       )) +
+  geom_boxplot() +
+  theme_classic() + ylab("Costs [Euro]") + xlab("Operation Size [Number Colonies]") +
+  #geom_text(aes(x = 3, y = 12.3, label="italic(p) < 0.05"), color = "gray", parse=T) + 
+  #annotate("text", x = 6, y = 10.3, label=paste("mean =", round(mean(DATA$costs),2)), color = "gray") + 
+  #geom_hline(yintercept=mean(DATA$costs), color=colorBlindBlack8[2]) +
+  theme(
+    axis.text.x = element_text(size = 14)
+  ) +
+  ggtitle("Survey 18/19", subtitle = get_test_label(res.kruskal1819, detailed = TRUE)) +
+  labs(caption=str_replace(get_pwc_label(pwc1819, type="text"), "pwc", "Pairwise Comparisons")) +
+  #scale_x_discrete(labels = paste0(n_p$tri_size, "\nn=", n_p$participants, "\nhives=", n_p$hives)) +
+  
+  ggsignif::geom_signif(
+    data=pwc1819,
+    aes(xmin=xmin, xmax=xmax, annotations=p.adj.signif, y_position = c(80,85,95), group = p.adj),
+    textsize = 3, color = "black", manual=TRUE, parse=FALSE)
+
+p1920 <- DATA %>% filter(costs < 200 & year == "19/20") %>% 
+  ggplot(.,
+         aes(
+           y = costs,
+           x = tri_size
+         )) +
+  geom_boxplot() +
+  theme_classic() + ylab("Costs [Euro]") + xlab("Operation Size [Number Colonies]") +
+  #geom_text(aes(x = 3, y = 12.3, label="italic(p) < 0.05"), color = "gray", parse=T) + 
+  #annotate("text", x = 6, y = 10.3, label=paste("mean =", round(mean(DATA$costs),2)), color = "gray") + 
+  #geom_hline(yintercept=mean(DATA$costs), color=colorBlindBlack8[2]) +
+  theme(
+    axis.text.x = element_text(size = 14)
+  ) +
+  ggtitle("Survey 19/20",subtitle = get_test_label(res.kruskal1920, detailed = TRUE)) +
+  labs(caption=str_replace(get_pwc_label(pwc1920, type="text"), "pwc", "Pairwise Comparisons")) +
+  #scale_x_discrete(labels = paste0(n_p$tri_size, "\nn=", n_p$participants, "\nhives=", n_p$hives)) +
+  
+  ggsignif::geom_signif(
+    data=pwc1920,
+    aes(xmin=xmin, xmax=xmax, annotations=p.adj.signif, y_position = c(80,85,95), group = p.adj),
+    textsize = 3, color = "black", manual=TRUE, parse=FALSE)
+
+
+p1819 | p1920
+
+xk <- kruskal.test(costs ~ tri_size, data=DATA)
+confint(xk)
+xk
+summary(xk)
+
+PT = pairwise.wilcox.test(DATA$costs,
+                          DATA$tri_size,
+                          p.adjust.method="holm")
+
+confint(PT)
+
+
+str(DATA2$tri_size)
+ggplot(DATA, aes(x = tri_size, y = costs)) + geom_boxplot()
+
+x <- aov(costs ~ 0 + tri_size, data = DATA)
+x
+confint(x)
+summary(x)
+y <- broom::tidy(x)
+TukeyHSD(x)
+costs_size_pairwise <- pairwise.t.test(DATA2$costs, DATA2$tri_size, p.adj = c("holm"))
+costs_size_pairwise
+broom::tidy(costs_size_pairwise)
+
 
 DATA$t_short_od <- as.factor(DATA$t_short_od)
 d <- DATA %>% group_by(t_short_od) %>% filter(n() > 15)
