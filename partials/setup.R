@@ -12,8 +12,10 @@ VLIBS <- c(
   "tidyverse", "patchwork", "here", 
   "readxl", "bookdown", "BlandAltmanLeh", 
   "boot", "ggsignif", "lme4", 
-  "rgeos", "maptools", "rgdal",
-  "ggstatsplot", "kableExtra"
+  #"rgeos", "maptools", "rgdal",
+  "sf",
+  #"ggstatsplot", 
+  "kableExtra", "rstatix"  
   )
 
 # Use Colors in Plots

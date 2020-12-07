@@ -93,14 +93,18 @@ For the analysis of the combination of different varroa control methods, a usage
 
 Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
 
+### Operation Size
+
+For the analysis of expenses and operation size, we grouped survey participants by the number of colonies wintered into following groups: 1-20, 21-50 and more than 50. Data distrubtion analysis was done with QQ-plots and boxplots. Statistical test were done with Kruskall-Wallis and effect size estimation. Statistically signficiant result were followed up by pairwise Dunn-Test, because of the different sample sizes, and Holm p-value correction.
+
 
 ```{r}
 # Cleanup Env
 rm(list=ls()[
   !(ls() %in%
   c(
-    "RAW", "DATA", "fBootMean", 
-    "fBootMedian", "colorBlindBlack8", "stats_aut", 
+    "RAW", "DATA", "fBootMean",
+    "fBootMedian", "colorBlindBlack8", "stats_aut",
     "treatmentList", "fMapCluster"
     )
   )])
