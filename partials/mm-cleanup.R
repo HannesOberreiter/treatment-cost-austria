@@ -34,7 +34,9 @@ COST_UPPER_NO_ESTIMATE <- DATA[DATA$costs > upper_limit,]
 COST_UPPER <- COST_UPPER_NO_ESTIMATE[COST_UPPER_NO_ESTIMATE$costs > COST_UPPER_NO_ESTIMATE$t_estimated*2,]
 COST_UPPER <- COST_UPPER[,c("id", "id_original", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
 # Remove these entries, as they make sense
-id_nochange <- c(751)
+# 1976 explains that he bought a power generator and vaporizer
+# 751 Bienensauna
+id_nochange <- c(751, 1976)
 COST_UPPER <- COST_UPPER %>% filter(!(id %in% id_nochange))
 # Calculate new prices
 COST_UPPER$new <- COST_UPPER$costs / COST_UPPER$hives_winter

@@ -12,21 +12,26 @@ SHAPEFILE.NAME.AUSTRIA <- "VGD_modf"
 # Load MAP
 SHAPEFILE.FOLDER.AUSTRIA  <- gsub(" ", "", paste(here(), SHAPEFILE.NAME.AUSTRIA, sep = "/"), fixed = TRUE)
 
-
 # Read MAPS
 if(!exists("MAP_AUSTRIA")){
-  # quicker version with SF
-  MAP_AUSTRIA <- read_sf(SHAPEFILE.FOLDER.AUSTRIA)
-  MF_STATES <- MAP_AUSTRIA %>% 
-    group_by(BL) %>% 
-    summarize(
-      geometry = st_union(geometry)
-    )
-  MF_DISTRICTS <- MAP_AUSTRIA %>% 
-    group_by(PB) %>% 
-    summarize(
-      geometry = st_union(geometry)
-    )
+  if(file.exists("data/maps.RData")){
+    load("data/maps.RData")
+  } else {
+    MAP_AUSTRIA <- read_sf(SHAPEFILE.FOLDER.AUSTRIA)
+    MF_STATES <- MAP_AUSTRIA %>% 
+      group_by(BL) %>% 
+      summarize(
+        geometry = st_union(geometry)
+      )
+    MF_DISTRICTS <- MAP_AUSTRIA %>% 
+      group_by(PB) %>% 
+      summarize(
+        geometry = st_union(geometry)
+      )
+    # save R object to prevent loading each time
+    save(MAP_AUSTRIA, MF_DISTRICTS, MF_STATES, file = "data/maps.RData")
+  }
+  # Old Version we now use sf package, as it is quicker
   #MAP_AUSTRIA   <- readOGR( dsn = SHAPEFILE.FOLDER.AUSTRIA, layer = SHAPEFILE.NAME.AUSTRIA )
   #MF_STATES     <- fortify( MAP_AUSTRIA, region = "BL" )
   #MF_DISTRICTS  <- fortify( MAP_AUSTRIA, region = "PB" )
@@ -52,7 +57,7 @@ p <- ggplot() +
     aes(x = longitude, y = latitude, size = n, fill = Survey), 
     color = "black", stroke = 0.3, shape = 21, alpha = 0.8
     ) + 
-  scale_fill_discrete(type = colorBlindBlack8) +
+  scale_fill_discrete(type = colorBlindBlack8[c(2,4)]) +
   coord_sf() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Beekeeper (n)", size = "Beekeeper (n)") +
   scale_size_continuous(
@@ -68,3 +73,4 @@ p <- ggplot() +
     axis.ticks = element_blank(),
     panel.grid.major = element_blank()
   )
+

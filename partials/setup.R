@@ -11,11 +11,11 @@ knitr::opts_chunk$set(
 VLIBS <- c(
   "tidyverse", "patchwork", "here", 
   "readxl", "bookdown", "BlandAltmanLeh", 
-  "boot", "ggsignif", "lme4", 
+  "boot", "ggsignif", "lme4", "ggupset",
   #"rgeos", "maptools", "rgdal",
   "sf",
   #"ggstatsplot", 
-  "kableExtra", "rstatix"  
+  "kableExtra", "rstatix", "latex2exp"
   )
 
 # Use Colors in Plots

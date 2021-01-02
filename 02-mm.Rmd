@@ -8,9 +8,13 @@ source("partials/mm-cleanup.R", local = knitr::knit_global())
 
 The survey was a citizen science survey which is done each year in spring since 2008 and is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey are the yearly colony losses over winter for the Austrian Beekeeper. It is part of the COLOSS questionnaire [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success and as seen in other studies [@oberreiter2020]. The survey is not mandatory but beekeepers who want to get more official support they must participate. 
 
-As most questions are related to winter colony losses we are only interested in an subset of questions: Number of colonies wintered (size of operation), Number of colonies lost over winter period (due natural or queen loss, without losses due to natural disaster), month(s) and type of treatment used, estimated treatment expenses per colony without labor costs. The last question about the expenses, which is our main focus, was only available in the online survey as the questionnaire printed in the beekeeping journal and handed out paper submissions are a shorter version. The survey was anonymous and private data like IP addresses were only used in the first step to help identify double entries. If voluntary contact details were given, the data was anonymized prior analysis and only used if further enquire on questionable answers was necessary.
+As most questions are related to winter colony losses we are only interested in an subset of questions: Number of colonies wintered (size of operation), Number of colonies lost over winter period (due natural or queen loss, without losses due to natural disaster), state and district of main wintering apiary (as possible covariate), month(s) and type of treatment used, estimated treatment expenses per colony without labor costs. In addition two operational questions are also explored, if the beekeeper migrates with his colonies and if he/she is an organic certified beekeeper, with possible answers "Yes", "No", "Unsure".
 
-As we analyzed two continuous survey years and the survey is anonymous we have no assumption if the same beekeepers participated in both surveys. Therefore, we can not say that both years are independent or not and analyzed them separately. The advantages to compare two years is, that we may have a better overview if the survey is representative, as there should not much change in the expenses and distribution of beekeepers apiary location and size of operations in the two surveys.
+All questions are explored in combination with the expenses per colony, this questions was only available in the online survey as the questionnaire printed in the beekeeping journal and handed out paper submissions are a shorter version.
+
+The survey was anonymous and private data like IP addresses were only used in the first step to help identify double entries. If voluntary contact details were given, the data was anonymized prior analysis and only used if further enquire on questionable answers was necessary.
+
+As we analyzed two continuous survey years and the survey is anonymous we have no assumption if the same beekeepers participated in both surveys. Therefore, we can not say that both years are independent or not and analyzed them separately or use year as random effect. The advantages to compare two years is, that we may have a better overview if the survey is representative, as there should not much change in the expenses and distribution of beekeepers apiary location and size of operations in the two surveys. Furthermore, overall winter loss rates fluctuate between years of survey. This means I can check if a given treatment did result in both years to good results or not.
 
 ## Expenses Estimation
 
@@ -82,12 +86,26 @@ In total `r nrow(COST_ZERO)` participants said their treatment expenses were zer
 
 ### High Expenses
 
-We defined an upper limit cost outliner with the 3rd quantile and multiplied it by two which resulted in a cost limit of `r upper_limit`. In total `r nrow(COST_UPPER_NO_ESTIMATE)` participants did answers above this limit. To remove possible plausible answers, we did filter the resulting samples to only include expenses which are double of our previous calculated estimated expense for the individual beekeeper. This did reduce the survey answers in question to `r nrow(COST_UPPER)`. Upon investigating the `r nrow(COST_UPPER)` answers, we found out that most of them did answer total expenses per operation and not expenses per colony. Therefore, we divided the expenses by the number of colonies going into winter. Only `r length(id_nochange)` participants were not changed, as one only had one colony and did hyperthermia treatment and the second one did explicit explain the high expenses as comment.
+We defined an upper limit cost outliner with the 3rd quantile and multiplied it by two which resulted in a cost limit of `r upper_limit`. In total `r nrow(COST_UPPER_NO_ESTIMATE)` participants did answers above this limit. To remove possible plausible answers, we did filter the resulting samples to only include expenses which are double of our previous calculated estimated expense for the individual beekeeper. This did reduce the survey answers in question to `r nrow(COST_UPPER)`. Upon investigating the `r nrow(COST_UPPER)` answers, we found out that most of them did answer total expenses per operation and not expenses per colony. Therefore, we divided the expenses by the number of colonies going into winter. Only `r length(id_nochange)` participants were not changed, one had high expenses due to hyperthermia treatment and only few colonies and the second one did explain it by buying a power generator.
 
 ## Statistics
 
-The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with Tidyverse [@tidyverse2019]. Packages are version controlled with Renv [@renv2020]. For full reproducibility the code and a list of all other packages are available on GitHub^[Github: https://github.com/HannesOberreiter/treatment-expenses-austria]. The confidence interval (CI) for expenses per colony was generated with adjusted bootstrap percentile (BCa) method. Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link “logit” function [@vanderzee2013]. To minimize the variation in the varroa control methods and their combination, all months were grouped together. 
+The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with Tidyverse [@tidyverse2019]. Packages are version controlled with Renv [@renv2020]. For full reproducibility the code and a list of all other packages are available on GitHub^[Github: https://github.com/HannesOberreiter/treatment-expenses-austria].
 
+As the main goal of the study is an exploitative analyses of the data, therefore, I try to rely mostly on descriptive statistics. 
+
+The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. As it is still common to underlay the results with statistics tests, I will report p-values from permutation generated from approximative multivariate Kruskal-Wallis test (Monte Carlo)[@hothorn2006] and effect size (explained variance by the independent variable) with equation \@ref(eq:effect) [@tomczak2014].
+
+\begin{equation}
+\begin{aligned}
+  \eta^2_H = \frac{H-k+1}{n-k}
+\end{aligned}
+(\#eq:effect)
+\end{equation}
+
+Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link “logit” function [@vanderzee2013]. 
+
+To minimize the variation in the varroa control methods and their combination, all months were grouped together. 
 
 For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. 
 

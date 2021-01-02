@@ -5,8 +5,8 @@ site: bookdown::bookdown_site
 date: '2020'
 #rmd_files: ['index.Rmd', '01-intro.Rmd', '10-biblo.Rmd']
 output:
-  #bookdown::pdf_document2:
   #  keep_tex: true
+  #bookdown::pdf_document2:
   bookdown::gitbook:
     lib_dir: "thesis_assets"
     split_bib: FALSE

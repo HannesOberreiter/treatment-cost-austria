@@ -33,15 +33,15 @@ plotOperationQQ <- ggplot(DATA[DATA$costs<100,], aes(sample=costs, group = year,
       year = function(x){return(paste("Survey", x))}
     )
   ) +
-  scale_color_manual(values = colorBlindBlack8, name="Survey") +
+  scale_color_manual(values = colorBlindBlack8[c(2,4)], name="Survey") +
   labs(caption="1-20 Colonies, Survey 19/20, 2x Outliers >100 are hidden.")
 plotOperationQQ
 
 # Kruskall ####
 resKruskal1819 <- DATA %>% filter(year == "18/19") %>% 
-  kruskal_test(costs ~ 0 + tri_size) %>% add_column(year = "18/19")
+  rstatix::kruskal_test(costs ~ 0 + tri_size) %>% add_column(year = "18/19")
 resKruskal1920 <- DATA %>% filter(year == "19/20") %>% 
-  kruskal_test(costs ~ 0 + tri_size) %>% add_column(year = "19/20")
+  rstatix::kruskal_test(costs ~ 0 + tri_size) %>% add_column(year = "19/20")
 resKruskall <- rbind(resKruskal1819, resKruskal1920)
 rm(resKruskal1819, resKruskal1920)
 #resKruskall
@@ -114,7 +114,7 @@ plotOperationStat <- DATA %>% filter(costs < 200) %>%
       breaks = c(seq(0,100,5))
     ) + 
   scale_color_manual(
-    values = colorBlindBlack8, name="Survey"
+    values = colorBlindBlack8[c(2,4)], name="Survey"
     ) +
   geom_text(
     data = facetLabels, 
@@ -126,7 +126,5 @@ plotOperationStat <- DATA %>% filter(costs < 200) %>%
   ~year,
   labeller = labeller(
     year = function(x){return(paste("Survey", x))}))
-#plotOperationStat
 
-paste0(latex2exp("$\\eta^2$", output = "text"),round(resEffect$effsize[1],4))
-
+#paste0(TeX("$\\eta^2$", output = "text"),round(resEffect$effsize[1],4))

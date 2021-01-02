@@ -105,9 +105,9 @@ text <- paste0(
 
 ggplot(DATA) +
   geom_violin(
-    aes(x = year, y = costs), 
-    fill=colorBlindBlack8[7],
-    color=colorBlindBlack8[7]
+    aes(x = year, y = costs, fill = year), 
+    #fill=colorBlindBlack8[7],
+    color=colorBlindBlack8[1]
     ) +
   geom_boxplot(
     aes(x = year, y = costs), 
@@ -121,6 +121,10 @@ ggplot(DATA) +
     size = 0.5, 
     arrow = arrow(length = unit(0.1, "inches"))
   ) + 
+  scale_color_manual(
+    values = colorBlindBlack8[c(2,4)], 
+    aesthetics = "fill", name="Survey"
+  ) +
   xlab("Survey Year") + ylab("Expenses / Colony [Euro]") +
   geom_segment(
     x = 2, y = 45,
@@ -143,6 +147,51 @@ ggplot(DATA) +
       )
 
 ```
+## Distribution of Participants in groups of interest
+
+```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest and combination of both years. Percentage reported stands respectivley for the survey years 2018/19 and 2019/20. "}
+# Generate DF for ggupset
+# only yes/no, no NA's and Hobby Beekeepers < 21 colonies wintered
+df_ggupset <- DATA %>% 
+  filter(op_migratory_beekeeper != "Unsicher" & op_cert_org_beek != "Unsicher") %>% 
+  drop_na(op_migratory_beekeeper, op_cert_org_beek) %>% 
+  mutate(
+  up_migratory_beekeeper = ifelse(op_migratory_beekeeper == "Ja", "Migratory", NA),
+  up_cert_org_beek = ifelse(op_cert_org_beek == "Ja", "Cert. Organic", NA),
+  up_hobby = ifelse(hives_winter < 21, "Hobby 1-20 Colonies", NA)
+)
+# nest data for plot
+df_ggupset <- df_ggupset %>% 
+  nest(up_nest = c(up_migratory_beekeeper, up_cert_org_beek, up_hobby))
+# stats for labels
+# percent (18/19 / 19/20) %
+label_ggupset <- df_ggupset %>% 
+  count(year, up_nest, sort = F) %>% 
+  mutate(np = round(n/sum(n)*100,1)) %>% 
+  group_by(up_nest) %>% 
+  summarise(
+    label = paste0("(", paste0(np, collapse = "/"), ")%")
+  )
+  
+df_ggupset %>%
+  ggplot(aes(x=up_nest, y=..count.., fill = year)) +
+  stat_count(position = "stack", color = colorBlindBlack8[1]) +
+  geom_text(
+    data = label_ggupset,
+    aes(y = 0, label = label, fill = NA),
+    vjust = 1.2, size = 3
+  ) +
+  scale_color_manual(
+    values = colorBlindBlack8[c(2,4)], aesthetics = "fill", name="Survey"
+  ) +
+  scale_y_continuous(breaks=seq(0,max(nrow(df_ggupset)),100)) +
+  scale_x_upset() + 
+  ylab("Beekeeper [#]") + xlab("") +
+  theme_classic() + theme(legend.position="left")
+```
+
+
+
 
 ## Expenses Estimations {#r-estimations}
 
@@ -235,14 +284,14 @@ ggplot() +
   geom_abline(
     aes(
       intercept = ba.stats$lines, 
-      colour = I(c(colorBlindBlack8[3], colorBlindBlack8[2], colorBlindBlack8[3])), 
+      colour = I(c(colorBlindBlack8[3], colorBlindBlack8[5], colorBlindBlack8[3])), 
       slope = c(rep(0, 3))),
     show.legend = F
     ) +
   geom_abline(
     aes(
       intercept = ba.stats$CI.lines, 
-      color = I(c(rep(colorBlindBlack8[3], 2), rep(colorBlindBlack8[2], 2), rep(colorBlindBlack8[3], 2))),
+      color = I(c(rep(colorBlindBlack8[3], 2), rep(colorBlindBlack8[5], 2), rep(colorBlindBlack8[3], 2))),
       slope = c(rep(0, 6))
       ),
     linetype = "dashed",
