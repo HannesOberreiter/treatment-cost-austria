@@ -12,6 +12,7 @@
 
 # Bookdown
 _bookdown_files/
+_book/ 
 
 # knitr and R markdown default cache directories
 *_cache/
