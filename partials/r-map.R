@@ -13,7 +13,7 @@ SHAPEFILE.NAME.AUSTRIA <- "VGD_modf"
 SHAPEFILE.FOLDER.AUSTRIA  <- gsub(" ", "", paste(here(), SHAPEFILE.NAME.AUSTRIA, sep = "/"), fixed = TRUE)
 
 # Read MAPS
-if(!exists("MAP_AUSTRIA")){
+if(!exists("MF_STATES")){
   if(file.exists("data/maps.RData")){
     load("data/maps.RData")
   } else {
