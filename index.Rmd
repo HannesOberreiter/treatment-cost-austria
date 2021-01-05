@@ -1,26 +1,26 @@
 ---
-title: "Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa Destructor*"
+title: Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa
+  Destructor*
 author: "Hannes Oberreiter & Robert Brodschneider"
-site: bookdown::bookdown_site
 date: '2020'
-#rmd_files: ['index.Rmd', '01-intro.Rmd', '10-biblo.Rmd']
 output:
-  #  keep_tex: true
-  #bookdown::pdf_document2:
   bookdown::gitbook:
-    lib_dir: "thesis_assets"
-    split_bib: FALSE
+    split_bib: no
     config:
       fontsettings:
         theme: night
         family: sans
         size: 2
+  bookdown::pdf_document2:
+    keep_tex: yes
+site: bookdown::bookdown_site
 header-includes:
 - \usepackage{hyperref}
 - \usepackage{float}
 - \usepackage{caption}
 - \captionsetup[figure]{font=small}
 - \usepackage{siunitx}
+- \usepackage{threeparttable}
 subtitle: University of Graz, Institut for Biology
 bibliography: bib.bibtex
 biblio-style: authoryear
@@ -31,10 +31,13 @@ abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypoth
   have no influence on survival rate, H1 = Costs have an influence on the survival
   rate.
 ---
-
-```{r load-files, warning=F, echo=F, include=F}
-source("partials/setup.R", local = knitr::knit_global())
-source("partials/files.R", local = knitr::knit_global())
+```{r, warning=F, echo=F, include=F}
+# special case for PDF and table as they otherwise wont work
+if(knitr::is_latex_output()){
+  options(knitr.table.format = "latex")
+} else {
+  options(knitr.table.format = "html")
+}
 ```
 
 # Preface {-}

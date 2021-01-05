@@ -1,3 +1,9 @@
+```{r load-files, warning=F, echo=F, include=F}
+source("partials/setup.R", local = knitr::knit_global())
+source("partials/files.R", local = knitr::knit_global())
+source("partials/functions.R", local = knitr::knit_global())
+```
+
 # Material and Methods
 
 ```{r mm-load, warning=F, echo=F, include=F}
@@ -28,7 +34,7 @@ kable(
   booktabs = TRUE, row.names = FALSE,
   caption = c, col.names = cn
 ) %>%
-  footnote(general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods'; Other biotechnical methods do not include drone brood removal or hypothermia; and Another method excludes synthetic methods.")
+  footnote(threeparttable = T, general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods; Other biotechnical methods do not include drone brood removal or hypothermia and Another method excludes synthetic methods.")
 
 rm(c, cn)
 ```
@@ -121,10 +127,11 @@ For the analysis of expenses and operation size, we grouped survey participants 
 rm(list=ls()[
   !(ls() %in%
   c(
-    "RAW", "DATA", "fBootMean",
-    "fBootMedian", "colorBlindBlack8", "stats_aut",
-    "treatmentList", "fMapCluster"
-    )
+    "RAW", "DATA",
+    "colorBlindBlack8", "stats_aut",
+    "treatmentList"
+    ) |
+  grepl("^f", ls())
   )])
 ```
 

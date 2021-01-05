@@ -74,3 +74,6 @@ p <- ggplot() +
     panel.grid.major = element_blank()
   )
 
+fSaveImages("map", p)
+
+rm(p, MAP1819, MAP1920, MAP_POINTS, MF_DISTRICTS, MF_STATES)

@@ -67,8 +67,7 @@ source("partials/r-map.R", local = knitr::knit_global())
 ```
 
 ```{r distr-map, include=T, fig.cap="Distribution map of approximnate main winter apiary position for our survey participants in the survey year 2018/19 and 2019/20. Shapefiles under Creative Commons https://www.data.gv.at/"}
-p
-rm(p, MAP1819, MAP1920, MAP_POINTS, MF_DISTRICTS, MF_STATES)
+knitr::include_graphics('images/map.png')
 ```
 
 ```{r}
@@ -96,102 +95,13 @@ The distribution of expenses per colony is right skewed with some extreme high o
 
 
 ```{r distr-year, include=T, messages=F, warnings=F, fig.cap="Violin and overlapping boxplot of the costs from the survey, extreme outliers are not visible."}
-text <- paste0(
-  "Max.: ", expenses_table$max, "\n",
-  "Min.: ", expenses_table$min, "\n",
-  "Mean: ", expenses_table$mean, "\n",
-  "Median: ", expenses_table$median, "\n"
-  )
-
-ggplot(DATA) +
-  geom_violin(
-    aes(x = year, y = costs, fill = year), 
-    #fill=colorBlindBlack8[7],
-    color=colorBlindBlack8[1]
-    ) +
-  geom_boxplot(
-    aes(x = year, y = costs), 
-    outlier.shape = NA, alpha=0.5, fill=colorBlindBlack8[5]
-    ) +
-  geom_segment(
-    x = 1, y = 45,
-    xend = 1, yend = 52,
-    lineend = "round",
-    linejoin = "round",
-    size = 0.5, 
-    arrow = arrow(length = unit(0.1, "inches"))
-  ) + 
-  scale_color_manual(
-    values = colorBlindBlack8[c(2,4)], 
-    aesthetics = "fill", name="Survey"
-  ) +
-  xlab("Survey Year") + ylab("Expenses / Colony [Euro]") +
-  geom_segment(
-    x = 2, y = 45,
-    xend = 2, yend = 52,
-    lineend = "round",
-    linejoin = "round",
-    size = 0.5, 
-    arrow = arrow(length = unit(0.1, "inches"))
-  ) + 
-  annotate(
-    "text",
-    label = text,
-    x = c(1.35, 2.35), y = c(40, 40),
-    hjust = "right"
-  ) + 
-  theme_classic() +
-  scale_y_continuous(
-    limits = c(0,50),
-    breaks = c(seq(0,50,5))
-      )
-
+knitr::include_graphics('images/distr-year.png')
 ```
 ## Distribution of Participants in groups of interest
 
 ```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest and combination of both years. Percentage reported stands respectivley for the survey years 2018/19 and 2019/20. "}
-# Generate DF for ggupset
-# only yes/no, no NA's and Hobby Beekeepers < 21 colonies wintered
-df_ggupset <- DATA %>% 
-  filter(op_migratory_beekeeper != "Unsicher" & op_cert_org_beek != "Unsicher") %>% 
-  drop_na(op_migratory_beekeeper, op_cert_org_beek) %>% 
-  mutate(
-  up_migratory_beekeeper = ifelse(op_migratory_beekeeper == "Ja", "Migratory", NA),
-  up_cert_org_beek = ifelse(op_cert_org_beek == "Ja", "Cert. Organic", NA),
-  up_hobby = ifelse(hives_winter < 21, "Hobby 1-20 Colonies", NA)
-)
-# nest data for plot
-df_ggupset <- df_ggupset %>% 
-  nest(up_nest = c(up_migratory_beekeeper, up_cert_org_beek, up_hobby))
-# stats for labels
-# percent (18/19 / 19/20) %
-label_ggupset <- df_ggupset %>% 
-  count(year, up_nest, sort = F) %>% 
-  mutate(np = round(n/sum(n)*100,1)) %>% 
-  group_by(up_nest) %>% 
-  summarise(
-    label = paste0("(", paste0(np, collapse = "/"), ")%")
-  )
-  
-df_ggupset %>%
-  ggplot(aes(x=up_nest, y=..count.., fill = year)) +
-  stat_count(position = "stack", color = colorBlindBlack8[1]) +
-  geom_text(
-    data = label_ggupset,
-    aes(y = 0, label = label, fill = NA),
-    vjust = 1.2, size = 3
-  ) +
-  scale_color_manual(
-    values = colorBlindBlack8[c(2,4)], aesthetics = "fill", name="Survey"
-  ) +
-  scale_y_continuous(breaks=seq(0,max(nrow(df_ggupset)),100)) +
-  scale_x_upset() + 
-  ylab("Beekeeper [#]") + xlab("") +
-  theme_classic() + theme(legend.position="left")
+knitr::include_graphics('images/distr-groups.png')
 ```
-
-
-
 
 ## Expenses Estimations {#r-estimations}
 
@@ -241,71 +151,20 @@ kable(
   caption = c,
 ) %>% 
   add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>% 
-  footnote(general = "AS-LT/ST = Formic acid - long/short term; Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture; Biot = Another biotechnical methods") # %>% kable_classic()
+  footnote(threeparttable = T, general = "AS-LT/ST = Formic acid - long/short term; Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture; Biot = Another biotechnical methods") # %>% kable_classic()
 rm(c, d)
 ```
 
-```{r}
-# Bland-Altmann
-d <- DATA %>% 
-  group_by(t_short_od) %>% summarise(
-    n    = n(),
-    p    = round(n()*100/nrow(DATA),2),
-    mc   = round(mean(costs), 2),
-    medc = round(median(costs), 2),
-    me   = round(mean(t_estimated), 2),
-    mede = round(median(t_estimated), 2),
-  ) %>% 
-  mutate(
-    dif = mc-me
-  ) %>% 
-  filter(n >= 15) %>% arrange(desc(n))
+Most of our estimates for common treatment with now at least 15 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences, of survey expenses versus estimated expenses as statistical method of agreement [@bland1986]. $\log_2$ converted to minimizes effect of outliers, see figure \@ref(fig:estimates-bland). 
 
-ba.stats <- bland.altman.stats(d$mc, d$me)
-ba.stats$label <- d$t_short_od
+The $\log_2$ change can be seen as follows, 1 represent a double of the original and -1 is half of the original on the transformed scale. The highest difference, which means the treatment estimates higher than the survey results are for Formic Acid Short and Long Term respectivley. Which means the survey responses are 0.5 times higher than the predcited estimates. Overall as said we see a more overestimates and the results coming from the survey are lower. The Two combinations with the higher overestimating are Biotechnical and Oxalsublimation (Biot. & Ox-sub) and Formic Acid Short+Long Term and Oxalic sublimation and Oxalic Mixture (Fa-ST & Fa-LT & Ox-sub & Ox-mix).
 
-limit_y = round( ifelse( max(ba.stats$diffs) > (-1*min(ba.stats$diffs)), max(ba.stats$diffs), -1*min(ba.stats$diffs) ) + 0.5, digits = 1)
-```
+All estimates are inside of two standard deviations and inside our set confidence interval of 95%. For this combination we overestimated the expenses by a mean difference of 10.10 Euros.
 
-Most of our estimates for common treatment with now at least 15 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences of survey expenses versus estimated expenses, see figure \@ref(fig:estimates-bland). Only one treatment combination (Oxalic acid mixture and Thymol) is outside of the line of two standard deviations, but inside our set confidence interval of 95%. For this combination we overestimated the expenses by a mean difference of 10.10 Euros.
+(ref:estimated-bland) $\log_2$ transformed mean difference between survey and estimated expenses of the treatment combinations with at least 15 beekeepers using it. Lines indicating mean and lower and upper two times standard deviations each with 95% confidence interval. Highest and lowest two treatment combinations are marked.
 
-```{r estimates-bland, include=T, fig.cap="Bland-Altmann Plot, mean difference between survey and estimated expenses of the treatment combinations with at least 15 beekeepers using it. Lines indicating mean and lower and upper two times standard deviations each with 95% confidence interval."}
-ggplot() +
-  aes(x = ba.stats$means, y = ba.stats$diffs) +
-  geom_point(aes(size = d$n)) +
-  geom_label(
-    aes(
-      x = ba.stats$means[abs(ba.stats$diffs)>8], 
-      y = ba.stats$diffs[abs(ba.stats$diffs)>8], 
-      label = ba.stats$label[abs(ba.stats$diffs)>8]
-      ),
-    nudge_x = -2
-    )+
-  geom_abline(
-    aes(
-      intercept = ba.stats$lines, 
-      colour = I(c(colorBlindBlack8[3], colorBlindBlack8[5], colorBlindBlack8[3])), 
-      slope = c(rep(0, 3))),
-    show.legend = F
-    ) +
-  geom_abline(
-    aes(
-      intercept = ba.stats$CI.lines, 
-      color = I(c(rep(colorBlindBlack8[3], 2), rep(colorBlindBlack8[5], 2), rep(colorBlindBlack8[3], 2))),
-      slope = c(rep(0, 6))
-      ),
-    linetype = "dashed",
-    alpha = 0.5,
-    show.legend = F
-  ) +
-  geom_hline(yintercept = 0, linetype = "dotted") +
-
-  xlab("Means [Euro]") + ylab("Differences [Euro]") +
-  labs(size = "Answers [n]") + 
-  ylim(c( -1*limit_y, limit_y )) +
-  theme_classic()
-
-rm(d, ba.stats, limit_y)
+```{r estimates-bland, include=T, fig.cap="(ref:estimated-bland)"}
+knitr::include_graphics('images/bland-altman.png')
 ```
 
 ## Operation Size
@@ -332,13 +191,77 @@ kable(
   pack_rows("2019/20", 4, 6) # %>% kable_classic()
 ```
 
-```{r qq-operation-size, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile."}
-plotOperationQQ
+```{r qq-operation-size, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible."}
+knitr::include_graphics('images/qq-operation-size.png')
 ```
 
-The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(resEffect$effsize[1],4)` and for 2019/20 of $\eta^2(H)=$ `r round(resEffect$effsize[2],4)`. Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
+The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(resEffect$effsize[1],4)` (95% CI: `r resEffect$conf.low[1]`-`r resEffect$conf.high[1]`) and for 2019/20 of $\eta^2(H)=$ `r round(resEffect$effsize[2],4)` (95% CI: `r resEffect$conf.low[2]`-`r resEffect$conf.high[2]`). Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
 
-```{r stats-operation-size, include=T, fig.cap="Distribution of expenses in given operation size groups. Kruskal-Wallis and Post-Hoc analysis with Dunn-test are annoated. The symbols **** indiciating highly significant result and ns not significant."}
-plotOperationStat
+```{r stats-operation-size, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-operation-size.png')
+```
+## Certified Organic Bekeeper
+
+```{r, warning=F, echo=F, include=F}
+source("partials/r-cert-org.R", local = knitr::knit_global())
 ```
 
+Operation sizes and number of participants in our survey are not normally distributed. Most participants have 1-20 colonies in both survey years \@ref(tab:table-certOrgSummary). The distribution of the quartiles in our given Operation Size Groups are similar in both years, except for the operation size greater than 50 colonies in survey year 2019/20 is a visible difference \@ref(fig:qq-operation-size).
+
+```{r table-certOrgSummary, include=T}
+c = "Certified Organic Beekeeper distribution of the two survey years."
+
+colNames <- c("Certified Organic", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+
+kable(
+  summaryCertOrg[,-2], booktabs = T,
+  col.names = colNames,
+  digits = 2,
+  align = c("c", rep("r", 4)),
+  caption = c
+  ) %>% 
+  pack_rows("2018/19", 1, 4) %>%
+  pack_rows("2019/20", 5, 7) # %>% kable_classic()
+```
+
+
+```{r qq-cert-org, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible."}
+knitr::include_graphics('images/qq-cert-org.png')
+```
+
+```{r stats-cert-org, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-cert-org.png')
+```
+
+## Migratory Bekeeper
+
+```{r, warning=F, echo=F, include=F}
+source("partials/r-migratory.R", local = knitr::knit_global())
+```
+
+Operation sizes and number of participants in our survey are not normally distributed. Most participants have 1-20 colonies in both survey years \@ref(tab:table-certOrgSummary). The distribution of the quartiles in our given Operation Size Groups are similar in both years, except for the operation size greater than 50 colonies in survey year 2019/20 is a visible difference \@ref(fig:qq-operation-size).
+
+```{r table-migratorySummary, include=T}
+c = "Certified Organic Beekeeper distribution of the two survey years."
+
+colNames <- c("Migratory", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+
+kable(
+  summaryMigratory[,-2], booktabs = T,
+  col.names = colNames,
+  digits = 2,
+  align = c("c", rep("r", 4)),
+  caption = c
+  ) %>% 
+  pack_rows("2018/19", 1, 3) %>%
+  pack_rows("2019/20", 4, 6) # %>% kable_classic()
+```
+
+
+```{r qq-migratory, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible."}
+knitr::include_graphics('images/qq-migratory.png')
+```
+
+```{r stats-migratory, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-migratory.png')
+```

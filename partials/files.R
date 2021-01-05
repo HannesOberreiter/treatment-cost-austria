@@ -178,8 +178,17 @@ RAW$varroa_checked[RAW$varroa_checked != "Ja" & RAW$T_vcount_total12 > 0] <- "Ja
 RAW$varroa_treated[RAW$varroa_treated != "Ja" & RAW$T_amount > 0]         <- "Ja"
 
 ### Generate Cols without Drone Brood Removal
-RAW$t_desc_od  <- str_replace(RAW$t_desc, "Drone brood removal & ", "")
-RAW$t_short_od <- str_replace(RAW$t_short, "Drone & ", "")
-
+RAW$t_desc_od  <- RAW$t_desc %>% str_replace(., "Drone brood removal & ", "") %>% str_trim()
+RAW$t_short_od <- RAW$t_short %>% str_replace(., "Drone & ", "") %>% str_trim()
+# REMOVES cols not needed
+RAW <- RAW %>% select(
+  -starts_with(c("lost_", "symp_", "flow_")),
+  -c("apiary_nearby", "weak", "young_queens", 
+      "hives_spring_before", "queen_problems",
+      "op_mash_bottom_board", "op_insulated_hives",
+      "op_plastic_hives")
+  ) %>% 
+  select(-c(op_varroatolerant:crippled_bees)) %>% 
+  select(-c(T_vcount_01:T_other_12))
 
 rm(t, x)
