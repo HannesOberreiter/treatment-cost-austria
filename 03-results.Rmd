@@ -1,3 +1,12 @@
+```{r r-result, warning=F, echo=F, include=F}
+source("partials/r-map.R", local = knitr::knit_global())
+source("partials/r-plot-distr-year.R", local = knitr::knit_global())
+source("partials/r-plot-distr-groups.R", local = knitr::knit_global())
+source("partials/r-bland-altman.R", local = knitr::knit_global())
+
+source("partials/r-operation-size.R", local = knitr::knit_global())
+```
+
 # Results
 
 ## Survey Data
@@ -13,7 +22,7 @@ RAW_REPORTS <- RAW %>% group_by(year) %>%
 DATA_REPORTS <- DATA %>% group_by(year) %>% 
   summarize(
     n = n(),
-    colonies = sum(hives_winter),
+    colonies        = sum(hives_winter),
     mean_colonies   = round(mean(hives_winter),2),
     median_colonies = median(hives_winter)
   )
@@ -25,20 +34,20 @@ REPORTS <- tibble(
   Percent = round(DATA_REPORTS$n/RAW_REPORTS$n*100,1)
 )
 
-NO_COST <- RAW %>% filter(is.na(costs)) %>% group_by(year) %>% summarise(n = n())
+SUMMARY_noCost <- NO_COST_ZERO$id_remove %>% count(year)
 
-stats_aut = stats_aut %>% add_column(
+statsAut <- statsAut %>% add_column(
   survey_beekeeper = DATA_REPORTS$n,
-  survey_colonies = DATA_REPORTS$colonies
+  survey_colonies  = DATA_REPORTS$colonies
 ) %>% mutate(
   rate_beekeeper = round(survey_beekeeper / beekeeper * 100, 1),
-  rate_colonies = round(survey_colonies / colonies * 100, 1)
+  rate_colonies  = round(survey_colonies / colonies * 100, 1)
 )
 
 rm(DATA_REPORTS, RAW_REPORTS)
 ```
 
-The number of reports which did include expenses and removed invalid or illogical answers. The cost answer was left empty by `r NO_COST$n[NO_COST$year == '18/19']` participants in 2018/19 survey and `r NO_COST$n[NO_COST$year == '19/20']` participants in 2019/20. The number of naswers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]`, see table \@ref(tab:reports). Compared to the number of registered beekeeper and honey bee colonies with the national beekeeping association "Biene Österreich", the number of participation with valid answers including costs for survey year 2018/19 with `r stats_aut$rate_beekeeper[stats_aut$year == '2018']`% and for the survey year 2019/20 with `r stats_aut$rate_beekeeper[stats_aut$year == '2019']`%, see table \@ref(tab:registered). The distribution map of participants with valid answers shows good coverage all over Austria (figure \@ref(fig:distr-map)). 
+The number of reports which did include expenses and removed invalid or illogical answers. The cost answer was left empty by `r SUMMARY_noCost$n[SUMMARY_noCost$year == '18/19']` participants in 2018/19 survey and `r SUMMARY_noCost$n[SUMMARY_noCost$year == '19/20']` participants in 2019/20. The number of answers was similar for the survey of 2018/19 with `r REPORTS$Percent[1]`% and for 2019/20 with `r REPORTS$Percent[2]`, see table \@ref(tab:reports). Compared to the number of registered beekeeper and honey bee colonies with the national beekeeping association "Biene Österreich", the number of participation with valid answers including costs for survey year 2018/19 with `r statsAut$rate_beekeeper[statsAut$year == '2018']`% and for the survey year 2019/20 with `r statsAut$rate_beekeeper[statsAut$year == '2019']`%, see table \@ref(tab:registered). The distribution map of participants with valid answers shows good coverage all over Austria (figure \@ref(fig:distr-map)).
 
 ```{r reports, include=T}
 cn = c("Year", "Total [n]", "Answered [n]", "Percent [%]")
@@ -48,55 +57,30 @@ knitr::kable(
   booktabs = TRUE, row.names = FALSE,
   col.names = cn, format = "markdown", caption = c
 )
-rm(REPORTS, cn, NO_COST)
+rm(REPORTS, cn)
 ```
 
 ```{r registered, include=T}
 cn = c("Year", "Beekeeper [n]", "Colonies [n]", "Survey Beekeeper [n]", "Survey Colonies [n]")
 c = "Percentage of survey participants in relation to the amount of registered beekeepers with the national beekeeping association Biene Österreich (2018 and 2019)."
 knitr::kable(
-  stats_aut[,c(2:6)],
+  statsAut[,c(2:6)],
   booktabs = TRUE, row.names = FALSE,
   col.names = cn, format = "markdown", caption = c
 )
 rm(c, cn)
 ```
 
-```{r r-map, warning=F, echo=F, include=F}
-source("partials/r-map.R", local = knitr::knit_global())
-```
-
 ```{r distr-map, include=T, fig.cap="Distribution map of approximnate main winter apiary position for our survey participants in the survey year 2018/19 and 2019/20. Shapefiles under Creative Commons https://www.data.gv.at/"}
 knitr::include_graphics('images/map.png')
 ```
 
-```{r}
-# Expenses Data 
-expenses_table <- DATA %>% 
-  group_by(year) %>% 
-  summarise(
-    min    = format(round(min(t_estimated),2), nsmall = 2),
-    mean   = format(round(mean(costs),2), nsmall = 2),
-    median = format(round(median(costs),2), nsmall = 2),
-    max    = format(round(max(costs),2), nsmall = 2)
-    ) %>%  add_column(type = "Survey", .after="year")
-estimate_table <- DATA %>% 
-  group_by(year) %>% 
-  summarise(
-    min    = format(round(min(t_estimated),2), nsmall = 2),
-    mean   = format(round(mean(t_estimated),2), nsmall = 2),
-    median = format(round(median(t_estimated),2), nsmall = 2),
-    max    = format(round(max(t_estimated),2), nsmall = 2)
-    ) %>% add_column(type = "Estimated", .after="year")
-```
-
-
-The distribution of expenses per colony is right skewed with some extreme high outliers, but mean and median are for each year close (figure \@ref(fig:distr-year)). Especially the survey year 2019/20 has one extreme value at `r expenses_table$max[expenses_table$year == "19/20"]` Euro. The two survey years compared are similar in the results with mean difference `r format(as.numeric(expenses_table$mean[1])-as.numeric(expenses_table$mean[2]), nsmall=2)` Euro and median difference `r format(as.numeric(expenses_table$median[1]) - as.numeric(expenses_table$median[2]), nsmall=2)` Euro. The distribution shows that participants preferable answer in round estimates eg. 5.00, 10.00, 15.00 Euros.
-
+The distribution of expenses per colony is right skewed with some extreme high outliers, but mean and median are for each year close (figure \@ref(fig:distr-year)). Especially the survey year 2019/20 has one extreme value at `r SUMMARY_expenses$expenses_table$max[2]` Euro. The two survey years compared are similar in the results with mean difference `r format(as.numeric(SUMMARY_expenses$expenses_table$mean[1])-as.numeric(SUMMARY_expenses$expenses_table$mean[2]), nsmall=2)` Euro and median difference `r format(as.numeric(SUMMARY_expenses$expenses_table$median[1]) - as.numeric(SUMMARY_expenses$expenses_table$median[2]), nsmall=2)` Euro. The distribution shows that participants preferable answer in round estimates eg. 5.00, 10.00, 15.00 Euros.
 
 ```{r distr-year, include=T, messages=F, warnings=F, fig.cap="Violin and overlapping boxplot of the costs from the survey, extreme outliers are not visible."}
 knitr::include_graphics('images/distr-year.png')
 ```
+
 ## Distribution of Participants in groups of interest
 
 ```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest and combination of both years. Percentage reported stands respectivley for the survey years 2018/19 and 2019/20. "}
@@ -110,7 +94,7 @@ The calculated estimated expenses mean and median are higher than in the survey 
 ```{r table-estimates, include=T}
 c = "Comparison of estimated expenses and the expenses given by participants in the survey. All values are in Euro."
 
-print_table <- rbind(estimate_table, expenses_table) %>% 
+print_table <- rbind(SUMMARY_expenses$estimate_table, SUMMARY_expenses$expenses_table) %>% 
    arrange(c(1,3,2,4))
 
 kable(
@@ -124,20 +108,12 @@ kable(
   #booktabs = TRUE, row.names = FALSE,
   #col.names = cn, format = "markdown", caption = c
 #)
-#rm(REPORTS, cn, NO_COST)
+rm(c, print_table)
 ```
 
 ```{r common-comb, include=T}
-d <- DATA %>% 
-  group_by(t_short_od) %>% summarise(
-    n     = n(),
-    p     = round(n()*100/nrow(DATA),2),
-    mc    = round(mean(costs), 2),
-    medc  = round(median(costs), 2),
-    me    = round(mean(t_estimated), 2),
-    mede  = round(median(t_estimated), 2),
-  ) %>% 
-  filter(n >= 30) %>% arrange(desc(n))
+d <- SUMMARY_blandAltmann %>% filter(n >= 30) %>% 
+  select(t_short_od:med_estimate)
 
 c <- paste0("Most used combination for both survey years together with at least 30 participants. Total and Percent correspond to participants. Mean and Median Expenses from the survey and in comaprison from the estimate in Euro. Drone brood removal method is exluded.")
 
@@ -152,10 +128,10 @@ kable(
 ) %>% 
   add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>% 
   footnote(threeparttable = T, general = "AS-LT/ST = Formic acid - long/short term; Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture; Biot = Another biotechnical methods") # %>% kable_classic()
-rm(c, d)
+rm(c, cn, d)
 ```
 
-Most of our estimates for common treatment with now at least 15 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences, of survey expenses versus estimated expenses as statistical method of agreement [@bland1986]. $\log_2$ converted to minimizes effect of outliers, see figure \@ref(fig:estimates-bland). 
+Most of our estimates for common treatment with now at least 15 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences, of survey expenses versus estimated expenses as statistical method of agreement [@bland1986]. $\log_2$ converted to minimizes effect of outliers, see figure \@ref(fig:estimates-bland).
 
 The $\log_2$ change can be seen as follows, 1 represent a double of the original and -1 is half of the original on the transformed scale. The highest difference, which means the treatment estimates higher than the survey results are for Formic Acid Short and Long Term respectivley. Which means the survey responses are 0.5 times higher than the predcited estimates. Overall as said we see a more overestimates and the results coming from the survey are lower. The Two combinations with the higher overestimating are Biotechnical and Oxalsublimation (Biot. & Ox-sub) and Formic Acid Short+Long Term and Oxalic sublimation and Oxalic Mixture (Fa-ST & Fa-LT & Ox-sub & Ox-mix).
 
@@ -168,10 +144,6 @@ knitr::include_graphics('images/bland-altman.png')
 ```
 
 ## Operation Size
-
-```{r r-operation-size, warning=F, echo=F, include=F}
-source("partials/r-operation-size.R", local = knitr::knit_global())
-```
 
 Operation sizes and number of participants in our survey are not normally distributed. Most participants have 1-20 colonies in both survey years \@ref(tab:table-operationSummary). The distribution of the quartiles in our given Operation Size Groups are similar in both years, except for the operation size greater than 50 colonies in survey year 2019/20 is a visible difference \@ref(fig:qq-operation-size).
 
@@ -195,11 +167,30 @@ kable(
 knitr::include_graphics('images/qq-operation-size.png')
 ```
 
-The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(resEffect$effsize[1],4)` (95% CI: `r resEffect$conf.low[1]`-`r resEffect$conf.high[1]`) and for 2019/20 of $\eta^2(H)=$ `r round(resEffect$effsize[2],4)` (95% CI: `r resEffect$conf.low[2]`-`r resEffect$conf.high[2]`). Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
+The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_operation_size$Effect$effsize[1],4)` (95% CI: `r STATS_operation_size$Effect$conf.low[1]`-`r STATS_operation_size$Effect$conf.high[1]`) and for 2019/20 of $\eta^2(H)=$ `r round(STATS_operation_size$Effect$effsize[2],4)` (95% CI: `r STATS_operation_size$Effect$conf.low[2]`-`r STATS_operation_size$Effect$conf.high[2]`). Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
 
 ```{r stats-operation-size, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-operation-size.png')
 ```
+
+### Effect of treatment method removed
+
+```{r stats-operation-size-residuals, include=T, fig.cap="Boxplot of residuals from costs ~ treatment method in given operation size groups, with approximative Kruskal-Wallis test results and effect size. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-operation-size-residuals.png')
+```
+
+### Extimated Extrapolated Costs
+
+(ref:stats-operation-size-extrapolated) Extrapolated costs based on mean with bootstrap 95% CI as error lines. Total colonies from \@ref(tab:registered) table, operation size distribution as represented in our survey.
+
+```{r stats-operation-size-extrapolated, include=T, fig.cap='(ref:stats-operation-size-extrapolated)'}
+knitr::include_graphics('images/stats-operation-size-extrapolated.png')
+```
+
+year 18/19 = `r format(round(SUMMARY_extrapolatedSum$total), big.mark = ",")[1]`
+
+year 19/20 = `r format(round(SUMMARY_extrapolatedSum$total), big.mark = ",")[2]`
+
 ## Certified Organic Bekeeper
 
 ```{r, warning=F, echo=F, include=F}
@@ -223,7 +214,6 @@ kable(
   pack_rows("2018/19", 1, 4) %>%
   pack_rows("2019/20", 5, 7) # %>% kable_classic()
 ```
-
 
 ```{r qq-cert-org, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible."}
 knitr::include_graphics('images/qq-cert-org.png')
@@ -257,11 +247,20 @@ kable(
   pack_rows("2019/20", 4, 6) # %>% kable_classic()
 ```
 
-
 ```{r qq-migratory, include=T, fig.cap="QQ-plots of our given operation size samples for both survey years. Shown fitted Q-Q Line to 25 and 75 Percentile. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible."}
 knitr::include_graphics('images/qq-migratory.png')
 ```
 
 ```{r stats-migratory, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-migratory.png')
+```
+## Treatment Methods
+
+### Cost Loss Plot
+
+
+(ref:stats-loss-cost-plot) Loss rate GLM 95% CI, median Price, Other < 10n methods
+
+```{r stats-loss-cost-plot, include=T, fig.cap='(ref:stats-loss-cost-plot)'}
+knitr::include_graphics('images/stats-loss-cost-plot.png')
 ```

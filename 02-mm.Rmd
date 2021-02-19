@@ -1,18 +1,13 @@
 ```{r load-files, warning=F, echo=F, include=F}
-source("partials/setup.R", local = knitr::knit_global())
-source("partials/files.R", local = knitr::knit_global())
-source("partials/functions.R", local = knitr::knit_global())
+source("partials/setup.R",      local = knitr::knit_global())
+source("partials/mm-cleanup.R", local = knitr::knit_global())
 ```
 
 # Material and Methods
 
-```{r mm-load, warning=F, echo=F, include=F}
-source("partials/mm-cleanup.R", local = knitr::knit_global())
-```
-
 ## Survey
 
-The survey was a citizen science survey which is done each year in spring since 2008 and is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey are the yearly colony losses over winter for the Austrian Beekeeper. It is part of the COLOSS questionnaire [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success and as seen in other studies [@oberreiter2020]. The survey is not mandatory but beekeepers who want to get more official support they must participate. 
+The survey was a citizen science survey which is done each year in spring since 2008 and is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey are the yearly colony losses over winter for the Austrian Beekeeper. It is part of the COLOSS questionnaire [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success and as seen in other studies [@oberreiter2020]. The survey is not mandatory but beekeepers who want to get more official support they must participate.
 
 As most questions are related to winter colony losses we are only interested in an subset of questions: Number of colonies wintered (size of operation), Number of colonies lost over winter period (due natural or queen loss, without losses due to natural disaster), state and district of main wintering apiary (as possible covariate), month(s) and type of treatment used, estimated treatment expenses per colony without labor costs. In addition two operational questions are also explored, if the beekeeper migrates with his colonies and if he/she is an organic certified beekeeper, with possible answers "Yes", "No", "Unsure".
 
@@ -24,7 +19,9 @@ As we analyzed two continuous survey years and the survey is anonymous we have n
 
 ## Expenses Estimation
 
-Expenses estimation was carried out for data control of given answers in the survey and to check if a logical expenses estimation of products yield the same result as the participants answers. To calculate estimates we researched online store prices in 2020 in Austria for official registered medication^[Austrian medicinal product index: https://aspregister.basg.gv.at/, accessed November 2020] and used common application amount and methods in Austria from beekeeping school materials and experience from previous surveys to calculate an estimate for each treatment method an expenses per colony, see table \@ref(tab:standard-cost) for our calculated estimate. The calculation with average month of usage and estimated 11 colonies can be seen in \@ref(tab:common). After that for each survey participants an estimate was calculated with the given answer for treatment method (or combination), number of colonies and number of months used.
+Expenses estimation was carried out for data control of given answers in the survey and to check if a logical expenses estimation of products yield the same result as the participants answers. To calculate estimates we researched online store prices in 2020 in Austria for official registered medication[^mm-1] and used common application amount and methods in Austria from beekeeping school materials and experience from previous surveys to calculate an estimate for each treatment method an expenses per colony, see table \@ref(tab:standard-cost) for our calculated estimate. The calculation with average month of usage and estimated 11 colonies can be seen in \@ref(tab:common). After that for each survey participants an estimate was calculated with the given answer for treatment method (or combination), number of colonies and number of months used.
+
+[^mm-1]: Austrian medicinal product index: <https://aspregister.basg.gv.at/>, accessed November 2020
 
 ```{r standard-cost, include=T}
 c <- "Our calculated estimates for treatment expenses per method. Investments can be used long term (we calculate 10 years, eg. Hyperthermia) and are divided by the number of colonies. Material can also be used long term (7 years, eg. Queen Cages) but needs to be bought for each colony. Consumables are used for each colony (eg. Formic Acid Long Term, 200ml)."
@@ -41,8 +38,7 @@ rm(c, cn)
 
 ```{r common, include=T}
 # Get median number of colonies to calculate an estimate
-m_colonies = median(DATA$hives_winter)
-
+m_colonies <- median(DATA$hives_winter)
 col <- DATA %>% 
     select(!!(paste0(treatmentList$ttotal, "12")))
 # Get number of participates using the single treatment methods
@@ -53,10 +49,10 @@ nu <- col %>% na_if(0) %>% colMeans(na.rm=T)
 
 common_single <- tibble(
   tname = treatmentList$tname,
-  n = sin,
-  p = round(sin*100/nrow(DATA),2),
-  nu = round(nu, 2),
-  est = round(treatmentList$investment / m_colonies + treatmentList$material + treatmentList$consumables*nu, 2)
+  n     = sin,
+  p     = round(sin*100/nrow(DATA),2),
+  nu    = round(nu, 2),
+  est   = round(treatmentList$investment / m_colonies + treatmentList$material + treatmentList$consumables*nu, 2)
 ) %>% arrange(desc(p))
 
 c <- paste0("Most used Methods in the two survey years, average months indicating the average of months this methods was used. Estimated costs are calculated with ", m_colonies, " colonies, which represents the median number of colonies in our survey, and the average months of usage.")
@@ -64,19 +60,28 @@ c <- paste0("Most used Methods in the two survey years, average months indicatin
 cn = c("Method", "Total [n]", "Percent [%]", "Average Months[n]", "Estimated Costs")
 kable(
   common_single[-1,],
-  booktabs = TRUE, row.names = FALSE,
-  col.names = cn,
-  caption = c
+  booktabs   = TRUE, row.names = FALSE,
+  col.names  = cn,
+  caption    = c
 ) # %>%   kable_classic()
 rm(cn, c, common_single, nu, sin, col, m_colonies)
 ```
-
 
 ## Data Cleanup
 
 ### Newspaper and Paper Submission
 
-The short version of the survey, which was printed in a beekeeping journal and paper handout submissions, which we received via postal service, did not include the question about expenses and, therefore, were excluded these answers from the analysis. That concern a total of `r sum(COUNT_PAPER$n[COUNT_PAPER$submitted=="Paper" | COUNT_PAPER$submitted=="Newspaper"])` answers from `r sum(COUNT_PAPER$n[COUNT_PAPER$submitted=="Paper" | COUNT_PAPER$submitted=="Newspaper"]) + nrow(RAW)` over the two years of survey.
+The short version of the survey, which was printed in a beekeeping journal and paper handout submissions, which we received via postal service, did not include the question about expenses and, therefore, were excluded these answers from the analysis. That concern a total of `r sum(SUMMARY_submitted$n[SUMMARY_submitted$submitted=="Paper" | SUMMARY_submitted$submitted=="Newspaper"])` answers from `r sum(SUMMARY_submitted$n[SUMMARY_submitted$submitted=="Paper" | SUMMARY_submitted$submitted=="Newspaper"]) + nrow(RAW)` over the two years of survey. Though there is one exception which was kept to this, as one person did send a filled out paper handout of the online survey.
+
+### No Answers on Expenses
+
+year 18/19
+`r SUMMARY_submitted %>% filter(submitted == "Internet" & year == "18/19") %>% pull(n)-nrow(DATA %>% filter(year == "18/19"))`
+year 19/20
+
+`r SUMMARY_submitted %>% filter(submitted == "Internet" & year == "19/20") %>% pull(n)-nrow(DATA %>% filter(year == "19/20"))` 
+ 
+did not answers the question for expenses in both years.
 
 ### No Treatment
 
@@ -84,57 +89,42 @@ In the survey `r nrow(NO_TREATMENT)` participants did answer "No treatment again
 
 ### No Methods
 
-Because we want to analyze treatment methods in combination with the costs, we did also remove `r nrow(NO_METHOD)` participants which did answer treatment expenses in the survey, but were not specific which treatment methods they used. 
+Because we want to analyze treatment methods in combination with the costs, we did also remove `r nrow(NO_METHOD)` participants which did answer treatment expenses in the survey, but were not specific which treatment methods they used.
 
 ### Zero Expenses
 
-In total `r nrow(COST_ZERO)` participants said their treatment expenses were zero. Only `r length(id_keep)` answer were kept, as the treatment was a combination of hyperthermia and biotechnical and we can make no assumption about the real expenses of the participant. Ofcourse the equipment for the hyperthermia do cost something, but we don't know more details, as he could already have the equipment for a long time. `r length(id_remove)-length(id_sponsor)` were removed as they said zero expenses but actually did treatment with organic acids, which is illogical as the organic acids are consumed and not for free. In addition `r length(id_sponsor)` participants got a sponsorship (beekeeping club or local community) for their treatment expenses, which were also removed.
+In total `r nrow(NO_COST_ZERO[["data"]])` participants said their treatment expenses were zero. Only one answer were kept, as the treatment was a combination of hyperthermia and biotechnical and we can make no assumption about the real expenses of the participant. Ofcourse the equipment for the hyperthermia do cost something, but we don't know more details, as he could already have the equipment for a long time. `r nrow(NO_COST_ZERO[["id_remove"]])-length(NO_COST_ZERO[["id_sponsor"]])` were removed as they said zero expenses but actually did treatment with organic acids, which is illogical as the organic acids are consumed and not for free. In addition `r length(NO_COST_ZERO[["id_sponsor"]])` participants got a sponsorship (beekeeping club or local community) for their treatment expenses, which were also removed.
 
 ### High Expenses
 
-We defined an upper limit cost outliner with the 3rd quantile and multiplied it by two which resulted in a cost limit of `r upper_limit`. In total `r nrow(COST_UPPER_NO_ESTIMATE)` participants did answers above this limit. To remove possible plausible answers, we did filter the resulting samples to only include expenses which are double of our previous calculated estimated expense for the individual beekeeper. This did reduce the survey answers in question to `r nrow(COST_UPPER)`. Upon investigating the `r nrow(COST_UPPER)` answers, we found out that most of them did answer total expenses per operation and not expenses per colony. Therefore, we divided the expenses by the number of colonies going into winter. Only `r length(id_nochange)` participants were not changed, one had high expenses due to hyperthermia treatment and only few colonies and the second one did explain it by buying a power generator.
+We defined an upper limit cost outliner with the 3rd quantile and multiplied it by two which resulted in a cost limit of `r NO_COST_UPPER[["upper_limit"]]`. In total `r nrow(NO_COST_UPPER[["COST_UPPER_NO_ESTIMATE"]])` participants did answers above this limit. To remove possible plausible answers, we did filter the resulting samples to only include expenses which are double of our previous calculated estimated expense for the individual beekeeper. This did reduce the survey answers in question to `r nrow(NO_COST_UPPER[["COST_UPPER"]])`. Upon investigating the `r nrow(NO_COST_UPPER[["COST_UPPER"]])` answers, we found out that most of them did answer total expenses per operation and not expenses per colony. Therefore, we divided the expenses by the number of colonies going into winter. Only `r length(NO_COST_UPPER[["id_nochange"]])` participants were not changed, one had high expenses due to hyperthermia treatment and only few colonies and the second one did explain it by buying a power generator.
 
 ## Statistics
 
-The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with Tidyverse [@tidyverse2019]. Packages are version controlled with Renv [@renv2020]. For full reproducibility the code and a list of all other packages are available on GitHub^[Github: https://github.com/HannesOberreiter/treatment-expenses-austria].
+The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with Tidyverse [@tidyverse2019]. Packages are version controlled with Renv [@renv2020]. For full reproducibility the code and a list of all other packages are available on GitHub[^mm-2].
 
-As the main goal of the study is an exploitative analyses of the data, therefore, I try to rely mostly on descriptive statistics. 
+[^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
+
+As the main goal of the study is an exploitative analyses of the data, therefore, I try to rely mostly on descriptive statistics.
 
 The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. As it is still common to underlay the results with statistics tests, I will report p-values from permutation generated from approximative multivariate Kruskal-Wallis test (Monte Carlo)[@hothorn2006] and effect size (explained variance by the independent variable) with equation \@ref(eq:effect) [@tomczak2014].
 
+```{=tex}
 \begin{equation}
 \begin{aligned}
   \eta^2_H = \frac{H-k+1}{n-k}
 \end{aligned}
 (\#eq:effect)
 \end{equation}
+```
+Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013].
 
-Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link “logit” function [@vanderzee2013]. 
+To minimize the variation in the varroa control methods and their combination, all months were grouped together.
 
-To minimize the variation in the varroa control methods and their combination, all months were grouped together. 
-
-For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. 
+For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results.
 
 Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
 
 ### Operation Size
 
 For the analysis of expenses and operation size, we grouped survey participants by the number of colonies wintered into following groups: 1-20, 21-50 and more than 50. Data distrubtion analysis was done with QQ-plots and boxplots. Statistical test were done with Kruskall-Wallis and effect size estimation. Statistically signficiant result were followed up by pairwise Dunn-Test, because of the different sample sizes, and Holm p-value correction.
-
-
-```{r}
-# Cleanup Env
-rm(list=ls()[
-  !(ls() %in%
-  c(
-    "RAW", "DATA",
-    "colorBlindBlack8", "stats_aut",
-    "treatmentList"
-    ) |
-  grepl("^f", ls())
-  )])
-```
-
-
-
-

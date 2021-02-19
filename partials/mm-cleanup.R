@@ -1,43 +1,68 @@
-# Newpaper and Paper ####
+# Description -------------------------------------------------------------
+# Cleanup of survey answers which must be wrong
+# or not logical (eg. more than possible)
+# also code snippets for reporting on material and methods section
+
+# Paper and Newspaper -----------------------------------------------------
+# The expenses question is only in the internet 
+# version available, therefore we need to report how much we drop
 RAW$submitted <- "Internet"
 RAW$submitted[grepl("P", RAW$id_original, fixed = TRUE)] <- 'Paper'
 RAW$submitted[grepl("Z", RAW$id_original, fixed = TRUE)] <- 'Newspaper'
-COUNT_PAPER <- RAW %>% group_by(submitted) %>% summarise(n = n())
+SUMMARY_submitted <- RAW %>% 
+  group_by(submitted, year) %>% summarise(n = n())
 
+# Generate DATA -----------------------------------------------------------
 # Extract only answers with valid answer for costs
 DATA <- RAW[!is.na(RAW$costs),]
+DATA %>% count(submitted)
 
-# Extract No Treatment Answers ####
-NO_TREATMENT <- DATA[DATA$varroa_treated != "Ja",]
-NO_TREATMENT <- NO_TREATMENT[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-DATA         <- DATA[!(DATA$id %in% NO_TREATMENT$id),]
+## No Treatment Answer but Costs -----------------------------------------------------
+NO_TREATMENT <- DATA %>% filter(varroa_treated != "Ja")
+NO_TREATMENT <- NO_TREATMENT %>% 
+  select(c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short"))
+DATA         <- DATA %>% filter(!(id %in% NO_TREATMENT$id))
 
-# Extract Participants which did answer costs but did give no answer on what treatment ####
-NO_METHOD <- DATA[is.na(DATA$t_short),]
-NO_METHOD <- NO_METHOD[,c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
-DATA      <- DATA[!(DATA$id %in% NO_METHOD$id),]
+## No Treatment Method given -----------------------------------------------
+# Extract Participants which did answer costs but 
+# did give no answer on what treatment
+NO_METHOD <- DATA %>% filter(is.na(t_short))
+NO_METHOD <- NO_METHOD %>% 
+  select(c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short"))
+DATA      <- DATA %>% filter(!(id %in% NO_METHOD$id))
 
-# Entries with zero costs ####
-COST_ZERO  <- DATA[DATA$costs == 0,]
-COST_ZERO  <- COST_ZERO[,c("id", "id_original", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+## Zero Costs ------------------------------------------------------------
+NO_COST_ZERO            <- list()
+NO_COST_ZERO[["data"]]  <- DATA %>% filter(costs == 0)
+NO_COST_ZERO[["data"]]  <- NO_COST_ZERO[["data"]] %>% 
+  select(c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short"))
 # sponsorship (e.g. Imkereiförderung, Gemeinde)
-id_sponsor <- c(1672, 2003, 2446, 1930)
+NO_COST_ZERO[["id_sponsor"]] <- c("353-18/19", "752-18/19", "855-18/19", "1624-18/19")
 # biotechnical & hyperthermie
-id_keep    <- c(2534)
-id_remove  <- COST_ZERO$id[!(COST_ZERO$id %in% id_keep)]
-DATA       <- DATA[!(DATA$id %in% id_remove),]
+NO_COST_ZERO[["id_keep"]]    <- c("1750-18/19")
+NO_COST_ZERO[["id_remove"]]  <- NO_COST_ZERO[["data"]] %>% 
+  filter(!(id %in% NO_COST_ZERO[["id_keep"]]))
+DATA                         <- DATA %>% 
+  filter(!(id %in% NO_COST_ZERO[["id_remove"]]$id))
 
-# High Costs ####
-csum <- summary(DATA$costs)
-upper_limit <- csum[5] * 2
-COST_UPPER_NO_ESTIMATE <- DATA[DATA$costs > upper_limit,]
-COST_UPPER <- COST_UPPER_NO_ESTIMATE[COST_UPPER_NO_ESTIMATE$costs > COST_UPPER_NO_ESTIMATE$t_estimated*2,]
-COST_UPPER <- COST_UPPER[,c("id", "id_original", "hives_winter", "hives_lost", "costs", "t_estimated", "varroa_treated", "comments", "year", "T_amount", "c_short")]
+## High Costs --------------------------------------------------------------
+NO_COST_UPPER <- list()
+# upper limit two times the 3th (75%) quantile
+NO_COST_UPPER[["upper_limit"]] <- quantile(DATA$costs, probs = 0.75, names = F) * 2
+NO_COST_UPPER[["COST_UPPER_NO_ESTIMATE"]] <- DATA %>% 
+  filter(costs > NO_COST_UPPER[["upper_limit"]]) %>% 
+  select(c("id", "costs", "varroa_treated", "comments", "year", "T_amount", "c_short", "t_estimated", "hives_winter"))
+NO_COST_UPPER[["COST_UPPER"]] <- NO_COST_UPPER[["COST_UPPER_NO_ESTIMATE"]]  %>% 
+  filter(costs > t_estimated * 2)
 # Remove these entries, as they make sense
-# 1976 explains that he bought a power generator and vaporizer
-# 751 Bienensauna
-id_nochange <- c(751, 1976)
-COST_UPPER <- COST_UPPER %>% filter(!(id %in% id_nochange))
-# Calculate new prices
-COST_UPPER$new <- COST_UPPER$costs / COST_UPPER$hives_winter
-DATA$costs[(DATA$id %in% COST_UPPER$id)] <- COST_UPPER$new
+# 815-18/19 explains that he bought a power generator and vaporizer
+# 3959-19/20 Bienensauna
+NO_COST_UPPER[["id_nochange"]] <- c("3959-19/20", "815-18/19")
+NO_COST_UPPER[["NEW_COST"]]   <- NO_COST_UPPER[["COST_UPPER"]] %>% 
+  filter(!(id %in% NO_COST_UPPER[["id_nochange"]])) %>% 
+  mutate(
+    # Calculate new prices, as we think that they answered a total costs for all colonies
+    new_cost = costs / hives_winter
+  )
+# add new calculated costs to our main df
+DATA$costs[(DATA$id %in% NO_COST_UPPER[["NEW_COST"]]$id)] <- NO_COST_UPPER[["NEW_COST"]]$new_cost

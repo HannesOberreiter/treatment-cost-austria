@@ -1,8 +1,33 @@
+# Description -------------------------------------------------------------
+# Expenses Distribution per year as plot
+
+# Generate Summary Data ---------------------------------------------------
+SUMMARY_expenses <- list()
+SUMMARY_expenses$expenses_table <- DATA %>% 
+  group_by(year) %>% 
+  summarise(
+    min    = format(round(min(costs),2), nsmall = 2),
+    mean   = format(round(mean(costs),2), nsmall = 2),
+    median = format(round(median(costs),2), nsmall = 2),
+    max    = format(round(max(costs),2), nsmall = 2)
+  ) %>%  add_column(type = "Survey", .after="year")
+SUMMARY_expenses$estimate_table <- DATA %>% 
+  group_by(year) %>% 
+  summarise(
+    min    = format(round(min(t_estimated),2), nsmall = 2),
+    mean   = format(round(mean(t_estimated),2), nsmall = 2),
+    median = format(round(median(t_estimated),2), nsmall = 2),
+    max    = format(round(max(t_estimated),2), nsmall = 2)
+  ) %>% add_column(type = "Estimated", .after="year")
+
+rm(expenses_table, estimate_table)
+
+# Plot --------------------------------------------------------------------
 text <- paste0(
-  "Max.: ", expenses_table$max, "\n",
-  "Min.: ", expenses_table$min, "\n",
-  "Mean: ", expenses_table$mean, "\n",
-  "Median: ", expenses_table$median, "\n"
+  "Max.: ", SUMMARY_expenses$expenses_table$max, "\n",
+  "Min.: ", SUMMARY_expenses$expenses_table$min, "\n",
+  "Mean: ", SUMMARY_expenses$expenses_table$mean, "\n",
+  "Median: ", SUMMARY_expenses$expenses_table$median, "\n"
 )
 
 p <- ggplot(DATA) +
@@ -45,7 +70,6 @@ p <- ggplot(DATA) +
     limits = c(0,50),
     breaks = c(seq(0,50,5))
   )
-
 fSaveImages("distr-year", p)
 rm(text, p)
 

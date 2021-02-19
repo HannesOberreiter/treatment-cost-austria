@@ -19,7 +19,7 @@ fSaveImages <- function(filename, currentplot, w = 7.5, h = 4){
 fMapCluster <- function( x, number_clusters = 2){
   # I do not really understand how else we should do this, because it is not a real "Cluster" Search
   # Creating our clustering without deep mathematics, high k-means then remove one cluster frame and only keep up to 3 when they to overlap
-  x <- x %>% na.omit()
+  x <- x %>% select(c("latitude", "longitude")) %>%  na.omit()
   # kmeans for simple automatic cluster search, 1/4 seems to work good with this data
   # 1/4 for beekeeper distribution
   c <- kmeans(x, ( nrow(x)/number_clusters) )
@@ -34,7 +34,7 @@ fMapCluster <- function( x, number_clusters = 2){
   x$cluster <- factor( c$cluster )
   x$n <- 1
   x$w <- 0
-  # Compare Cache wih our Cluster to only have a cache with points which are not inside the selected cluster
+  # Compare Cache with our Cluster to only have a cache with points which are not inside the selected cluster
   x <- x[!x$cluster %in% CENTERS$cluster,]
   x <- rbind(CENTERS, x)
   # Arrange DF by n, because if overlapping happens the darkest point (most n) will be at top (example vienna)
@@ -55,7 +55,7 @@ fCoinKruskal <- function(depentend, indepentend){
     coin::kruskal_test(
       dep ~ 0 + ind, data = x, 
       distribution = approximate(
-        nresample = 10000, parallel = "multicore"
+        nresample = 10000
       )
     )
 }
@@ -67,33 +67,31 @@ fEffektSize <- function(depentend, indepentend){
   x <- tibble(dep = depentend, ind = indepentend)
   kruskal_effsize(
     dep ~ 0 + ind, data = x, 
-    ci = T, ci.type = "bca", nboot = 5000, parallel = "multicore", ncpus = parallel::detectCores()
+    ci = T, ci.type = "basic"
   )
 }
 
-
-fCoinLabel <- function(input, eff){
-  df   <- resKruskal %>% map_int(~ .x@statistic@df)
-  stat <- resKruskal %>% map_dbl(~ statistic(.x))
-  p    <- resKruskal %>% map_chr(~ p_format(pvalue(.x), accuracy = 1e-03 ))
-  print(df)
-  print(stat)
-  print(p)
+fCoinLabel <- function(kruskal, eff){
+  df   <- kruskal %>% map_int(~ .x@statistic@df)
+  stat <- kruskal %>% map_dbl(~ statistic(.x))
+  p    <- kruskal %>% map_chr(~ p_format(pvalue(.x), accuracy = 1e-03 ))
   TeX(
     sprintf(
       '$\\chi^2$(%i) = $%.2f$, $\\textit{p}$ = $%s$, $\\eta^2(H)$ = $%.2f$', 
       df,
       stat,
       p,
-      eff$effsize
+      abs(eff$effsize)
     )
   )
 }
 
 fPairwiseMM <- function(d){
   x = tibble(
-    xmin = character(), xmax = character(), 
-    mean_diff = numeric(), median_diff = numeric()
+    xmin = character(), 
+    xmax = character(), 
+    mean_diff = numeric(), 
+    median_diff = numeric()
   )
   for(i in 1:(nrow(d)-1)){
     xmin    <- d[i, 1]

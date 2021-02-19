@@ -42,4 +42,4 @@ if(knitr::is_latex_output()){
 
 # Preface {-}
 
-The analysis of the citizen science survey data was conducted over the years 2020 and 2021. For full reproducibility and in the mindset of open source, we publish all our code in a GitHub repository. This should help to understand our approach and give a good starting point for other studies and countries who want to do a similar study.
+The analysis of the citizen science survey data was conducted for the winters 2018/19, 2019/20 and 2020/21 For full reproducibility and in the mindset of open source, we publish all our code in a GitHub repository. This should help to understand our approach and gives a good starting point for other studies and countries who want to do a similar study.
