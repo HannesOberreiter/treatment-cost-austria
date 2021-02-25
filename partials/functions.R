@@ -1,4 +1,3 @@
-
 # Bootstrap Functions for Median and Mean
 fBootMedian <- function(d, i) {
   median(d[i])
@@ -7,7 +6,7 @@ fBootMean <- function(d, i) {
   mean(d[i])
 }
 
-# simple function to save images 
+# simple function to save images
 fSaveImages <- function(filename, currentplot, w = 7.5, h = 4){
   ggsave(paste0("images/", filename, ".pdf"), currentplot, width = w, height = h)
   ggsave(paste0("images/", filename, ".png"), currentplot, width = w, height = h, dpi = 320)
@@ -49,7 +48,6 @@ fMapCluster <- function( x, number_clusters = 2){
 # kruskal_wallis without coin gives the same test results
 # effekt size is based on coin kruskal wallis, if we use bootstrap we can get 
 # CI, effektsize is multiplied by 100 the % explained by the variable of the variance
-
 fCoinKruskal <- function(depentend, indepentend){
     x <- tibble(dep = depentend, ind = indepentend)
     coin::kruskal_test(
@@ -71,6 +69,7 @@ fEffektSize <- function(depentend, indepentend){
   )
 }
 
+# Labels for Plots
 fCoinLabel <- function(kruskal, eff){
   df   <- kruskal %>% map_int(~ .x@statistic@df)
   stat <- kruskal %>% map_dbl(~ statistic(.x))
@@ -85,7 +84,6 @@ fCoinLabel <- function(kruskal, eff){
     )
   )
 }
-
 fPairwiseMM <- function(d){
   x = tibble(
     xmin = character(), 

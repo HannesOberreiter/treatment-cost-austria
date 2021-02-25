@@ -250,92 +250,101 @@ plotOperationStat_removedTreatment
 fSaveImages("stats-operation-size-residuals", plotOperationStat_removedTreatment)
 rm(facetLabels_removedTreatment, countLabel_removedTreatment, difLabel_removedTreatment, plotOperationStat_removedTreatment)
 
-# Extrapolation of Data ----------------------------------------------------
-# https://www.ama.at/getattachment/4c3a7dfc-01a1-46a8-a2dd-4a876b7e8011/Imkereiprogramm-2020-2022-final.pdf?lang=de-AT
+# Only Same Treatment Method ----------------------------------------------
+# Extract Treatment Methods used by big operations
+STATS_operation_size$bigOperationTreatments <- DATA %>% 
+  filter(tri_size == ">50") %>% 
+  select(c_short_od) %>% 
+  unique() %>% 
+  pull()
 
-totalhives <- DATA %>% 
-  group_by(year) %>% 
-  summarise(
-    t_hives = sum(hives_winter)
-  )
+# generate second subset of data
+subDataTreatment <- DATA %>%
+  filter(c_short_od %in% STATS_operation_size$bigOperationTreatments)
 
-cost_boot <- DATA %>% 
-  group_by(year, tri_size) %>% 
-  nest() %>% 
-  mutate(
-    boot = map_dfr(
-      .x = data, 
-      ~broom:::tidy.boot(boot(.x$costs, fBootMean, 10000), conf.int = T, type = "basic")
-      )
-  ) %>% 
+STATS_operation_size$Kruskal_BigOp <- subDataTreatment %>%
+  split(.$year) %>%
+  map(~ fCoinKruskal(.x$costs, .x$tri_size))
+
+STATS_operation_size$Effect_BigOp <- subDataTreatment %>%
+  split(.$year) %>%
+  map(~ fEffektSize(.x$costs, .x$tri_size)) %>% 
+  bind_rows(.id = "year")
+
+## Plot --------------------------------------------------------------------
+countLabel_removedTreatment <- subDataTreatment %>%   
+  count(year, tri_size)
+
+facetLabels_removedTreatment <- tibble(
+  year = c("18/19", "19/20"),
+  label = fCoinLabel(STATS_operation_size$Kruskal_BigOp, STATS_operation_size$Effect_BigOp)
+)
+
+difLabel_removedTreatment <- subDataTreatment %>% 
+  group_by(tri_size, year) %>% 
+  summarize(
+    mean = mean(costs), 
+    median = median(costs)
+    ) %>% 
   ungroup() %>% 
-  select(-data) %>% 
-  unnest_legacy() %>% 
-  select(-boot)
+  group_split(year, remove = F) %>%
+  map_dfr(~ fPairwiseMM(.x))
 
-extrapolated_df <- DATA %>% 
-  left_join(., statsAut, by = c("year" = "year2")) %>% 
-  left_join(., totalhives, by = c("year" = "year")) %>% 
-  group_by(year, tri_size) %>% 
-  summarise(
-    hives = sum(hives_winter),
-    hives_freq = sum(hives_winter)/t_hives[[1]],
-    colonies = colonies[[1]],
-    med   = median(costs),
-    mad   = mad(costs)
-  ) %>% 
-  ungroup() %>%
-  left_join(., cost_boot, by = c("year" = "year", "tri_size" = "tri_size")) %>%
-  mutate(
-    extrapolated_hives      = hives_freq*colonies,
-    extrapolated_cost       = statistic * (hives_freq*colonies),
-    extrapolated_cost_upper = conf.high * (hives_freq*colonies),
-    extrapolated_cost_lower = conf.low * (hives_freq*colonies)
-  )
-
-SUMMARY_extrapolatedSum <- extrapolated_df %>% 
-  group_by(year) %>% 
-  summarise(
-    total = sum(extrapolated_cost),
-    colonies = sum(extrapolated_hives)
-  ) %>% 
-  mutate(
-    label = paste(
-      "Total",
-      format(round(total), big.mark = ","), 
-      "Euro for",
-      format(round(colonies), big.mark = ","),
-      "Colonies"
-    )
-  )
-
-plotOperationStat_extrapolated <- extrapolated_df %>% 
-  ggplot(aes(x = tri_size, y = extrapolated_cost, fill = year)) +
-  geom_bar(stat = "identity") +
-  geom_text(
-    data = SUMMARY_extrapolatedSum, 
+plotOperationStat_removedTreatment <- subDataTreatment %>%
+  filter(costs < 100) %>% 
+  ggplot(
     aes(
-      label = label, 
-      x = "21-50"
-      ), 
-    parse = F, y = 1.5*10^6, inherit.aes = F,
-    size = 3
+      y = costs,
+      x = tri_size,
+      color = year
+    )
+  ) +
+  geom_boxplot(show.legend = F) +
+  stat_summary(
+    fun = mean, geom = "point", show.legend = F, color = "black"
+  ) +
+  geom_text(
+    data = countLabel_removedTreatment, 
+    mapping = aes(x = tri_size, label = paste0("n = ", n), y = 0),
+    size = 2.5,
+    vjust = 1.2,
+    color = "gray"
+  ) +
+  theme_classic() + ylab("Expenses/Colony [Euro]") + xlab("Operation Size [Number Colonies]") +
+  theme(
+    axis.text.x = element_text(size = 12)
+  ) +
+  # labs(
+  #   caption = "Black point indicating sample mean."
+  # ) +
+  ggsignif::geom_signif(
+    data=difLabel_removedTreatment,
+    aes(
+      xmin=xmin, xmax=xmax,
+      annotations = paste(tex),
+      y_position = c(78,70,62, 78,70,62)
+    ),
+    textsize = 3, color = "black", manual=TRUE, parse=TRUE
   ) +
   scale_y_continuous(
-    labels = function(x) format(x, big.mark = ",", decimal.mark = ".", scientific = FALSE),
-    breaks = seq(0,max(extrapolated_df$extrapolated_cost_upper), 100000)
-    ) +
-  theme_classic() + ylab("Extrapolated Total Costs [Euro]") + xlab("Operation Size [Number Colonies]") +
-  geom_pointrange(aes(ymin = extrapolated_cost_lower, ymax = extrapolated_cost_upper)) +
-  scale_fill_manual(
+    limits = c(0,100),
+    breaks = c(seq(0,100,5))
+  ) +
+  scale_color_manual(
     values = colorBlindBlack8[c(2,4)], name="Survey"
+  ) +
+  geom_text(
+    data = facetLabels_removedTreatment, 
+    aes(label=label, x = "21-50"), 
+    parse=T, y = 100, inherit.aes = F,
+    size = 3
   ) +
   facet_wrap(
     ~year,
     labeller = labeller(
       year = function(x){return(paste("Survey", x))}))
 
-fSaveImages("stats-operation-size-extrapolated", plotOperationStat_extrapolated)
+fSaveImages("stats-operation-size-bigop", plotOperationStat_removedTreatment)
+rm(facetLabels_removedTreatment, countLabel_removedTreatment, difLabel_removedTreatment, plotOperationStat_removedTreatment)
 
-rm(plotOperationStat_extrapolated, totalhives, extrapolated_df, cost_boot)
 

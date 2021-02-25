@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 libs <- c(
   "tidyverse", "patchwork", "here", "readxl", # Main Packages
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
-  "latex2exp", "ggsignif", "ggupset", # Helper Packages
+  "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
   "BlandAltmanLeh", "boot", "rstatix", "coin" # Statistics
   )

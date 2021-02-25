@@ -4,7 +4,7 @@
 
 # Data --------------------------------------------------------------------
 SUMMARY_blandAltmann <- DATA %>% 
-  group_by(t_short_od) %>% 
+  group_by(c_short_od) %>% 
   summarise(
     n     = n(),
     p     = round(n()*100/nrow(DATA),2),
@@ -25,12 +25,12 @@ SUMMARY_blandAltmann <- DATA %>%
     # -1 is half difference
     log_dif = log_survey - log_estimate
   ) %>% 
-  filter(n >= 15) %>% 
+  filter(n >= 10) %>% 
   arrange(desc(n))
 
 # Stats -------------------------------------------------------------------
 ba.stats <- bland.altman.stats(SUMMARY_blandAltmann$log_survey, SUMMARY_blandAltmann$log_estimate)
-ba.stats$label <- SUMMARY_blandAltmann$t_short_od
+ba.stats$label <- SUMMARY_blandAltmann$c_short_od
 
 # Plot --------------------------------------------------------------------
 limit_y <- round(
@@ -38,7 +38,7 @@ limit_y <- round(
     max(ba.stats$diffs) > (-1*min(ba.stats$diffs)), 
     max(ba.stats$diffs), 
     -1*min(ba.stats$diffs) ), 
-  digits = 1)
+  digits = 1) + 0.2
 
 labellogi <- (rank(ba.stats$diffs) < 3
  | rank(desc(ba.stats$diffs)) < 3 )
@@ -46,19 +46,6 @@ colorlogi <- ifelse(labellogi, colorBlindBlack8[8], colorBlindBlack8[1])
 
 p <- ggplot() +
   aes(x = 2^(ba.stats$means), y = ba.stats$diffs) +
-  geom_point(
-    aes(size = SUMMARY_blandAltmann$n, color = I(colorlogi)), show.legend = F
-    ) +
-  geom_label(
-    aes(
-      x = 2^ba.stats$means[labellogi], 
-      y = ba.stats$diffs[labellogi], 
-      label = ba.stats$label[labellogi]
-    ),
-    size = 2,
-    hjust = 1, # 0.5 left, 0 center, 1 right
-    nudge_x = -0.2
-  )+
   geom_abline(
     aes(
       intercept = ba.stats$lines, 
@@ -77,11 +64,25 @@ p <- ggplot() +
     show.legend = F
   ) +
   geom_hline(yintercept = 0, linetype = "dotted") +
-  
+  geom_point(
+    aes(size = SUMMARY_blandAltmann$n, color = I(colorlogi)), show.legend = F
+  ) +
+  geom_text(
+    aes(
+      x = 2^ba.stats$means[labellogi], 
+      y = ba.stats$diffs[labellogi], 
+      label = ba.stats$label[labellogi]
+    ),
+    size = 2,
+    hjust = 1, # 0.5 left, 0 center, 1 right
+    nudge_x = -0.2,
+    check_overlap = T
+    
+  )+
   xlab("Mean of Survey and Estimates [Euro]") + ylab(TeX("Differences (Survey-Estimate) \\[$\\log_2$ Euro\\]")) +
   labs(size = "Answers [n]") + 
-  ylim(c( -1*limit_y, limit_y )) +
-  xlim(0, NA) 
+  scale_y_continuous(limits = c( -1*limit_y, limit_y), breaks = seq(-10, 10, 0.5)) +
+  scale_x_continuous(limits = c(0, NA), breaks = seq(0, 100, 2))
 
-fSaveImages("bland-altman", p)
+fSaveImages("bland-altman", p, h = 4.5)
 rm(ba.stats, limit_y, labellogi, colorlogi, p)

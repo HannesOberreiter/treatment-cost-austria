@@ -1,14 +1,20 @@
 ```{r r-result, warning=F, echo=F, include=F}
-source("partials/r-map.R", local = knitr::knit_global())
-source("partials/r-plot-distr-year.R", local = knitr::knit_global())
+source("partials/r-map.R",               local = knitr::knit_global())
+source("partials/r-plot-distr-year.R",   local = knitr::knit_global())
 source("partials/r-plot-distr-groups.R", local = knitr::knit_global())
-source("partials/r-bland-altman.R", local = knitr::knit_global())
+source("partials/r-bland-altman.R",      local = knitr::knit_global())
 
-source("partials/r-operation-size.R", local = knitr::knit_global())
+#source("partials/r-operation-size.R",    local = knitr::knit_global())
+#source("partials/r-migratory.R",         local = knitr::knit_global())
+#source("partials/r-cert-org.R",          local = knitr::knit_global())
+
+source("partials/r-factor.R",            local = knitr::knit_global())
+source("partials/r-extrapolation.R",     local = knitr::knit_global())
+source("partials/r-loss-expenses.R",     local = knitr::knit_global())
+
 ```
 
 # Results
-
 ## Survey Data
 
 ```{r, include=FALSE}
@@ -113,7 +119,7 @@ rm(c, print_table)
 
 ```{r common-comb, include=T}
 d <- SUMMARY_blandAltmann %>% filter(n >= 30) %>% 
-  select(t_short_od:med_estimate)
+  select(c_short_od:med_estimate)
 
 c <- paste0("Most used combination for both survey years together with at least 30 participants. Total and Percent correspond to participants. Mean and Median Expenses from the survey and in comaprison from the estimate in Euro. Drone brood removal method is exluded.")
 
@@ -127,17 +133,15 @@ kable(
   caption = c,
 ) %>% 
   add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>% 
-  footnote(threeparttable = T, general = "AS-LT/ST = Formic acid - long/short term; Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture; Biot = Another biotechnical methods") # %>% kable_classic()
+  footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter, AS-LT/ST = Formic acid - long/short term; Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture; Biot = Another biotechnical methods") # %>% kable_classic()
 rm(c, cn, d)
 ```
 
-Most of our estimates for common treatment with now at least 15 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences, of survey expenses versus estimated expenses as statistical method of agreement [@bland1986]. $\log_2$ converted to minimizes effect of outliers, see figure \@ref(fig:estimates-bland).
+Most of our estimates for common treatment with now at least 10 participants using the combination of methods are overestimated. This can be seen if we plot the mean differences, of survey expenses versus estimated expenses as statistical method of agreement [@bland1986]. $\log_2$ converted to minimizes effect of outliers, see figure \@ref(fig:estimates-bland).
 
-The $\log_2$ change can be seen as follows, 1 represent a double of the original and -1 is half of the original on the transformed scale. The highest difference, which means the treatment estimates higher than the survey results are for Formic Acid Short and Long Term respectivley. Which means the survey responses are 0.5 times higher than the predcited estimates. Overall as said we see a more overestimates and the results coming from the survey are lower. The Two combinations with the higher overestimating are Biotechnical and Oxalsublimation (Biot. & Ox-sub) and Formic Acid Short+Long Term and Oxalic sublimation and Oxalic Mixture (Fa-ST & Fa-LT & Ox-sub & Ox-mix).
+The $\log_2$ change can be seen as follows, 1 represent a double of the original and -1 is half of the original on the transformed scale. The highest difference, which means the treatment estimates higher than the survey results are for combinations with formic acid shortterm. Which means the survey responses are ~1.7 times higher than the predicted estimates. Overall there are more overestimates of calculated expeneses and the results coming from the survey are lower. The two combinations with the higher overestimating are both including a biotechnical variant in summer. All estimates are inside of two standard deviations with set confidence interval of 95%.
 
-All estimates are inside of two standard deviations and inside our set confidence interval of 95%. For this combination we overestimated the expenses by a mean difference of 10.10 Euros.
-
-(ref:estimated-bland) $\log_2$ transformed mean difference between survey and estimated expenses of the treatment combinations with at least 15 beekeepers using it. Lines indicating mean and lower and upper two times standard deviations each with 95% confidence interval. Highest and lowest two treatment combinations are marked.
+(ref:estimated-bland) $\log_2$ transformed mean difference between survey and estimated expenses of the treatment combinations with at least 10 beekeepers using it. Lines indicating mean and lower and upper two times standard deviations each with 95% confidence interval. Highest and lowest two treatment combinations are marked.
 
 ```{r estimates-bland, include=T, fig.cap="(ref:estimated-bland)"}
 knitr::include_graphics('images/bland-altman.png')
@@ -153,7 +157,7 @@ c = "Operation Size (Numer of Colonies) distribution of the two survey years."
 colNames <- c("Operation Sizes", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
 
 kable(
-  summaryOperation[,-2], booktabs = T,
+  STATS_operation_size$Summary[,-2], booktabs = T,
   col.names = colNames,
   digits = 2,
   align = c("c", rep("r", 4)),
@@ -173,11 +177,14 @@ The given operation size groups shows significant difference in both years. The 
 knitr::include_graphics('images/stats-operation-size.png')
 ```
 
-### Effect of treatment method removed
+### Effect of treatment method removed - Big Operations Treatment Methods
 
-```{r stats-operation-size-residuals, include=T, fig.cap="Boxplot of residuals from costs ~ treatment method in given operation size groups, with approximative Kruskal-Wallis test results and effect size. Black points indicating mean. Pairwise comparison of median between groups are given."}
-knitr::include_graphics('images/stats-operation-size-residuals.png')
+Treatment Methods not used by big operations: `r  STATS_operation_size$treatments`
+
+```{r stats-operation-size-bigop, include=T, fig.cap="Subset with only treatment methods which are used by Operations > 50, with approximative Kruskal-Wallis test results and effect size. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-operation-size-treatment.png')
 ```
+
 
 ### Extimated Extrapolated Costs
 
@@ -193,10 +200,6 @@ year 19/20 = `r format(round(SUMMARY_extrapolatedSum$total), big.mark = ",")[2]`
 
 ## Certified Organic Bekeeper
 
-```{r, warning=F, echo=F, include=F}
-source("partials/r-cert-org.R", local = knitr::knit_global())
-```
-
 Operation sizes and number of participants in our survey are not normally distributed. Most participants have 1-20 colonies in both survey years \@ref(tab:table-certOrgSummary). The distribution of the quartiles in our given Operation Size Groups are similar in both years, except for the operation size greater than 50 colonies in survey year 2019/20 is a visible difference \@ref(fig:qq-operation-size).
 
 ```{r table-certOrgSummary, include=T}
@@ -205,7 +208,7 @@ c = "Certified Organic Beekeeper distribution of the two survey years."
 colNames <- c("Certified Organic", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
 
 kable(
-  summaryCertOrg[,-2], booktabs = T,
+  STATS_certorg$Summary[,-2], booktabs = T,
   col.names = colNames,
   digits = 2,
   align = c("c", rep("r", 4)),
@@ -223,21 +226,25 @@ knitr::include_graphics('images/qq-cert-org.png')
 knitr::include_graphics('images/stats-cert-org.png')
 ```
 
-## Migratory Bekeeper
+### Effect of treatment method removed - Only Cert Org Treatment Methods
 
-```{r, warning=F, echo=F, include=F}
-source("partials/r-migratory.R", local = knitr::knit_global())
+Treatment Methods not used certified organic beekeeper: `r  STATS_certorg$treatments`
+
+```{r stats-cert-org-treatment, include=T, fig.cap="Subset of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-cert-org-treatment.png')
 ```
+
+## Migratory Bekeeper
 
 Operation sizes and number of participants in our survey are not normally distributed. Most participants have 1-20 colonies in both survey years \@ref(tab:table-certOrgSummary). The distribution of the quartiles in our given Operation Size Groups are similar in both years, except for the operation size greater than 50 colonies in survey year 2019/20 is a visible difference \@ref(fig:qq-operation-size).
 
 ```{r table-migratorySummary, include=T}
-c = "Certified Organic Beekeeper distribution of the two survey years."
+c = "Migratory Beekeeper distribution of the two survey years."
 
 colNames <- c("Migratory", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
 
 kable(
-  summaryMigratory[,-2], booktabs = T,
+  STATS_migratory$Summary[,-2], booktabs = T,
   col.names = colNames,
   digits = 2,
   align = c("c", rep("r", 4)),
@@ -254,12 +261,19 @@ knitr::include_graphics('images/qq-migratory.png')
 ```{r stats-migratory, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-migratory.png')
 ```
-## Treatment Methods
 
+### Effect of treatment method removed - Only Migratory Treatment Methods
+
+Treatment Methods not used migratory beekeeper: `r STATS_migratory$treatments`
+
+```{r stats-migratory-treatment, include=T, fig.cap="Subset only migratory beekeeper treatment methods of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
+knitr::include_graphics('images/stats-migratory-treatment.png')
+```
+
+## Treatment Methods
 ### Cost Loss Plot
 
-
-(ref:stats-loss-cost-plot) Loss rate GLM 95% CI, median Price, Other < 10n methods
+(ref:stats-loss-cost-plot) Loss rate GLM 95% CI, median Price, Other < 10n methods.
 
 ```{r stats-loss-cost-plot, include=T, fig.cap='(ref:stats-loss-cost-plot)'}
 knitr::include_graphics('images/stats-loss-cost-plot.png')

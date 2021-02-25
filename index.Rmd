@@ -1,8 +1,8 @@
 ---
 title: Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa
   Destructor*
-author: "Hannes Oberreiter & Robert Brodschneider"
-date: '2020'
+author: "Hannes Oberreiter"
+date: '2021'
 output:
   bookdown::gitbook:
     split_bib: no
@@ -26,10 +26,7 @@ bibliography: bib.bibtex
 biblio-style: authoryear
 link-citations: yes
 urlcolor: blue
-abstract: Summary of Stats and Statistics for Treatment Costs Varroa. Our Hypothesis
-  is that the costs have an influence or correlated to the winter losses. H0 = Costs
-  have no influence on survival rate, H1 = Costs have an influence on the survival
-  rate.
+abstract: Exploratory analysis on the yearly colony loss survey in Austria, with the focus on treatment expenses. 
 ---
 ```{r, warning=F, echo=F, include=F}
 # special case for PDF and table as they otherwise wont work
@@ -42,4 +39,4 @@ if(knitr::is_latex_output()){
 
 # Preface {-}
 
-The analysis of the citizen science survey data was conducted for the winters 2018/19, 2019/20 and 2020/21 For full reproducibility and in the mindset of open source, we publish all our code in a GitHub repository. This should help to understand our approach and gives a good starting point for other studies and countries who want to do a similar study.
+The analysis of the citizen science survey data was conducted for the winters 2018/19, 2019/20 and 2020/21. For full reproducibility and in the mindset of open source, I publish all of my code in a GitHub repository. This should help to understand the approach and gives a good starting point for other studies and countries who want to carry out a similar study.

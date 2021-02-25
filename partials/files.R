@@ -206,12 +206,21 @@ RAW$varroa_treated[RAW$varroa_treated != "Ja" & RAW$T_amount > 0]         <- "Ja
 RAW$t_desc_od  <- RAW$t_desc  %>% str_replace(., "Drone brood removal & ", "") %>% str_trim()
 RAW$t_short_od <- RAW$t_short %>% str_replace(., "Drone & ", "") %>% str_trim()
 
+RAW$c_desc_od  <- RAW$c_desc  %>% str_replace(., "SPRING Drone brood removal & ", "") %>% str_trim()
+RAW$c_desc_od  <- RAW$c_desc_od  %>% str_replace(., "SUMMER Drone brood removal & ", "") %>% str_trim()
+RAW$c_desc_od  <- RAW$c_desc_od  %>% str_replace(., "WINTER Drone brood removal & ", "") %>% str_trim()
+RAW$c_short_od <- RAW$c_short %>% str_replace(., "SP-Drone & ", "") %>% str_trim()
+RAW$c_short_od <- RAW$c_short_od %>% str_replace(., "SU-Drone & ", "") %>% str_trim()
+RAW$c_short_od <- RAW$c_short_od %>% str_replace(., "WI-Drone & ", "") %>% str_trim()
+
 # Lump Treatment < 10 ----------------------------------------------------------
 RAW <- RAW %>% 
   group_by(year) %>%
   mutate(
     t_short_od_lump = forcats::fct_lump_min(t_short_od, 10),
-    t_desc_od_lump  = forcats::fct_lump_min(t_desc_od, 10)
+    t_desc_od_lump  = forcats::fct_lump_min(t_desc_od, 10),
+    c_short_od_lump = forcats::fct_lump_min(c_short_od, 10),
+    c_desc_od_lump  = forcats::fct_lump_min(c_desc_od, 10)
   ) %>% ungroup()
 
 
