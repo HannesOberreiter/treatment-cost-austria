@@ -98,7 +98,7 @@ The analysis of the data was carried out with R [@r2020], plotting and data mani
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
-As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics. The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. Though it is still common to underlay the results with statistics tests, I will report p-values from permutation generated from approximative multivariate Kruskal-Wallis test (Monte Carlo) [@hothorn2006] and report effect size (explained variance by the independent variable) with the equation \@ref(eq:effect) [@tomczak2014].
+As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics. The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. Though it is still common to underlay the results with statistics tests, I will report p-values from permutation generated from approximative multivariate Kruskal-Wallis test (Monte Carlo) [@hothorn2006] and report effect size $\eta^2_H$ (explained variance by the independent variable) with the equation \@ref(eq:effect) [@tomczak2014].
 
 ```{=tex}
 \begin{equation}
