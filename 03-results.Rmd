@@ -171,7 +171,7 @@ kable(
 knitr::include_graphics('images/qq-operation-size.png')
 ```
 
-The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_operation_size$Effect$effsize[1],4)` (95% CI: `r STATS_operation_size$Effect$conf.low[1]`-`r STATS_operation_size$Effect$conf.high[1]`) and for 2019/20 of $\eta^2(H)=$ `r round(STATS_operation_size$Effect$effsize[2],4)` (95% CI: `r STATS_operation_size$Effect$conf.low[2]`-`r STATS_operation_size$Effect$conf.high[2]`). Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
+The given operation size groups shows significant difference in both years. The computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_operation_size[["Effect"]][["18/19"]],4)` and for 2019/20 of $\eta^2(H)=$ `r round(STATS_operation_size[["Effect"]][["19/20"]],4)`. Post-hoc analysis results in significant difference between the smallest operation size group with 1-20 colonies and the bigger operation groups. Between the operation size group with 21-50 and above 50 colonies was no statistically significant difference \@ref(fig:stats-operation-size).
 
 ```{r stats-operation-size, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-operation-size.png')
@@ -222,13 +222,18 @@ kable(
 knitr::include_graphics('images/qq-cert-org.png')
 ```
 
+The statistical significant difference between organic and non-organic beekeepers in both years. The computed effect size is very small, with size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_certorg[["Effect"]][["18/19"]],4)` and for 2019/20 of $\eta^2(H)=$ `r round(STATS_certorg[["Effect"]][["19/20"]],4)`, figure \@ref(fig:stats-cert-org). 
+
+
 ```{r stats-cert-org, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-cert-org.png')
 ```
 
 ### Effect of treatment method removed - Only Cert Org Treatment Methods
 
-Treatment Methods not used certified organic beekeeper: `r  STATS_certorg$treatments`
+Number of Treatment Methods used by certified organic beekeeper: `r  length( STATS_certorg$treatments)`
+
+The computed effect size for Kruskal-Wallis is very small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_certorg[["Effect_Treatment"]][["18/19"]],4)` and for 2019/20 of $\eta^2(H)=$ `r round(STATS_certorg[["Effect_Treatment"]][["19/20"]],4)`
 
 ```{r stats-cert-org-treatment, include=T, fig.cap="Subset of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-cert-org-treatment.png')
@@ -258,13 +263,19 @@ kable(
 knitr::include_graphics('images/qq-migratory.png')
 ```
 
+The computed effect size for Kruskal-Wallis is very small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_migratory[["Effect"]][["18/19"]],4)` and for 2019/20 of $\eta^2(H)=$ `r round(STATS_migratory[["Effect"]][["19/20"]],4)`
+
+
 ```{r stats-migratory, include=T, fig.cap="Boxplot of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-migratory.png')
 ```
 
 ### Effect of treatment method removed - Only Migratory Treatment Methods
 
-Treatment Methods not used migratory beekeeper: `r STATS_migratory$treatments`
+Number of Treatment Methods used by certified organic beekeeper: `r  length( STATS_migratory$treatments)`
+
+The computed effect size for Kruskal-Wallis is very small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(STATS_migratory[["Effect_Treatment"]][["18/19"]],4)` and for 2019/20 of $\eta^2(H)=$ `r round(STATS_migratory[["Effect_Treatment"]][["19/20"]],4)`
+
 
 ```{r stats-migratory-treatment, include=T, fig.cap="Subset only migratory beekeeper treatment methods of expenses in given operation size groups, with approximative Kruskal-Wallis test results and effect size. One extreme outlier (>100) for survey 19/20 in group 1-20 is not visible. Black points indicating mean. Pairwise comparison of median between groups are given."}
 knitr::include_graphics('images/stats-migratory-treatment.png')

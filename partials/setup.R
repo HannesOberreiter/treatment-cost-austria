@@ -22,11 +22,11 @@ knitr::opts_chunk$set(
 
 # Libraries ---------------------------------------------------------------
 libs <- c(
-  "tidyverse", "patchwork", "here", "readxl", # Main Packages
+  "tidyverse", "here", "readxl", # Main Packages
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
   "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
-  "BlandAltmanLeh", "boot", "rstatix", "coin" # Statistics
+  "BlandAltmanLeh", "boot", "coin" # Statistics
   )
 
 # sf library needs to be loaded directly and not from cache

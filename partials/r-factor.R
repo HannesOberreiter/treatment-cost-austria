@@ -42,10 +42,12 @@ fKruskal <- function(df, sub, col){
   l$Kruskal <- df %>%
     split(.$year) %>%
     map(~ fCoinKruskal(.x$costs, .x[[col]]))
-  l$Effect <- df %>%
-    split(.$year) %>%
-    map(~ fEffektSize(.x$costs, .x[[col]])) %>% 
-    bind_rows(.id = "year")
+  l$Effect <- l$Kruskal %>% 
+    map(~ fEffektSize(.x))
+  # l$Effect <- df %>%
+  #   split(.$year) %>%
+  #   map(~ fEffektSize(.x$costs, .x[[col]])) %>% 
+  #   bind_rows(.id = "year")
   
   # l$Kruskal_Residuals <- df %>%
   #   split(.$year) %>%
@@ -58,10 +60,12 @@ fKruskal <- function(df, sub, col){
   l$Kruskal_Treatment <- sub %>%
     split(.$year) %>%
     map(~ fCoinKruskal(.x$costs, as.factor(.x[[col]])))
-  l$Effect_Treatment <- sub %>%
-    split(.$year) %>%
-    map(~ fEffektSize(.x$costs, as.factor(.x[[col]]))) %>% 
-    bind_rows(.id = "year")
+  l$Effect_Treatment <- l$Kruskal_Treatment %>% 
+    map(~ fEffektSize(.x))
+  # l$Effect_Treatment <- sub %>%
+  #   split(.$year) %>%
+  #   map(~ fEffektSize(.x$costs, as.factor(.x[[col]]))) %>% 
+  #   bind_rows(.id = "year")
   
   return(l)
 }
@@ -196,6 +200,7 @@ STATS_operation_size$treatments <- DATA %>%
   select(c_short_od) %>% 
   unique() %>% 
   pull()
+
 # generate second subset of data
 STATS_operation_size$subDataTreatment <- DATA %>%
   filter(c_short_od %in% STATS_operation_size$treatments)
@@ -309,7 +314,7 @@ plot_treatment <- fPlotFactor(
   c(78, 78),
   1.5
 ) +
-  xlab("Operation Size [Number Colonies]")
+  xlab("Migratory Beekeeper")
 
 fSaveImages("stats-migratory", plot_org)
 fSaveImages("stats-migratory-treatment", plot_treatment)
@@ -401,3 +406,17 @@ fSaveImages("stats-cert-org", plot_org)
 fSaveImages("stats-cert-org-treatment", plot_treatment)
 
 rm(plot_org, plot_treatment)
+
+# Inactive Code Chunks --------------------------------------------------
+## Dunn-Test ---------------------------------------------------------------
+
+# pwc1819 <- DATA %>% filter(year == "18/19") %>% 
+#   rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") %>% 
+#   add_column(year = "18/19")
+# pwc1920 <- DATA %>% filter(year == "19/20") %>% 
+#   rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") %>% 
+#   add_column(year = "19/20")
+# Binding Position for Plotting of Significant Values
+# resPWC <- rbind(pwc1819, pwc1920) %>% rstatix::add_xy_position(x = "tri_size")
+# rm(pwc1819, pwc1920)
+

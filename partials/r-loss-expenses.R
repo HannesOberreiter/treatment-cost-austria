@@ -1,6 +1,10 @@
-# PCA ---------------------------------------------------------------------
+# Description -------------------------------------------------------------
+# Loss Rate VS Expenses
+# compare each group versus the mean / median
 
+# Functions ---------------------------------------------------------------
 fGLM <- function(d){
+  # Loss Rate Calculation
   GLM.FULL <- glm(
     cbind( hives_lost_e, hives_spring_e ) ~ c_short_od_lump,
     family = quasibinomial( link = "logit" ), 
@@ -42,21 +46,21 @@ fGLM <- function(d){
 }
 
 
+# Generate Year DF --------------------------------------------------------
 pc1920 <- DATA %>% 
   filter(year == "19/20") %>% 
   mutate(
     t_short_od_lump = fct_drop(t_short_od_lump),
     c_short_od_lump = fct_drop(c_short_od_lump)
   )
-
 pc1920 <- pc1920 %>% 
   group_by(year, c_short_od_lump) %>% 
   summarise(
-    n = n(),
-    mean = mean(costs),
+    n      = n(),
+    mean   = mean(costs),
     median = median(costs),
-    mad = mad(costs),
-    sd = sd(costs)
+    mad    = mad(costs),
+    sd     = sd(costs)
   ) %>% 
   bind_cols(fGLM(pc1920))
 
@@ -69,30 +73,35 @@ pc1819 <- DATA %>%
 pc1819 <- pc1819 %>% 
   group_by(year, c_short_od_lump) %>% 
   summarise(
-    n = n(),
-    mean = mean(costs),
+    n      = n(),
+    mean   = mean(costs),
     median = median(costs),
-    mad = mad(costs),
-    sd = sd(costs)
+    mad    = mad(costs),
+    sd     = sd(costs)
   ) %>% 
   bind_cols(fGLM(pc1819))
-
 pc <- bind_rows(pc1920, pc1819)
+rm(pc1819, pc1920)
 
+# Caclulate Total Mean / Median -------------------------------------------
 # breakline for costs both years together? Maybe makes more sense
-dc_sum <- pc %>% summarise(
-  total_mean = mean(DATA$costs),
-  total_median = median(DATA$costs),
-  total_middle = mean(middle)
-)
+dc_sum <- pc %>% 
+  group_by(year) %>% 
+  summarise(
+    total_mean   = mean(mean),
+    total_median = median(median),
+    total_middle = median(middle)
+  )
+
 
 pc <- pc %>% left_join(dc_sum, by = c("year" = "year"))
 
+# Define Categories -------------------------------------------------------
 pc <- pc %>% mutate(
   type = case_when(
-    median <= total_median & middle < total_middle ~ "Cheap and Good",
+    median <= total_median & middle <= total_middle ~ "Cheap and Good",
     median > total_median & middle > total_middle ~ "Expensive and Bad",
-    median <= total_median & middle > total_middle ~ "Cheap and Bad",
+    median <= total_median & middle >= total_middle ~ "Cheap and Bad",
     median > total_median & middle < total_middle ~ "Expensive and Good"
   ),
   type_mean = case_when(
@@ -103,17 +112,18 @@ pc <- pc %>% mutate(
   )
 )
 
+# Plot --------------------------------------------------------------------
 pcPlot <- pc %>% 
   #ggplot(aes(x = mean, y = middle, color = type_mean)) +
   ggplot(aes(x = median, y = middle, color = type)) +
-  geom_hline(data = dc_sum, aes(yintercept = total_middle), size = 1, color = "black") +
+  geom_hline(data = dc_sum, aes(yintercept = total_middle), size = 1, color = "gray") +
   #geom_vline(data = dc_sum, aes(xintercept = total_mean), size = 1, color = "red") +
-  geom_vline(data = dc_sum, aes(xintercept = total_median), size = 1, color = "black") +
+  geom_vline(data = dc_sum, aes(xintercept = total_median), size = 1, color = "gray") +
   geom_label_repel(aes(label=c_short_od_lump), max.overlaps = 30, show.legend = F) +
-  geom_point(show.legend = T) +
-  geom_errorbar(aes(ymin = lowerlim, ymax = upperlim), show.legend = F, alpha = 0.2) +
+  geom_point(show.legend = T, alpha = 0.9) +
+  #geom_errorbar(aes(ymin = lowerlim, ymax = upperlim), show.legend = F, alpha = 0.2) +
   #geom_errorbarh(aes(xmin = mean-sd, xmax = mean+sd), show.legend = F, alpha = 0.2) +
-  geom_errorbarh(aes(xmin = median-mad, xmax = median+mad), show.legend = F, alpha = 0.2) +
+  #geom_errorbarh(aes(xmin = median-mad, xmax = median+mad), show.legend = F, alpha = 0.2) +
   scale_y_continuous(
     breaks = seq(0, 50, 5)
   ) +
@@ -127,7 +137,7 @@ pcPlot <- pc %>%
   xlab("Expenses/Colony [Euro]") +
   ylab("Loss rates [%]") +
   facet_wrap(~ year, ncol = 1, scales = "free_x")
-
+pcPlot
 fSaveImages("stats-loss-cost-plot", pcPlot, 12, 12)
 
 
