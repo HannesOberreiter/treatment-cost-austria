@@ -4,7 +4,7 @@
 # see partials/setup.R
 
 library("tidyverse")
-library("patchwork")
+#library("patchwork")
 library("here")
 library("readxl")
 library("bookdown")
@@ -17,7 +17,7 @@ library("ggupset")
 #library("ggpmisc")
 library("boot")
 library("coin")
-library("rstatix")
+#library("rstatix")
 library("ggsignif")
 # library("lme4")
 # library("ggstatsplot")

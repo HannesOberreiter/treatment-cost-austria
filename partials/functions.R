@@ -61,26 +61,38 @@ fCoinKruskal <- function(depentend, indepentend){
 # Effect Size ####
 # The interpretation values commonly in published literature are: 
 # 0.01- < 0.06 (small effect), 0.06 - < 0.14 (moderate effect) and >= 0.14 (large effect).
-fEffektSize <- function(depentend, indepentend){
-  x <- tibble(dep = depentend, ind = indepentend)
-  kruskal_effsize(
-    dep ~ 0 + ind, data = x, 
-    ci = T, ci.type = "basic"
-  )
+# fEffektSize <- function(depentend, indepentend){
+#   rstatix Variant
+#   x <- tibble(dep = depentend, ind = indepentend)
+#   kruskal_effsize(
+#     dep ~ 0 + ind, data = x, 
+#     ci = T, ci.type = "basic"
+#   )
+# }
+fEffektSize <- function(krus){
+  # simpler Calculation of Effect size no CI needed would also be 
+  # caught by multiple testing
+  # Formula
+  # \eta^2_H = \frac{H-k+1}{n-k}
+  H <- statistic(krus)
+  n <- nrow(krus@statistic@x)
+  k <- krus@statistic@df+1
+  effect <- (H-k+1)/(n-k)
+  return(effect)
 }
 
 # Labels for Plots
 fCoinLabel <- function(kruskal, eff){
   df   <- kruskal %>% map_int(~ .x@statistic@df)
   stat <- kruskal %>% map_dbl(~ statistic(.x))
-  p    <- kruskal %>% map_chr(~ p_format(pvalue(.x), accuracy = 1e-03 ))
+  p    <- kruskal %>% map_chr(~ format.pval(pvalue(.x), eps = 0.001 ))
   TeX(
     sprintf(
       '$\\chi^2$(%i) = $%.2f$, $\\textit{p}$ = $%s$, $\\eta^2(H)$ = $%.2f$', 
       df,
       stat,
       p,
-      abs(eff$effsize)
+      abs(unlist(eff))
     )
   )
 }
