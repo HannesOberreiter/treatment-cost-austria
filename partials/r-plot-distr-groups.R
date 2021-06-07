@@ -19,12 +19,13 @@ df_ggupset <- df_ggupset %>%
 
 # stats for labels
 # percent (18/19 / 19/20) %
-label_ggupset <- df_ggupset %>% 
-  count(year, up_nest, sort = F) %>% 
-  mutate(np = round(n/sum(n)*100,1)) %>% 
+label_ggupset <- df_ggupset %>%
+  add_count(year, name = "total_n", sort = F) %>%
+  count(year, up_nest, total_n, sort = F) %>% 
+  mutate(np = round(n/total_n*100,1)) %>% 
   group_by(up_nest) %>% 
   summarise(
-    label = paste0("(", paste0(np, collapse = "/"), ")%")
+    label = paste0("(", paste0(np, collapse = "/"), ")")
   )
 
 # Plot --------------------------------------------------------------------

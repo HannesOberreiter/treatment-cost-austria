@@ -20,6 +20,37 @@
 
 # machine learning with months + treatment to check for costs ?
 
+
+It’s difficult to come up with rules for when to use what type of model. 
+
+Things like the study design, the nature of the outcome variable, the type of research question and what the model will be used for play a role in making a choice of model type.
+
+You may be able to come up with some loose guidelines to keep in mind. 
+
+For example, tree models and random forest (and other “black box” types of models) are best used when you are interested in using the model for predictive purposes and you may also have significantly more predictors than number of subjects/items in your study: p >> n.  Here, p = number of predictors and n = number of study subjects/items.
+
+The models below would be used when you have p < n and can accommodate both prediction and explanation. (Explanation refers to describing the relationships between particular predictors and the outcome variable.)
+
+Linear regression models can be used when you measure a continuous variable once for each study subject/item. 
+
+Poisson regression models can be used when you measure a count variable once for each study subject/item.  With these models, you have to check for the presence of overdispersion or underdispersion. If overdispersion is present, you can swap the model for a quasipoisson model or a negative binomial model. 
+Another problem you can encounter with count outcome variables is zero-inflation.  For that, you would need to use a zero-inflated or hurdle version of the Poisson or Negative Binomial regression models, depending on what mechanism you are willing to assume for generating the zeroes.
+For binary outcomes, you would use binary logistic regression.
+
+For nominal outcomes (having more than 2 unordered categories), you would use multinomial regression.
+
+For ordinal outcomes (having more than 2 ordered categories), you would use multinomial regression.
+
+For ‘discrete’ proportion outcomes (where you know both the numerator and denominator of the proportions and they consist of counts), you would use binomial logistic regression.
+
+For ‘discrete’ proportion outcomes (where you know both the numerator and denominator of the proportions and they consist of counts), you would use binomial logistic regression.
+For ‘continuous’ proportion outcomes, you would use beta regression or zero and/or one inflated versions.
+
+All of these p < n models can also be used in a slightly different context: when you have a single study subject/item (e.g., country) and you measure the values of that subject/item repeatedly over time.
+
+For situations where the outcome value is measured multiple times for at least some of the study subjects/items and you have several such such subjects/items, you would use mixed effects versions of the p < n models described above.
+
+
 DATA$logcost <- log10(DATA$costs+(1/6))
 
 # https://learningstatisticswithr.com/book/bayes.html#the-p-value-is-a-lie.
