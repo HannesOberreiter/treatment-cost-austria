@@ -32,7 +32,7 @@ abstract: Exploratory analysis on the yearly colony loss survey in Austria, with
 ---
 ```{r, warning=F, echo=F, include=F}
 # special case for PDF and table as they otherwise wont work
-if(knitr::is_latex_output()){
+if (knitr::is_latex_output()) {
   options(knitr.table.format = "latex")
 } else {
   options(knitr.table.format = "html")
