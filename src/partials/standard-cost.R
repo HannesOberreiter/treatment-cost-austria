@@ -4,19 +4,19 @@
 # applying practices, eg. from course materials
 
 # Dependent Files ---------------------------------------------------------
-source("partials/list-treatments.R")
+source("src/partials/list-treatments.R")
 
 # Costs Calculation --------------------------------------------------------------------
 # Create Temporary Vector of "Standard" Calculated Costs
 # investment cost, will be divided by the number of colonies
 # material cost, will be multiplied by the number of colonies, but could be used multiple years
 # ongoing costs, will be multiplied by number of colonies (eg. amount of formic acid)
-investmentCost        <- c(rep(0, nrow(treatmentList)))
-materialCost          <- c(rep(0, nrow(treatmentList)))
-ongoingCost           <- c(rep(0, nrow(treatmentList)))
+investmentCost <- c(rep(0, nrow(treatmentList)))
+materialCost <- c(rep(0, nrow(treatmentList)))
+ongoingCost <- c(rep(0, nrow(treatmentList)))
 names(investmentCost) <- treatmentList$tname
-names(materialCost)   <- treatmentList$tname
-names(ongoingCost)    <- treatmentList$tname
+names(materialCost) <- treatmentList$tname
+names(ongoingCost) <- treatmentList$tname
 
 
 ## Hypertermia -------------------------------------------------------------
@@ -44,7 +44,7 @@ investmentCost["Hyperthermia"] <- mean(c(2475, 799))
 
 materialCost["Another biotechnical method"] <- mean(
   c(
-    mean(c(23.50, 28.90, 33.0)), 
+    mean(c(23.50, 28.90, 33.0)),
     12.00,
     7.25
   )
@@ -96,12 +96,12 @@ materialCost["Formic acid - short term"] <- mean(
 ongoingCost["Formic acid - long term"] <- mean(
   c(
     16.15, 16.50, 13.50
-  )*as_lt
+  ) * as_lt
 )
 ongoingCost["Formic acid - short term"] <- mean(
   c(
     16.15, 16.50, 13.50
-  )*as_st
+  ) * as_st
 )
 
 rm(as_lt, as_st)
@@ -110,13 +110,13 @@ rm(as_lt, as_st)
 # Application, Standard Method from Literature and Course Materials
 # 16 ml per brood frame, 5 brood frames ~ 80ml * 2 (two times application)
 
-# Product: Lactic Acid, 15%; 
-# Cost     9.80 / l 
+# Product: Lactic Acid, 15%;
+# Cost     9.80 / l
 # Source:  http://www.bienen-gesundheit.com/sortiment/milchsaeure/
 # Source:  https://www.imkereibedarf-bienenweber.de/Milchsaeure-15-ad-us-vet-1-Liter-Flasche-zur-Varroabekaempfung
 # Date:    05.10.2020
 
-ongoingCost["Lactic acid"] <- mean(9.80*0.160)
+ongoingCost["Lactic acid"] <- mean(9.80 * 0.160)
 
 ## Oxalic Acid Pure ------------------------------------------------
 # Product: Api Bioxal
@@ -125,7 +125,7 @@ ongoingCost["Lactic acid"] <- mean(9.80*0.160)
 # Source:  https://shop.garten-bienen.at/fuer-gesunde-bienen/api-bioxal-oxalsaeure-zur-varroa-winterbehandlung-35-g.html
 # Date:    05.10.2020
 
-# Product: OXUVAR 
+# Product: OXUVAR
 # Cost:    10.65 / 275g
 # Appl.:   Bottle for 15 Colonies
 # Source:  https://www.andermatt-biovet.de/de_bvi/oxuvar5-7-traeufelbehandlung-gegen-varroa.html
@@ -138,9 +138,9 @@ ongoingCost["Lactic acid"] <- mean(9.80*0.160)
 # Date:    05.10.2020
 
 ongoingCost["Oxal acid - pure"] <- mean(
-  14.50/10,
-  10.65/15,
-  39/888*50,
+  14.50 / 10,
+  10.65 / 15,
+  39 / 888 * 50,
 )
 
 ## Oxalic Sublimation ------------------------------------------------------
@@ -172,7 +172,7 @@ investmentCost["Oxal acid - sublimation"] <- mean(
 
 # multiply by 2 becuse in summer its probably used more often and in winter only once
 ongoingCost["Oxal acid - sublimation"] <- mean(
-  14.50/15 * 2
+  14.50 / 15 * 2
 )
 
 ## Oxalic Mixture ----------------------------------------------------------
@@ -209,11 +209,11 @@ ongoingCost["Oxal acid - mixture"] <- mean(
 # Cost:    26.50 / 10 Strips -> 2 / Colony
 
 ongoingCost["Thymol"] <- mean(
-  3.50 * 2, 3.00 * 2, 26.5/10*2
+  3.50 * 2, 3.00 * 2, 26.5 / 10 * 2
 )
 
 ## Synthetical -------------------------------------------------------------
-# Product: Polyvar 
+# Product: Polyvar
 # Cost:    30.00  / 10 Strips
 # Appl.:   1 Strip per Colony
 # Source:  https://www.medizinfuchs.at/preisvergleich/polyvar-yellow-275-mg-impraeg.str.f.d.bienenstock-10-st-bayer-vital-gmbh-gb-tiergesundheit-pzn-13413376.html
@@ -240,22 +240,18 @@ ongoingCost["Synthetic methods"] <- mean(
 
 # Investment & Material Deduction Time -------------------------------------
 # estimated years of usage
-deInvestment  <- 10
-deMaterial    <- 5
+deInvestment <- 10
+deMaterial <- 5
 investmentCost <- investmentCost / deInvestment
-materialCost   <- materialCost   / deMaterial
+materialCost <- materialCost / deMaterial
 
 
 # Clean Up ----------------------------------------------------------------
 ESTIMATED_COSTS <- tibble(
   investment  = round(investmentCost, 2),
-  material    = round(materialCost,   2),
-  consumables = round(ongoingCost,    2)
+  material    = round(materialCost, 2),
+  consumables = round(ongoingCost, 2)
 )
 treatmentList <- cbind(treatmentList, ESTIMATED_COSTS)
 
 rm(deInvestment, deMaterial, materialCost, ongoingCost, investmentCost, ESTIMATED_COSTS)
-
-
-
-
