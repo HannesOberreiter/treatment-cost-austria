@@ -72,11 +72,12 @@ tab
 rm(tab, c, cn)
 ```
 
+### Distribution of Participants in groups of interest
 
-## Distribution of Participants in groups of interest
+The most common group in the survey are recreational beekeepers, which I defined as participants with 25 or less colonies (figure \@ref(fig:distr-groups)). Second most are beekeepers with more than 25 colonies. Only a small portion of participants are certified organic or migratory beekeepers and even less both combined. The observed distribution is similar over all three survey years, a small decline in recreational beekeepers which are also report to migrate their colonies can be seen.
 
-```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest and combination of both years. Percentage reported stands respectivley for the survey years 2018/19 and 2019/20. "}
-knitr::include_graphics("images/distr-groups.png")
+```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest for each year. Percentage reported stands respectivley for the survey years 2018/19, 2019/20 and 2020/21. Recreational Beekeepers are participants with 25 or less colonies going into winter."}
+knitr::include_graphics("output/figs/distr-groups.png")
 ```
 
 ## Expenses Estimations {#r-estimations}

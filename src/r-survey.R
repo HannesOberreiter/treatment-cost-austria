@@ -51,18 +51,18 @@ r_survey$summary$estimate_table <- dfClean %>%
 
 
 # Summary Plot --------------------------------------------------------------------
-text1 <- rep(paste0(
-    "Max.:", "\n",
-    "Min.:", "\n",
-    "Mean:", "\n",
-    "Median:", "\n"
-), 3)
-text2 <- paste0(
-    r_survey$summary$survey_table$max, "\n",
-    r_survey$summary$survey_table$min, "\n",
-    r_survey$summary$survey_table$mean, "\n",
-    r_survey$summary$survey_table$median, "\n"
-)
+#text1 <- rep(paste0(
+#    "Max.:", "\n",
+#    "Min.:", "\n",
+#    "Mean:", "\n",
+#    "Median:", "\n"
+#), 3)
+#text2 <- paste0(
+#    r_survey$summary$survey_table$max, "\n",
+#    r_survey$summary$survey_table$min, "\n",
+#    r_survey$summary$survey_table$mean, "\n",
+#    r_survey$summary$survey_table$median, "\n"
+#)
 ## Based on Cedric Scherer raincloud chart
 ## https://www.cedricscherer.com/2021/06/06/visualizing-distributions-with-raincloud-plots-and-how-to-create-them-with-ggplot2/#section2
 p <- ggplot(dfClean, aes(x = year, y = costs, fill = year)) +
@@ -118,18 +118,18 @@ p <- ggplot(dfClean, aes(x = year, y = costs, fill = year)) +
         size = 0.5,
         arrow = arrow(length = unit(0.1, "inches"))
     ) +
-    annotate(
-        "text",
-        label = text1,
-        x = c(1.20, 2.20, 3.20), y = c(45, 45, 45),
-        hjust = "left"
-    ) +
-    annotate(
-        "text",
-        label = text2,
-        x = c(1.60, 2.60, 3.60), y = c(45, 45, 45),
-        hjust = "right"
-    ) +
+#    annotate(
+#        "text",
+#        label = text1,
+#        x = c(1.20, 2.20, 3.20), y = c(45, 45, 45),
+#        hjust = "left"
+#    ) +
+#    annotate(
+#        "text",
+#        label = text2,
+#        x = c(1.60, 2.60, 3.60), y = c(45, 45, 45),
+#        hjust = "right"
+#    ) +
     scale_y_continuous(
         limits = c(0, 50),
         breaks = c(seq(0, 50, 5))
@@ -147,3 +147,5 @@ p <- ggplot(dfClean, aes(x = year, y = costs, fill = year)) +
 
 fSaveImages(p, "distr-year", w = 8.5, h = 5)
 rm(text1, text2, p)
+
+
