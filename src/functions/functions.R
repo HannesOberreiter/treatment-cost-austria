@@ -6,5 +6,5 @@ print("Loaded Functions")
 for (f in list.files(path = glue("{here()}/src/functions/modules/"), pattern = "*.R")) {
     source(glue("{here()}/src/functions/modules/{f}"))
 }
-
+rm(f)
 print("Functions Loaded")

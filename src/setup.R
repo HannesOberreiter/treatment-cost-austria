@@ -22,9 +22,9 @@ knitr::opts_chunk$set(
 
 # Libraries ---------------------------------------------------------------
 libs <- c(
-  "tidyverse", "here", "readxl", # Main Packages
+  "tidyverse", "here", "readxl", "janitor", # Main Packages
   "glue", "patchwork", "rlang", "lintr",
-  "scales", "ggforce",
+  "scales", "ggforce", "ggdist", "gghalves",
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
   "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
@@ -63,15 +63,12 @@ colorBlindBlack8 <- c(
   "#F0E442", "#0072B2", "#D55E00", "#CC79A7"
 )
 
-# Beekeeper and Colonies in Austria based on
-# https://www.biene-oesterreich.at/daten-und-zahlen+2500++1000247
-statsAut <- tibble(
-  year = c(2018, 2019, 2020),
-  year2 = c("18/19", "19/20", "20/21"),
-  beekeeper = c(29745, 30237, 31923),
-  colonies = c(372889, 390607, 426121)
-)
+
 
 # Next Files --------------------------------------------------------------
+source("src/partials/list-motivation.R", local = knitr::knit_global())
+source("src/partials/list-austria.R", local = knitr::knit_global())
+source("src/partials/list-treatments.R", local = knitr::knit_global())
+source("src/partials/standard-cost.R", local = knitr::knit_global())
 source("src/partials/files.R", local = knitr::knit_global())
 source("src/functions/functions.R", local = knitr::knit_global())
