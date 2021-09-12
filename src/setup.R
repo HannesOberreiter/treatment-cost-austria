@@ -20,11 +20,14 @@ knitr::opts_chunk$set(
   comment = NA
 )
 
+set.seed(1337) # fix random seed for models and subsampling
 # Libraries ---------------------------------------------------------------
+# igraph installation problem: https://github.com/igraph/rigraph/issues/135 (dependency of solitude)
 libs <- c(
   "tidyverse", "here", "readxl", "janitor", # Main Packages
   "glue", "patchwork", "rlang", "lintr",
   "scales", "ggforce", "ggdist", "gghalves",
+  "isotree",
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
   "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
