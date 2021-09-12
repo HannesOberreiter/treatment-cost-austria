@@ -79,7 +79,7 @@ mmList$cost_zero$id_remove <- mmList$cost_zero$data %>%
 dfClean <- dfClean %>%
   filter(!(id %in% mmList$cost_zero$id_remove))
 
-## High Costs --------------------------------------------------------------
+## Outliers / High Costs --------------------------------------------------------------
 mmList$cost_upper <- list()
 mmList$cost_upper$upper_limit <- (quantile(dfClean$costs, probs = 0.75, names = F) + 3 * IQR(dfClean$costs)) * 2
 mmList$cost_upper$data <- dfClean %>%
@@ -89,33 +89,65 @@ mmList$cost_upper$data <- dfClean %>%
     new_cost = round(costs / hives_winter)
   )
 
+# Anomaly Detection based on isolation forest method
+# if we set output_score = TRUE is will overwrite smaple_size to use all rows
+mmList$cost_upper$iso_ext <- isotree::isolation.forest(
+  dfClean %>% select(costs, t_short_od),
+  ndim = 1,
+  # sample_size = NULL,
+  ntrees = 100,
+  nthreads = 1,
+  prob_pick_pooled_gain = 0,
+  prob_pick_avg_gain = 0,
+  output_score = TRUE
+)
+dfClean$outlier_score <- mmList$cost_upper$iso_ext$scores
+
+mmList$cost_upper$forest <- dfClean %>%
+  filter(outlier_score >= 0.6) %>%
+  select(c("id", "varroa_treated", "comments", "year", "t_amount", "c_short", "costs", "t_estimated", "hives_winter")) %>%
+  mutate(
+    new_cost = round(costs / hives_winter)
+  )
+
+# Scores should be around 0.5
+p <- dfClean %>%
+  mutate(hcolor = ifelse(outlier_score >= 0.6, colorBlindBlack8[8], "black")) %>%
+  ggplot(
+    aes(x = costs, y = outlier_score, color = hcolor)
+  ) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.6, ymax = Inf, alpha = 0.4, fill = colorBlindBlack8[7]) +
+  geom_point() +
+  ggplot2::scale_color_identity(guide = "legend", labels = c("Anomaly\n(>=0.6)\n", "Average\n(< 0.6)\n")) +
+  ylim(0, 1) +
+  labs(color = "") +
+  xlab("Expenses per colony") +
+  ylab("Standardized outlier score") +
+  ggplot2::theme(
+    panel.grid.major = element_line()
+  )
+
+fSaveImages(p, "isolation_forest")
+
+print("extreme IQR:")
+nrow(mmList$cost_upper$data)
+print("isolation Forest:")
+nrow(mmList$cost_upper$forest)
+print("Overlapping:")
+nrow(inner_join(mmList$cost_upper$forest, mmList$cost_upper$data))
+# Combine the two lists they overlap a lot actually
+mmList$cost_upper$combined_list <- bind_rows(mmList$cost_upper$forest, mmList$cost_upper$data) %>%
+  distinct(id, .keep_all = TRUE)
+
 # Remove these entries, as they make sense
 # Remove participants which used hyperthermia as we can make no assumptions about investement time
 # 815-18/19 explains that he bought a power generator and vaporizer (not anymore inside our new limit, so he wont be changed anyway)
 mmList$cost_upper$id_nochange <- c("815-18/19")
-mmList$cost_upper$new_data <- mmList$cost_upper$data %>%
+mmList$cost_upper$new_data <- mmList$cost_upper$combined_list %>%
   filter(!(id %in% mmList$cost_upper$id_nochange | stringr::str_detect(c_short, "Hyp.")))
+
 # add new calculated costs to our main df
 dfClean$costs[(dfClean$id %in% mmList$cost_upper$new_data$id)] <- mmList$cost_upper$new_data$new_cost
-
-# Outliers based on cohort
-# tmpHelper <- dfClean %>%
-#  group_by(t_short_od) %>%
-#  summarise(
-#    mean_costs = round(mean(costs)),
-#    median_costs = median(costs),
-#    q2 = quantile(costs, probs = 0.75, names = F) + 3 * IQR(costs)
-#  ) %>%
-#  glimpse()
-
-# tmpDf <- dfClean %>%
-#  left_join(tmpHelper, by = c("t_short_od")) %>%
-#  filter(costs > q2) %>%
-#  mutate(
-#    new = round(costs / hives_winter)
-#  ) %>%
-#  select(c("answer: costs per unit" = "costs", "answer: total units" = "hives_winter", "extreme outliers breakpoint" = "q2", "mean_costs", "median_costs", "new: costs per unit after dividing units" = new))
-
 
 ## Difference --------------------------------------------------------------
 mmList$reports <- dfData %>%

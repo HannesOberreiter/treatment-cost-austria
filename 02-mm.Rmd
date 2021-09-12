@@ -110,9 +110,9 @@ In total `r nrow(mmList$no_method)` participants did answer varroa expenses (min
 
 In total `r nrow(mmList$cost_zero$data)` participants said their treatment expenses were zero. Only one answer were kept, as the treatment was a combination of hyperthermia and biotechnical and I can make no assumption about the real expenses of the participant. Ofcourse the equipment for the hyperthermia do cost something, but we don't know more details, as he could already have the equipment for a long time. This means a total of `r length(mmList$cost_zero$id_remove)-length(mmList$cost_zero$id_sponsor)` were removed as they said zero expenses but actually did treatment with organic acids, which is illogical as the organic acids are consumed and not for free. Additionally `r length(mmList$cost_zero$id_sponsor)` participants got a sponsorship (beekeeping club or local community) for their treatment expenses and had therefore zero expenses, which were also removed.
 
-### High Expenses
+### Outlier Detection
 
-Some of the given answers about expenses per colony are quite high and above our calculated estimate. I decided to filter the dataset based on the arbitrary descision if the expenses per colony is double or more than the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in \@ref(eq:extreme-outliers). Further investigating the resulting list of `r nrow(mmList$cost_upper$data)` answers revealed that most of them did answer total expenses per operation and not expenses per colony as asked in the survey. As this is only an assumption, I removed from the outliers list participants which used Hyperthermia as treatment method, which could involve big investment, especially if it was only used for one year. As for the rest of the extreme outliers (*n* = `r nrow(mmList$cost_upper$new_data)`), I divided for each answers the expenses by the reported number of colonies going into winter. This means the manipulative impact was higher for participants which had high expenses above the limit and also reported a large number of colonies and less for small operations, were the expensive costs are possible true. The new calculated costs were updated in the cleaned dataset for further analysis.
+To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary descision if the expenses per colony is double or more than the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in \@ref(eq:extreme-outliers).
 
 ```{=tex}
 \begin{equation}
@@ -121,6 +121,12 @@ Some of the given answers about expenses per colony are quite high and above our
 \end{aligned}
 (\#eq:extreme-outliers)
 \end{equation}
+```
+
+This did detect `r nrow(mmList$cost_upper$data)` anomaly values based on the upper limit and without any information of the given treatment method. The second one is model based with the isolation forest approach [@liu2008], implemented in the R package [@isotree2021]. Input for the model was the expenses per colony and a dummy column which was encoded for each treatment method combination without drone brood removal. The parameters were set to take all rows of our dataset, 100 binary trees and split on a single variable. I defined values above 0.6 in the resulting standardized outlier score, as described in @liu2008, as anomaly values, which resulted in a list of `r nrow(mmList$cost_upper$forest)`. The two approaches did mostly overlap in their results and the lists were combined, which resulted in `r nrow(mmList$cost_upper$combined_list)` possible outliers. Further investigating of the outlier answers revealed that most of them did answer total expenses per operation and not expenses per colony as asked in the survey. As this is only an assumption, I removed from the outliers list participants which used Hyperthermia as treatment method, which could involve big investment, especially if it was only used for one year. As for the rest of the extreme outliers (*n* = `r nrow(mmList$cost_upper$new_data)`), I divided for each answers the expenses by the reported number of colonies going into winter. This means the manipulative impact was higher for participants which had high expenses above the limit and also reported a large number of colonies and less for small operations, were the expensive costs are possible true. The new calculated costs were updated in the cleaned dataset for further analysis.
+
+```{r isolation-forest, include=T, fig.cap="Isolation forest standardized outlier score to expenses per colony of the whole dataset. Black points are within the defined average range and pink coloured points indicating possible outliers. Red background area above the set average limit >= 0.6 outlier score. "}
+include_custom("output/figs/isolation_forest.png")
 ```
 
 ### Final Data Count
