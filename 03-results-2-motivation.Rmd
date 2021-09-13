@@ -1,0 +1,27 @@
+## Motivation choosing Varroa control method
+
+```{r, include=FALSE}
+source("src/r-motivation.R", local = knitr::knit_global())
+```
+
+The question "Which main motivations are most likely to apply to you when choosing the Varroa control method (max. 5)?" was only asked in the survey 2020/21, with a total of `r r_motivation$answers` valid answers. Even though it was possible to pick up to 5 answers, the most common answer was "Recommendations from beekeeping associations, extension workers, veterinarians, magazines, etc.", followed up by answers all including "Efficacy", see table \@ref(tab:motivation-comb). A longer list with the top 50 combinations is available in the appendix (tab. \@ref(tab:motivation-comb-full)). The dominant answer "Efficacy" can be seen in figure (fig:motivation-count), were "Efficacy" was the most often picked by above 60% of the participants, followed by "Side effects on bees" and "Residues". The answer "Costs", which is the main topic of my research question, was only picked by 6.8% beekeepers.
+
+```{r motivation-comb, include=T}
+cn <- c("Motivation", "Answers", "Motivations")
+c <- "Top 10 answers given by participants and the chosen combinations if multiple answers were selected. 'Answers' is the count this combination was picked and 'Motivations' are the number of different answers."
+tab <- knitr::kable(
+    r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 10),
+    align = c("l", rep("r", 2)),
+    booktabs = TRUE,
+    row.names = FALSE,
+    col.names = cn,
+    # format = "markdown",
+    caption = c
+)
+tab
+rm(tab, c, cn)
+```
+
+```{r motivation-count, include=T, messages=F, warnings=F, fig.cap="Total count of all 21 motivation answers for choosing varroa control method. Percentage is the relative amount of participants which did pick this motivation as one of their answers, number in brackets is the total count how many the answer was picked."}
+include_custom("output/figs/motivation-count.png")
+```

@@ -20,11 +20,11 @@ fPairwiseMM <- function(d) {
                 median_diff = round(abs(mediani - medianj))
             )
             names(dummy) <- c("xmin", "xmax", "mean_diff", "median_diff")
-            x <- x %>% add_row(dummy)
+            x <- x %>% dplyr::add_row(dummy)
         }
     }
     x <- x %>% add_column(
-        year = d$year[1],
+        year_long = d$year_long[1],
         tex = TeX(
             sprintf(
                 "$\\Delta | \\tilde{x} |$ = $%.1f$",

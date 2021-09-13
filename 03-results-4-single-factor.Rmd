@@ -1,0 +1,66 @@
+## Operational factor analysis
+
+Most questions in the survey are related to winter colony losses but two operational questions could give more insight into the expenses spend by beekeepers for their treatment method. This two are if the beekeeper migrates with his colonies and if it is an organic certified beekeeping operation, with possible answers "Yes", "No". If survey participants did answer "Unsure" or did not answer at all it was not used for the factor analysis. Additionally I look at the operation size, which can also be seen as operational questions.
+
+### Operation Size
+
+Operation sizes and number of participants in our survey are not normally distributed, with most participants managing less than 20 colonies and a few big operation with over one hundred colonies, see figure \@ref(fig:size-distr). Further on the participants were grouped into beekeepers with 25 or less colonies, which should represent recreational beekeepers, and the ones with more than 25 colonies, which should represent side-line and professional operations (table \@ref(tab:size-table)).
+
+(ref:size-distr) Distribution of operation size over the three survey years. Colonie numbers based on the reported colonies going into winter.
+
+```{r size-distr, include=T, fig.cap="(ref:size-distr)"}
+include_custom("output/figs/size-distr.png")
+```
+
+```{r size-table, include=T}
+c <- "Operation size distribution and measures of central tendency over the three survey years."
+cn <- c("Operation Size", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+tab <- kable(
+    r_operational$size$table %>% select(-year),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", rep("r", 4)),
+    caption = c
+) %>%
+    pack_rows("2018/19", 1, 2) %>%
+    pack_rows("2019/20", 3, 4) %>%
+    pack_rows("2020/21", 5, 6)
+tab
+rm(cn, c, tab)
+```
+
+The given operation size groups show statistical significant difference in all survey years. Although computed effect size for Kruskal-Wallis is small, with an estimate for the effect size in the survey year 2018/19 of $\eta^2(H)=$ `r round(r_operational$size$statistic$effect[[1]],2)`, in 2019/20 $\eta^2(H)=$ `r round(r_operational$size$statistic$effect[[2]],2)` and in the year 2020/21 $\eta^2(H)=$`r round(r_operational$size$statistic$effect[[3]],2)`, see figure \@ref(fig:size-stats).
+
+(ref:size-stats) Boxplot and test results of expenses in the two given operation size groups, with approximative Kruskal-Wallis test results and effect size. Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of median between groups are given as label above the boxplots.
+```{r size-stats, include=T, fig.cap="(ref:size-distr)"}
+include_custom("output/figs/size-stats.png")
+```
+
+### Certified organic beekeeping operation
+
+Only `r r_operational$organic$summary$np[[2]]`% of the survey participants are certified organic, see table \@ref(tab:organic-table). The statistical significant difference between organic and non-organic beekeepers in both years. The computed effect size is very small, in the survey year 2018/19 with $\eta^2(H)=$ `r round(r_operational$organic$statistic$effect[[1]],2)`, for 2019/20 with $\eta^2(H)=$ `r round(r_operational$organic$statistic$effect[[2]],2)` and in the year 2020/21 $\eta^2(H)=$`r round(r_operational$organic$statistic$effect[[3]],2)`, see figure \@ref(fig:organic-stats).
+
+```{r organic-table, include=T}
+c <- "Certified organic beekeeping operation distribution and measures of central tendency over the three survey years."
+cn <- c("Certified Organic", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+tab <- kable(
+    r_operational$organic$table %>% select(-year),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", rep("r", 4)),
+    caption = c
+) %>%
+    pack_rows("2018/19", 1, 2) %>%
+    pack_rows("2019/20", 3, 4) %>%
+    pack_rows("2020/21", 5, 6)
+tab
+rm(cn, c, tab)
+```
+
+(ref:organic-stats) Boxplot and test results of expenses if the beekeeping operation is certified organic or not, with approximative Kruskal-Wallis test results and effect size. Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of median between groups are given as label above the boxplots.
+```{r organic-stats, include=T, fig.cap="(ref:organic-distr)"}
+include_custom("output/figs/organic-stats.png")
+```
+

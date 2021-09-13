@@ -4,7 +4,8 @@ Statistical analysis of the treatment expenses against **Varroa Desctructor** wi
 
 ## Build Book
 
-`bookdown::render_book("index.Rmd", c("pdf_document2", "gitbook"))`
+`bookdown::render_book("index.Rmd", "pdf_document2")`
+`bookdown::render_book("index.Rmd", "gitbook")`
 
 ## Version Control
 

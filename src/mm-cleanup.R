@@ -18,6 +18,7 @@ mmList$motivation$no_answer <- dfMotivation %>%
   count(id, value) %>%
   filter(value == "Nein" & n == 21) %>%
   arrange(desc(n))
+
 # Remove the entries without any answer
 dfMotivation <- dfMotivation %>% filter(!(id %in% mmList$motivation$no_answer$id))
 # Count for M&M text

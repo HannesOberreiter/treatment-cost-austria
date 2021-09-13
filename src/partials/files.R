@@ -241,22 +241,22 @@ dfData$t_short_od <- dfData$t_short %>%
   str_replace(., glue::glue("{treatmentList$tshort[[2]]} & "), "") %>%
   str_trim()
 dfData$c_desc_od <- dfData$c_desc %>%
-  str_replace(., glue::glue("Frühjahr {treatmentList$tname[[2]]} & "), "") %>%
+  str_replace(., glue::glue("Spring {treatmentList$tname[[2]]} & "), "") %>%
   str_trim()
 dfData$c_desc_od <- dfData$c_desc_od %>%
-  str_replace(., glue::glue("Sommer {treatmentList$tname[[2]]} & "), "") %>%
+  str_replace(., glue::glue("Summer {treatmentList$tname[[2]]} & "), "") %>%
   str_trim()
 dfData$c_desc_od <- dfData$c_desc_od %>%
   str_replace(., glue::glue("Winter {treatmentList$tname[[2]]} & "), "") %>%
   str_trim()
 dfData$c_short_od <- dfData$c_short %>%
-  str_replace(., glue::glue("F-{treatmentList$tshort[[2]]} & "), "") %>%
+  str_replace(., glue::glue("SP-{treatmentList$tshort[[2]]} & "), "") %>%
   str_trim()
 dfData$c_short_od <- dfData$c_short_od %>%
-  str_replace(., glue::glue("S-{treatmentList$tshort[[2]]} & "), "") %>%
+  str_replace(., glue::glue("SU-{treatmentList$tshort[[2]]} & "), "") %>%
   str_trim()
 dfData$c_short_od <- dfData$c_short_od %>%
-  str_replace(., glue::glue("W-{treatmentList$tshort[[2]]} & "), "") %>%
+  str_replace(., glue::glue("WI-{treatmentList$tshort[[2]]} & "), "") %>%
   str_trim()
 
 # Lump Treatment < 10 ----------------------------------------------------------
@@ -289,3 +289,9 @@ dfData <- dfData %>%
   ) %>%
   select(-c(op_varroatolerant:crippled_bees)) %>%
   select(-c(T_vcount_01:T_other_12))
+
+# Add a Long Year Format -----------------------------------------------
+dfData <- dfData %>%
+  mutate(
+    year_long = paste0("20", year)
+  )
