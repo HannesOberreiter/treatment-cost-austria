@@ -110,7 +110,7 @@ In total `r nrow(mmList$no_method)` participants did answer varroa expenses (min
 
 In total `r nrow(mmList$cost_zero$data)` participants said their treatment expenses were zero. Only one answer were kept, as the treatment was a combination of hyperthermia and biotechnical and I can make no assumption about the real expenses of the participant. Ofcourse the equipment for the hyperthermia do cost something, but we don't know more details, as he could already have the equipment for a long time. This means a total of `r length(mmList$cost_zero$id_remove)-length(mmList$cost_zero$id_sponsor)` were removed as they said zero expenses but actually did treatment with organic acids, which is illogical as the organic acids are consumed and not for free. Additionally `r length(mmList$cost_zero$id_sponsor)` participants got a sponsorship (beekeeping club or local community) for their treatment expenses and had therefore zero expenses, which were also removed.
 
-### Outlier Detection
+### Outlier detection and imputation
 
 To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary descision if the expenses per colony is double or more than the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in \@ref(eq:extreme-outliers).
 
@@ -157,16 +157,13 @@ The analysis of the data was carried out with R [@r2020], plotting and data mani
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
-As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics. The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. Though it is still common to underlay the results with statistics tests, I will report p-values from permutation generated from approximative multivariate Kruskal-Wallis test (Monte Carlo) [@hothorn2006] and report effect size $\eta^2_H$ (explained variance by the independent variable) with the equation \@ref(eq:effect) [@tomczak2014].
+As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics. The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. 
 
-```{=tex}
-\begin{equation}
-\begin{aligned}
-  \eta^2_H = \frac{H-k+1}{n-k}
-\end{aligned}
-(\#eq:effect)
-\end{equation}
-```
+### Single Factor Analysis
+
+As it is still common to underlay the results with statistics tests, I will report the *p*-values from the median difference between given groups based on permutation generated null distribution (5,000 permutations). For the median point estimate is also a confidence interval (95%) calculated based on 1,000 bootstrap resamples. The visual difference and null distribution from the permutation test is attached in the appendix section.
+
+### Loss Rate
 
 Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013]. To minimize the variation in the varroa control methods and their combination, the drone brood removal was removed, as it led to only low common combinations. For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
 
