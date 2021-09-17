@@ -83,16 +83,29 @@ r_operational$size$qq <- dfClean %>%
 fSaveImages(r_operational$size$qq, "size-qq")
 
 ### Statistics
-r_operational$size$statistic <- dfClean %>%
-    fKruskal(., sub = FALSE, col = "operation")
+
+r_operational$size$statistic_perm <- dfClean %>%
+    # filter(operation %in% c("Ja", "Nein")) %>%
+    # mutate(test = ifelse(op_cert_org_beek == "Ja", 1, 0) %>% as.factor()) %>%
+    fPermTest(., "operation", stat = "diff in medians") %>%
+    arrange(year_long)
+
+# Save visual interpretation from permutation test
+r_operational$size$statistic_perm %>%
+    pmap(., fPlotPermutation) %>%
+    patchwork::wrap_plots(.) %>%
+    fSaveImages("size-permutation", w = 10)
+
+# r_operational$size$statistic <- dfClean %>%
+#    fKruskal(., sub = FALSE, col = "operation")
+
 p <- dfClean %>%
     mutate(
         operation = stringr::str_remove(operation, " Colonies")
     ) %>%
-    fPlotFactor(., "operation", r_operational$size$statistic, c(50, 50, 50)) +
+    fPlotFactor(., "operation", r_operational$size$statistic_perm, c(50, 50, 50)) +
     xlab("Operation size / Number of colonies")
 fSaveImages(p, "size-stats", w = 8, h = 5)
-
 
 ## Organic Beekeeper ----------
 r_operational$organic$data <- dfClean %>%
@@ -120,10 +133,21 @@ r_operational$organic$table <- r_operational$organic$data %>%
     ungroup() %>%
     glimpse()
 
-r_operational$organic$statistic <- r_operational$organic$data %>%
-    fKruskal(., sub = FALSE, col = "op_cert_org_beek")
+# r_operational$organic$statistic <- r_operational$organic$data %>%
+#    fKruskal(., sub = FALSE, col = "op_cert_org_beek")
+
+r_operational$organic$statistic_perm <- r_operational$organic$data %>%
+    fPermTest(., "op_cert_org_beek", stat = "diff in medians") %>%
+    arrange(year_long)
+
+# Save visual interpretation from permutation test
+r_operational$organic$statistic_perm %>%
+    pmap(., fPlotPermutation) %>%
+    patchwork::wrap_plots(.) %>%
+    fSaveImages("organic-permutation", w = 10)
+
 p <- r_operational$organic$data %>%
-    fPlotFactor(., "op_cert_org_beek", r_operational$organic$statistic, c(50, 50, 50)) +
+    fPlotFactor(., "op_cert_org_beek", r_operational$organic$statistic_perm, c(50, 50, 50)) +
     xlab("Certified Organic Beekeeping Operation")
 fSaveImages(p, "organic-stats", w = 8, h = 5)
 
@@ -153,9 +177,20 @@ r_operational$migratory$table <- r_operational$migratory$data %>%
     ungroup() %>%
     glimpse()
 
-r_operational$migratory$statistic <- r_operational$migratory$data %>%
-    fKruskal(., sub = FALSE, col = "op_migratory_beekeeper")
+# r_operational$migratory$statistic <- r_operational$migratory$data %>%
+#    fKruskal(., sub = FALSE, col = "op_migratory_beekeeper")
+
+r_operational$migratory$statistic_perm <- r_operational$migratory$data %>%
+    fPermTest(., "op_migratory_beekeeper", stat = "diff in medians") %>%
+    arrange(year_long)
+
+# Save visual interpretation from permutation test
+r_operational$migratory$statistic_perm %>%
+    pmap(., fPlotPermutation) %>%
+    patchwork::wrap_plots(.) %>%
+    fSaveImages("migratory-permutation", w = 10)
+
 p <- r_operational$migratory$data %>%
-    fPlotFactor(., "op_migratory_beekeeper", r_operational$migratory$statistic, c(50, 50, 50)) +
+    fPlotFactor(., "op_migratory_beekeeper", r_operational$migratory$statistic_perm, c(50, 50, 50)) +
     xlab("Migratory Beekeeping Operation")
 fSaveImages(p, "migratory-stats", w = 8, h = 5)

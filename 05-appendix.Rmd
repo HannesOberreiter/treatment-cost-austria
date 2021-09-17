@@ -15,3 +15,18 @@ tab <- knitr::kable(
 tab
 rm(tab, c, cn)
 ```
+
+
+(ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red Line point estimate for median difference, yellow area 95% confidence interval of point estimate. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. If *p*-value is reported as "\*\*\*" more permutation would be needed to calculate a precise *p*-value.
+
+```{r size-permutation, include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/size-permutation.png")
+```
+
+```{r organic-permutation, include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/organic-permutation.png")
+```
+
+```{r migratory-permutation, include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/migratory-permutation.png")
+```

@@ -1,17 +1,20 @@
 # Labels for Plots
 fCoinLabel <- function(statistic) {
     kruskal <- statistic$kruskal
-    eff <- statistic$effect
+    eff <- statistic$effect %>%
+        round(., 2) %>%
+        format(., nsmall = 2) %>%
+        stringr::str_replace(., "0.00", "<0.01")
     df <- kruskal %>% map_int(~ .x@statistic@df)
     stat <- kruskal %>% map_dbl(~ statistic(.x))
     p <- kruskal %>% map_chr(~ format.pval(pvalue(.x), eps = 0.001))
     TeX(
         sprintf(
-            "$\\chi^2$(%i) = $%.2f$, $\\textit{p}$ = $%s$, $\\eta^2(H)$ = $%.2f$",
+            "$\\chi^2$(%i) = $%.2f$, $\\textit{p}$ = $%s$, $\\eta^2(H)$ = $%s$",
             df,
             stat,
             p,
-            abs(unlist(eff))
+            eff
         )
     )
 }
@@ -30,9 +33,12 @@ fPlotFactor <- function(df, col, statistic, sigY) {
     # statistics test result from permutation kruskal wallis test
     # sigY is position of pairwise Statistics
     facetLabels <- tibble(
-        year_long = df %>% pull(year_long) %>% unique(),
-        label = fCoinLabel(statistic)
+        year_long = df %>% pull(year_long) %>% sort() %>% unique(),
+        label = fPermFacetLabel(statistic),
+        #label = fCoinLabel(statistic)
     )
+
+
     difLabel <- df %>%
         group_by(.data[[col]], year_long) %>%
         summarize(mean = mean(costs), median = median(costs)) %>%
@@ -106,3 +112,4 @@ fPlotFactor <- function(df, col, statistic, sigY) {
             )
         )
 }
+

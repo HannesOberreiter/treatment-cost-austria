@@ -27,8 +27,10 @@ fPairwiseMM <- function(d) {
         year_long = d$year_long[1],
         tex = TeX(
             sprintf(
-                "$\\Delta | \\tilde{x} |$ = $%.1f$",
-                x$median_diff
+                # "$\\Delta | \\tilde{x} |$ = $%.1f$",
+                # x$median_diff
+                "$\\Delta | \\bar{x} |$ = $%.1f$",
+                x$mean_diff
             )
         )
     )
