@@ -1,0 +1,239 @@
+# Modelling 
+
+- https://embed.tidymodels.org/articles/Applications/GLM.html
+- https://www.tidymodels.org/start/case-study/
+- https://www.lesahoffman.com/SPLH861/861_Lecture9_Generalized_Binary.pdf
+
+```{r}
+library(tidymodels)
+library(dotwhisker) # for visualizing regression results
+library(embed)
+library(vip) # variable importance plots
+# Fix the random numbers by setting the seed
+# This enables the analysis to be reproducible when random numbers are used
+set.seed(222)
+```
+
+Only one entry has a cost of zero, simply exclude it for the model
+```{r}
+dfClean %>%
+    filter(costs == 0) %>%
+    nrow()
+```
+
+Create our temporary Dataframe
+
+```{r}
+tmp <- dfClean %>%
+    filter(costs != 0) %>%
+    # Filter only rows which are complete
+    filter(op_cert_org_beek %in% c("Ja", "Nein") & op_migratory_beekeeper %in% c("Ja", "Nein")) %>%
+    mutate(
+        # log for somewhat normal distribution
+        costs = log(costs),
+        operation = forcats::as_factor(operation),
+        t_short_od_lump = forcats::as_factor(t_short_od_lump),
+        op_cert_org_beek = forcats::as_factor(op_cert_org_beek),
+        op_migratory_beekeeper = forcats::as_factor(op_migratory_beekeeper),
+        t_desc_od = forcats::as_factor(t_desc_od)
+    ) %>%
+    mutate(
+        across(ends_with("_yn"), as.factor)
+    ) %>%
+    select(-T_vcount_total_yn, -T_drone_total_yn) %>%
+    select(id, year, costs, operation, op_cert_org_beek, op_migratory_beekeeper, ends_with("_yn"), hives_winter, t_desc_od, district, state)
+
+nrow(tmp)
+
+# Put 3/4 of the data into the training set
+data_split <- rsample::initial_split(tmp, prop = 3 / 4)
+nrow(data_split)
+train_data <- rsample::training(data_split)
+test_data <- rsample::testing(data_split)
+train_folds <- rsample::bootstraps(train_data, times = 10)
+keep_pred <- control_resamples(save_pred = TRUE, save_workflow = TRUE)
+```
+
+## Recipes
+
+```{r}
+rec_simple <-
+    recipe(costs ~ 1, data = train_data) %>%
+    prep(training = train_data)
+
+rec_hives <-
+    recipe(costs ~ hives_winter, data = train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    prep(training = train_data)
+
+rec_hives_org <-
+    recipe(costs ~ hives_winter + op_cert_org_beek, data = train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    prep(training = train_data)
+
+rec_hives_org_migratory <-
+    recipe(costs ~ hives_winter + op_cert_org_beek + op_migratory_beekeeper, data = train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    prep(training = train_data)
+
+rec_treatment_comb <-
+    recipe(costs ~ t_desc_od, data = train_data) %>%
+    step_other(t_desc_od, threshold = 0.05) %>%
+    prep(training = train_data)
+
+rec_treatment_single <-
+    recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
+        T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn, data = train_data) %>%
+    prep(training = train_data)
+
+
+rec_treatment_comb <-
+    recipe(costs ~ operation + op_cert_org_beek + op_migratory_beekeeper + t_desc_od, data = train_data) %>%
+    step_other(t_desc_od, threshold = 0.05) %>%
+    prep(training = train_data)
+
+rec_treatment_single_operational <-
+    recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
+        T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + op_cert_org_beek + op_migratory_beekeeper, data = train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    prep(training = train_data)
+```
+
+## Models
+```{r}
+lm_mod <-
+    linear_reg() %>%
+    set_engine("lm")
+
+rf_mod <-
+    rand_forest(trees = 10000) %>%
+    set_engine("ranger", importance = "impurity") %>%
+    set_mode("regression")
+```
+
+
+## Create Workflow
+
+```{r}
+workflows <-
+    workflow_set(
+        preproc = list(
+            # simple = rec_simple,
+            # operational = rec_operational,
+            # treatmemt_comb = rec_treatment_comb,
+            # treatment_single = rec_treatment_single,
+            treatment_single_operational = rec_treatment_single_operational
+        ),
+        models = list(
+            lm = lm_mod,
+            rf = rf_mod
+        ),
+        cross = TRUE
+    )
+workflows
+```
+
+## Fitting
+
+```{r}
+data_fit <-
+    workflows %>%
+    workflow_map("fit_resamples", resamples = train_folds, control = keep_pred, verbose = TRUE)
+```
+
+```{r}
+collect_metrics(data_fit)
+```
+
+Predictions
+```{r}
+assess_res <- collect_predictions(data_fit) %>%
+    filter(wflow_id == "treatment_single_operational_lm")
+```
+
+```{r}
+assess_res %>%
+    ggplot(aes(x = costs, y = .pred)) +
+    geom_point(alpha = .15) +
+    geom_smooth(method = "lm") +
+    geom_abline(col = "red") +
+    coord_obs_pred() +
+    ylab("Predicted")
+```
+
+## Final Model Predict
+
+```{r}
+
+data_wflows <-
+    workflow_set(
+        preproc = list(
+            Base = rec_hives,
+            Operational = rec_hives_org_migratory,
+            Treatment = rec_treatment_single_operational
+        ),
+        models = list(
+            lm = lm_mod
+        ),
+        cross = FALSE
+    )
+
+d <- data_wflows %>%
+    select(wflow_id, info) %>%
+    unnest() %>%
+    mutate(
+        fitted = map(workflow, fit, data = train_data)
+    ) %>%
+    glimpse()
+
+c <- data_wflows %>%
+    select(wflow_id, info) %>%
+    unnest() %>%
+    mutate(
+        fitted = map(workflow, fit_resamples, resamples = train_folds)
+    ) %>%
+    glimpse()
+
+c %>%
+    mutate(
+        metrics = map(fitted, collect_metrics)
+    ) %>%
+    unnest(metrics)
+
+vi_scores <- d$fitted[[3]] %>%
+    pull_workflow_fit() %>%
+    vi()
+
+d %>%
+    mutate(
+        stat_parsnip = map(fitted, extract_fit_parsnip),
+        stat_tidy = map(stat_parsnip, tidy),
+        stat_values = map(fitted, glance)
+    ) %>%
+    unnest(stat_values)
+
+
+extract_fit_parsnip() %>%
+    tidy() %>%
+    arrange(desc(p.value))
+
+data_aug_test <-
+    augment(data_fit_f, test_data)
+data_aug_train <-
+    augment(data_fit_f, train_data)
+
+rmse(data_aug, costs, .pred)
+rmse(data_aug_train, costs, .pred)
+```
+
+```{r}
+data_aug_test %>%
+    ggplot(aes(costs, .pred)) +
+    geom_point(alpha = .15) +
+    geom_smooth(method = "lm") +
+    geom_abline(col = "red") +
+    coord_obs_pred() +
+    ylab("Predicted")
+```

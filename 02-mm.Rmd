@@ -161,7 +161,12 @@ As the main goal of the study is an exploratory data analyses (EDA) I try to rel
 
 ### Single Factor Analysis
 
-As it is still common to underlay the results with statistics tests, I will report the *p*-values from the median difference between given groups based on permutation generated null distribution (5,000 permutations). For the median point estimate is also a confidence interval (95%) calculated based on 1,000 bootstrap resamples. The visual difference and null distribution from the permutation test is attached in the appendix section.
+The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers "Yes", "No", "Uncertain". The category "Uncertain" and participants which did not answers the question were not used in statistical analysis. As it is still common to underlay the results with statistics tests, I will report the *p*-values from the median difference between given groups based on permutation generated null distribution (5,000 permutations). For the median point estimate is also a confidence interval (95%) calculated based on 1,000 bootstrap resamples. The visual difference and null distribution from the permutation test is attached in the appendix section.
+
+### Multiple Regression
+
+To evaluate if the analysed factors are independent of each other and also to the treatment methods a multiple regression model with treatment expenses per colony as dependent variable was fitted. The model was done with the @tidymodels2020 package Data preprocessing included removing the single zero expenses answer and $log_10$ transform of expenses and number of colonies wintered and only participants which did not answers the afore mentioned operational factors or did answer "Uncertain" were removed, to simplify the model parameters. Treatment methods were binary transformed if the participants did use it in any of the month in the survey to 1 otherwise to 0. Model fitting was done with 3/4 of the original dataset (n = `r nrow(r_model$train_data)`), first model evaluation was done with standard parameters (eg. $R^2$, AIC, BIC) and out of sample evaluation was done with `r nrow(r_model$test_data)` rows. Importance plot of variables based on @vip2020.
+
 
 ### Loss Rate
 

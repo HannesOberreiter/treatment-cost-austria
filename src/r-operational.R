@@ -194,3 +194,6 @@ p <- r_operational$migratory$data %>%
     fPlotFactor(., "op_migratory_beekeeper", r_operational$migratory$statistic_perm, c(50, 50, 50)) +
     xlab("Migratory Beekeeping Operation")
 fSaveImages(p, "migratory-stats", w = 8, h = 5)
+
+# Save output as permutation takes quite a time
+saveRDS(r_operational, "output/r-operational.rds")

@@ -1,6 +1,10 @@
 
 ## Expenses Estimations {#r-estimations}
 
+```{r, include=FALSE}
+source("src/r-estimate.R", local = knitr::knit_global())
+```
+
 The calculated estimated expenses mean and median are higher but similar in each year, than in the survey given by participants, see table \@ref(tab:table-estimates). The most common combinations, without drone brood removal, over the survey years and the corresponding estimates can be seen in table \@ref(tab:common-comb). For the tables the estimated expenses are calculated for each beekeeper in the survey and then the average was taken as with the survey expenses.
 
 ```{r table-estimates, include=T}

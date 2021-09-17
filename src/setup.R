@@ -31,7 +31,8 @@ libs <- c(
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
   "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
-  "BlandAltmanLeh", "boot", "coin" # Statistics
+  "BlandAltmanLeh", "boot"
+  #"coin" # Statistics
 )
 
 # sf library needs to be loaded directly and not from cache
@@ -73,5 +74,9 @@ source("src/partials/list-motivation.R", local = knitr::knit_global())
 source("src/partials/list-austria.R", local = knitr::knit_global())
 source("src/partials/list-treatments.R", local = knitr::knit_global())
 source("src/partials/standard-cost.R", local = knitr::knit_global())
-source("src/partials/files.R", local = knitr::knit_global())
+if (file.exists("output/dfData.rds")) {
+  r_operational <- readRDS("output/dfData.rds")
+} else {
+  source("src/partials/files.R", local = knitr::knit_global())
+}
 source("src/functions/functions.R", local = knitr::knit_global())

@@ -1,0 +1,42 @@
+## Multiple Regression
+
+```{r, include=FALSE}
+if (file.exists("output/r-model.rds")) {
+    r_operational <- readRDS("output/r-model.rds")
+} else {
+    source("src/r-model.R", local = knitr::knit_global())
+}
+```
+
+Starting with the base model including only the reported number of colonies wintered, the linear regression model did improve by adding the operational factors and as the last step the treatment methods \@ref(tab:model-table). The best model was with all predictors included, to evaluate eventual overfitting the predictive ability for out of sample and training set was evaluated, which shows that the training set (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 3)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Test") %>% pull(.estimate) %>% round(., 3)`) have a similar root mean square error.
+
+
+```{r model-table, include=T}
+c <- "Summary of model fit. Base model only includes number of colonies wintered, operational the two questions migratory beekeeper and certified organic beekeeper. The eleven treatment methods are binary encoded, excluded is drone brood removal."
+cn <- c("Model", "R^2", "adj. R^2", "df", "logLik", "AIC", "BIC")
+tab <- kable(
+    r_model$fitted %>% mutate(model = c("Base", "Base + Operational", "Base + Operational + Treatment")) %>% select(model, r.squared, adj.r.squared, df:BIC),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("l", rep("r", 9)),
+    caption = c
+)
+tab
+rm(cn, c, tab)
+```
+
+```{r model-rmse, include=T}
+c <- "Summary of model fit. Base model only includes number of colonies wintered, operational the two questions migratory beekeeper and certified organic beekeeper. The eleven treatment methods are binary encoded, excluded is drone brood removal."
+cn <- c("Model", "R^2", "adj. R^2", "df", "logLik", "AIC", "BIC")
+tab <- kable(
+    r_model$fitted %>% mutate(model = c("Base", "Base + Operational", "Base + Operational + Treatment")) %>% select(model, r.squared, adj.r.squared, df:BIC),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("l", rep("r", 9)),
+    caption = c
+)
+tab
+rm(cn, c, tab)
+```

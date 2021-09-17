@@ -295,3 +295,6 @@ dfData <- dfData %>%
   mutate(
     year_long = paste0("20", year)
   )
+
+# Save File ---------------------------
+saveRDS(dfData, "output/dfData.rds")

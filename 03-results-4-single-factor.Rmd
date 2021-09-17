@@ -1,13 +1,18 @@
 ## Operational factor analysis
 ```{r, include=FALSE}
-source("src/r-operational.R", local = knitr::knit_global())
+if (file.exists("output/r-operational.rds")) {
+    r_operational <- readRDS("output/r-operational.rds")
+} else {
+    source("src/r-operational.R", local = knitr::knit_global())
+}
 ```
 
 Most questions in the survey are related to winter colony losses but two operational questions could give more insight into the expenses spend by beekeepers for their treatment method. This two are if the beekeeper migrates with his colonies and if it is an organic certified beekeeping operation, with possible answers "Yes", "No". If survey participants did answer "Unsure" or did not answer at all it was not used for the factor analysis. Additionally I look at the operation size, which can also be seen as operational questions.
 
 ### Operation size
 
-Operation sizes and number of participants in our survey are not normally distributed, with most participants managing less than 20 colonies and a few big operation with over one hundred colonies, see figure \@ref(fig:size-distr). Further on the participants were grouped into beekeepers with 25 or less colonies, which should represent recreational beekeepers, and the ones with more than 25 colonies, which should represent side-line and professional operations (table \@ref(tab:size-table)).
+Operation sizes and number of participants in our survey are not normally distributed, with most participants managing less than 20 colonies and a few big operation with over one hundred colonies, see figure \@ref(fig:size-distr). The participants were grouped into two groups, beekeepers with 25 or less colonies, which should represent recreational beekeepers, and the ones with more than 25 colonies, which should represent side-line and professional operations (table \@ref(tab:size-table)). The given operation size groups show statistical significant difference in all survey years, whereas the smaller beekeeping operations spend on average and median more per colony as the beekeepers with more than 25 colonies (figure \@ref(fig:size-stats)). The absolute median difference between the groups is between `r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` Euro per colony. 
+
 
 (ref:size-distr) Distribution of operation size over the three survey years. Colonie numbers based on the reported colonies going into winter.
 
@@ -33,8 +38,6 @@ tab
 rm(cn, c, tab)
 ```
 
-The given operation size groups show statistical significant difference in all survey years, see figure \@ref(fig:size-stats).
-
 (ref:size-stats) Boxplot and test results of expenses in the two given operation size groups, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
 ```{r size-stats, include=T, fig.cap="(ref:size-stats)"}
@@ -43,7 +46,7 @@ include_custom("output/figs/size-stats.png")
 
 ### Certified organic beekeeping operation
 
-Only `r r_operational$organic$summary$np[[2]]`% of the survey participants are certified organic, see table \@ref(tab:organic-table). There is a statistical significant difference between organic and non-organic beekeepers in all survey years, see figure \@ref(fig:organic-stats).
+Only `r r_operational$organic$summary$np[[2]]`% of the survey participants are certified organic, see table \@ref(tab:organic-table). Participants who are a certified organic operation have signifikant lower treatment expenses per colony on average and median than participants without certificate \@ref(fig:organic-stats). The absolute median difference between the groups is between `r min(r_operational$organic$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` Euro per colony.
 
 ```{r organic-table, include=T}
 c <- "Certified organic beekeeping operation distribution and measures of central tendency over the three survey years."
@@ -71,7 +74,7 @@ include_custom("output/figs/organic-stats.png")
 
 ### Migratory beekeeper
 
-The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). A total of `r r_operational$migratory$summary$np[[2]]`% of the survey participants are migrating with their colonies, see table \@ref(tab:migratory-table). There is a statistical significant difference between migratory beekeeper and non-migrating beekeepers in all survey years, see figure \@ref(fig:migratory-stats).
+The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). A total of `r r_operational$migratory$summary$np[[2]]`% of the survey participants are migrating with their colonies, see table \@ref(tab:migratory-table). Participants who migrate their colonies have signifikant lower treatment expenses per colony on average and median than non-migratory beekeepers \@ref(fig:migratory-stats). The absolute median difference between the groups is between `r min(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` Euro per colony.
 
 ```{r migratory-table, include=T}
 c <- "Migratory beekeeper distribution and measures of central tendency over the three survey years."
