@@ -5,6 +5,15 @@ source("src/setup.R", local = knitr::knit_global())
 source("src/mm-cleanup.R", local = knitr::knit_global())
 ```
 
+```{r, include=FALSE}
+if (file.exists("output/r-model.rds")) {
+  r_model <- readRDS("output/r-model.rds")
+} else {
+  source("src/r-model.R", local = knitr::knit_global())
+}
+```
+
+
 ## Survey
 
 The survey is a citizen science survey which is done each year in spring since 2008. It is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey is the yearly colony losses over winter for the Austrian Beekeeper. The survey is part of the COLOSS questionnaire and most questions are in accordance with the other countries [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success and as seen in other studies [@oberreiter2020]. The survey is not mandatory but beekeepers who want to get more official support they need a certified that they participated in the survey.
