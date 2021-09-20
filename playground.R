@@ -93,3 +93,20 @@ data_aug %>%
     ylim(c(0, NA)) +
     xlim(c(0, NA)) +
     geom_point()
+
+
+
+library(performance)
+m1 <- extract_model(r_model$fitted$fitted[[1]])
+m2 <- extract_model(r_model$fitted$fitted[[2]])
+m3 <- extract_model(r_model$best_model)
+
+performance::check_collinearity(m) # looks good
+performance::check_autocorrelation(m) # looks good
+performance::check_heteroscedasticity(m) # http://www.statsmakemecry.com/smmctheblog/confusing-stats-terms-explained-heteroscedasticity-heteroske.html
+performance::check_homogeneity(m, method = "auto") # looks good
+performance::check_normality(m) # fails but test will most often resul tin non-normality
+performance::check_outliers(m) # ok
+performance::performance_accuracy(m) # we could report this
+performance::test_performance(m1, m2, m3)
+performance::compare_performance(m1, m2, m3)
