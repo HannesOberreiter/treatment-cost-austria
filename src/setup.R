@@ -27,7 +27,7 @@ libs <- c(
   "tidyverse", "here", "readxl", "janitor", # Main Packages
   "glue", "patchwork", "rlang", "lintr",
   "scales", "ggforce", "ggdist", "gghalves",
-  "isotree",
+  "isotree", "performance",
   "knitr", "bookdown", "kableExtra", # Main .Rmd Packages
   "latex2exp", "ggsignif", "ggupset", "ggrepel", # Helper Packages
   "sf", # Map
