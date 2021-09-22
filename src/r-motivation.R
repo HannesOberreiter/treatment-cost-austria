@@ -33,6 +33,42 @@ r_motivation$counts <- dfMotivation %>%
     ungroup() %>%
     glimpse()
 
+r_motivation$counts_state <- dfMotivation %>%
+    filter(value == "Ja") %>%
+    add_count(short, name = "total_count") %>%
+    group_by(desc, short, state) %>%
+    summarise(
+        total_count = first(total_count),
+        p_state = n() / first(total_count) * 100,
+        p_state_label = format(round(p_state, 1), nsmall = 1)
+    ) %>%
+    arrange(desc(total_count)) %>%
+    ungroup() %>%
+    glimpse()
+
+
+p2 <- r_motivation$counts_state %>%
+    group_by(short) %>%
+    filter(first(total_count) > 400) %>%
+    ungroup() %>%
+    ggplot(aes(x = short, y = p_state, fill = state)) +
+    geom_col() +
+    geom_text(aes(label = p_state_label), size = 3, position = position_stack(vjust = 0.5)) +
+    ylab("") +
+    ggplot2::scale_fill_manual(
+        values = c("#626161", colorBlindBlack8[-1], "#60df71")
+    ) +
+    labs(fill = "State") +
+    xlab("Top 5 Motivation Answers") +
+    ylab("Percentage of Austria total answers") +
+    ggplot2::theme(
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(vjust = 8),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+    )
+fSaveImages(p2, "motivation-state", h = 5.5)
+
 p <- r_motivation$counts %>%
     # dplyr::slice_max(count, n = 15) %>%
     mutate(

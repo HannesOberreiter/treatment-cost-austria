@@ -25,3 +25,7 @@ rm(tab, c, cn)
 ```{r motivation-count, include=T, messages=F, warnings=F, fig.cap="Total count of all 21 motivation answers for choosing varroa control method. Percentage is the relative amount of participants which did pick this motivation as one of their answers, number in brackets is the total count how many the answer was picked."}
 include_custom("output/figs/motivation-count.png")
 ```
+
+```{r motivation-state, include=T, messages=F, warnings=F, fig.cap="Top five motivation answers for choosing varroa control method. Stacked bar plot, representing answers for each state in Austria in relative amount to the total answers for this motivation question. Numbers in bars are in procent."}
+include_custom("output/figs/motivation-state.png")
+```
