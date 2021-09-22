@@ -7,7 +7,7 @@ mmList <- list()
 ## Motivation -------------------------------------------------------------
 dfMotivation <- dfData %>%
   filter(year == "20/21" & submitted == "Internet") %>%
-  select(id, starts_with("motivation_")) %>%
+  select(id, starts_with("motivation_"), state) %>%
   pivot_longer(starts_with("motivation_")) %>%
   drop_na(value) %>%
   left_join(motivationList, by = c("name" = "cname")) %>%
