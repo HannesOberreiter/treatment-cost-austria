@@ -31,7 +31,7 @@ tmp <- dfClean %>%
     mutate(
         # log for somewhat normal distribution
         costs = log(costs),
-        operation = forcats::as_factor(operation),
+        # operation = forcats::as_factor(operation),
         t_short_od_lump = forcats::as_factor(t_short_od_lump),
         op_cert_org_beek = forcats::as_factor(op_cert_org_beek),
         op_migratory_beekeeper = forcats::as_factor(op_migratory_beekeeper),
@@ -41,7 +41,7 @@ tmp <- dfClean %>%
         across(ends_with("_yn"), as.factor)
     ) %>%
     select(-T_vcount_total_yn, -T_drone_total_yn) %>%
-    select(id, year, costs, operation, op_cert_org_beek, op_migratory_beekeeper, ends_with("_yn"), hives_winter, t_desc_od, district, state)
+    select(id, year, costs, op_cert_org_beek, op_migratory_beekeeper, ends_with("_yn"), hives_winter, t_desc_od, district, state)
 
 nrow(tmp)
 
@@ -237,3 +237,4 @@ data_aug_test %>%
     coord_obs_pred() +
     ylab("Predicted")
 ```
+

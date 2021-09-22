@@ -31,6 +31,11 @@ r_model$train_data <- rsample::training(r_model$data_split)
 r_model$test_data <- rsample::testing(r_model$data_split)
 
 # Recipes ------------------------------
+r_model$rec_intercept_only <-
+    recipe(costs ~ 1, data = r_model$train_data) %>%
+    # step_log(hives_winter, base = 10) %>%
+    prep(training = r_model$train_data)
+
 r_model$rec_base <-
     recipe(costs ~ hives_winter, data = r_model$train_data) %>%
     step_log(hives_winter, base = 10) %>%
@@ -57,6 +62,7 @@ r_model$lm_mod <-
 r_model$data_wflows <-
     workflow_set(
         preproc = list(
+            Intercept = r_model$rec_intercept_only,
             Base = r_model$rec_base,
             Operational = r_model$rec_operational,
             Treatment = r_model$rec_treatment
@@ -66,7 +72,6 @@ r_model$data_wflows <-
         ),
         cross = FALSE
     )
-
 
 r_model$fitted <- r_model$data_wflows %>%
     select(wflow_id, info) %>%
@@ -87,42 +92,77 @@ r_model$fitted <- r_model$fitted %>%
 
 r_model$best_model <- r_model$fitted$fitted[[3]]
 
-r_model$vi_scores <- r_model$best_model %>%
-    pull_workflow_fit() %>%
-    vi()
+# Remove intercept only model otherwise we get an error
+r_model$vi_scores <- r_model$fitted[2:4, ] %>%
+    select(wflow_id, fitted) %>%
+    mutate(
+        vi_scores = map(
+            fitted, ~ pull_workflow_fit(.x) %>%
+                vi()
+        )
+    )
 
-r_model$pvalues <- r_model$best_model %>%
-    extract_fit_parsnip() %>%
-    tidy() %>%
-    arrange(p.value)
 
-r_model$prediction_test <-
-    augment(r_model$best_model, r_model$test_data) %>%
-    select(costs, .pred) %>%
-    mutate(type = "Testing")
+r_model$pvalues <- r_model$fitted %>%
+    select(wflow_id, fitted) %>%
+    mutate(
+        pvalue =
+            map(
+                fitted, ~ extract_fit_parsnip(.x) %>%
+                    tidy() %>%
+                    arrange(p.value)
+            )
+    ) %>%
+    unnest(pvalue)
 
-r_model$prediction_train <-
-    augment(r_model$best_model, r_model$train_data) %>%
-    select(costs, .pred) %>%
-    mutate(type = "Training")
+r_model$prediction <-
+    r_model$fitted %>%
+    select(wflow_id, fitted) %>%
+    mutate(
+        prediction_test = map(fitted, ~ augment(.x, r_model$test_data) %>%
+            select(costs, .pred) %>%
+            mutate(type = "Testing")),
+        prediction_train = map(fitted, ~ augment(.x, r_model$train_data) %>%
+            select(costs, .pred) %>%
+            mutate(type = "Training"))
+    )
+
+r_model$performance_accuracy <- r_model$fitted[2:4, ] %>%
+    select(wflow_id, fitted) %>%
+    mutate(
+        accuracy = map(
+            fitted, ~ extract_model(.x) %>%
+                performance::performance_accuracy()
+        )
+    )
+
+# r_model$performance_accuracy$accuracy[[1]]["Accuracy"]
 
 r_model$prediction_stats <- bind_rows(
-    yardstick::rmse(r_model$prediction_train, costs, .pred) %>% mutate(type = "Training"),
-    yardstick::rmse(r_model$prediction_test, costs, .pred) %>% mutate(type = "Test"),
+    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_test) %>%
+        yardstick::rmse(., costs, .pred) %>% mutate(type = "Training"),
+    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_train) %>%
+        yardstick::rmse(., costs, .pred) %>% mutate(type = "Test"),
 )
 
-p <- bind_rows(r_model$prediction_test, r_model$prediction_train) %>%
-    ggplot(aes(costs, .pred)) +
+p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$prediction %>% unnest(prediction_train)) %>%
+    filter(wflow_id %in% c("Intercept_lm", "Treatment_lm")) %>%
+    mutate(wflow_id = ifelse(wflow_id == "Intercept_lm", "Intercept Only", "Best Model")) %>%
+    ggplot(aes(costs, .pred, color = wflow_id, group = wflow_id)) +
     ylab("Prediction [log(Euro)]") +
     xlab("Survey [log(Euro)]") +
-    geom_point(alpha = .15) +
-    geom_smooth(method = "lm", color = colorBlindBlack8[4]) +
+    geom_point(alpha = .15, show.legend = FALSE) +
+    geom_smooth(method = "lm") +
     geom_abline(color = colorBlindBlack8[8]) +
+    labs(color = "Model") +
+    ggplot2::scale_color_manual(values = colorBlindBlack8[1:2]) +
     coord_obs_pred() +
-    facet_wrap(~type)
+    facet_wrap(~type) +
+    ggplot2::theme(
+        legend.position = "top"
+    )
 
 fSaveImages(p, "model-pred", w = 8, h = 5)
-
 
 # Should report some perfomrance tests?
 # library(performance)
