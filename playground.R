@@ -129,9 +129,9 @@ test_df %>%
 
 
 original <- data.frame(
-  a = c(1,2,3),
-  b = c(4,5,6),
-  c = c(7,8,9)
+    a = c(1, 2, 3),
+    b = c(4, 5, 6),
+    c = c(7, 8, 9)
 )
 
 as.list(original)
@@ -150,30 +150,3 @@ apply(
 )
 
 View(res)
-
-
-
-a <- c(1,2,3)
-b <- c(4,5,6)
-sum_a <- sum(a)
-sum_b <- sum(b)
-
-mean(c(sum_a,sum_b))
-(sum_a+sum_b)/2
-mean(sum_a, sum_b)
-
-
-
-
-        sapply(
-        rows,
-        function(x){
-            #print(x)
-            #list(group = names(x), x = unname(x))
-            },
-        USE.NAMES = TRUE
-        )
-    }
-
-
-ew_df<-original_df[-c(SADC_list<-c(“Angola”, “Botswana”, “Comoros”, “Democratic Republic of Congo”, “Congo”,“DRC”, “Eswatini”, “Lesotho”, “Madagascar”, “Malawi”, “Mauritius”, “Mozambique”, “Namibia”, “Seychelles”, “Tanzania”, “Zambia”, “Zimbabwe”))] 

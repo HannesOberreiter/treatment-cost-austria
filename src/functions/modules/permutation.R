@@ -40,8 +40,8 @@ fPermPvalue <- function(point, distribution) {
 fPermMedianLabel <- function(point_estimate, point_ci) {
     latex2exp::TeX(
         sprintf(
-            "$\\Delta | \\tilde{x} |$ = $%.1f$ (95%s CI: $%.1f$ - $%.1f$)",
-            point_estimate$stat,
+            "$\\Delta | \\tilde{x} |$ = $%s$ (95%s CI: $%.1f$ - $%.1f$)",
+            format(round(point_estimate$stat, 1), nsmall = 1),
             "%",
             point_ci$lower_ci,
             point_ci$upper_ci
@@ -68,9 +68,9 @@ fPermFacetLabel <- function(stat) {
 
     latex2exp::TeX(
         sprintf(
-            "$\\textit{p}$ = $%s$, $\\Delta | \\tilde{x} |$ = $%.1f$ (95%s CI: $%.1f$ - $%.1f$)",
+            "$\\textit{p}$ = $%s$, $\\Delta | \\tilde{x} |$ = $%s$ (95%s CI: $%.1f$ - $%.1f$)",
             p_value,
-            point_estimate,
+            format(round(point_estimate, 1), nsmall = 1),
             "%",
             lower_ci,
             upper_ci

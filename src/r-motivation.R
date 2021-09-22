@@ -35,14 +35,27 @@ r_motivation$counts <- dfMotivation %>%
 
 r_motivation$counts_state <- dfMotivation %>%
     filter(value == "Ja") %>%
+    group_by(state) %>%
+    mutate(
+        state = stringr::str_replace_all(state, stateList),
+        state_print = glue::glue("{state} (n={length(unique(id))})")
+    ) %>%
+    ungroup() %>%
     add_count(short, name = "total_count") %>%
-    group_by(desc, short, state) %>%
+    add_count(state, name = "state_count") %>%
+    group_by(desc, short, state_print) %>%
     summarise(
         total_count = first(total_count),
-        p_state = n() / first(total_count) * 100,
+        state_count = first(state_count),
+        p_state = round(n() / first(state_count) * 100, 1),
         p_state_label = format(round(p_state, 1), nsmall = 1)
     ) %>%
     arrange(desc(total_count)) %>%
+    ungroup() %>%
+    group_by(desc, short) %>%
+    mutate(
+        highest_lowest = max(p_state) == p_state | min(p_state) == p_state
+    ) %>%
     ungroup() %>%
     glimpse()
 
@@ -51,16 +64,34 @@ p2 <- r_motivation$counts_state %>%
     group_by(short) %>%
     filter(first(total_count) > 400) %>%
     ungroup() %>%
-    ggplot(aes(x = short, y = p_state, fill = state)) +
+    mutate(
+        short = forcats::fct_reorder(short, desc(total_count))
+    ) %>%
+    ggplot(aes(
+        x = short, y = p_state, group = short,
+        fill = state_print
+    )) +
     geom_col() +
-    geom_text(aes(label = p_state_label), size = 3, position = position_stack(vjust = 0.5)) +
+    geom_label(
+        aes(
+            label = p_state_label,
+            alpha = highest_lowest
+        ),
+        label.padding = unit(0.15, "lines"),
+        label.size = 0,
+        fill = I("white"),
+        size = 3,
+        position = position_stack(vjust = 0.5),
+        show.legend = FALSE
+    ) +
     ylab("") +
     ggplot2::scale_fill_manual(
         values = c("#626161", colorBlindBlack8[-1], "#60df71")
     ) +
+    ggplot2::scale_color_identity() +
     labs(fill = "State") +
     xlab("Top 5 Motivation Answers") +
-    ylab("Percentage of Austria total answers") +
+    ylab("Percentage of answers for each state") +
     ggplot2::theme(
         axis.text.y = element_blank(),
         axis.text.x = element_text(vjust = 8),

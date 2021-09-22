@@ -4,7 +4,7 @@
 source("src/r-motivation.R", local = knitr::knit_global())
 ```
 
-The question "Which main motivations are most likely to apply to you when choosing the Varroa control method (max. 5)?" was only asked in the survey 2020/21, with a total of `r r_motivation$answers` valid answers. Even though it was possible to pick up to 5 answers, the most common answer was "Recommendations from beekeeping associations, extension workers, veterinarians, magazines, etc.", followed up by answers all including "Efficacy", see table \@ref(tab:motivation-comb). A longer list with the top 50 combinations is available in the appendix (tab. \@ref(tab:motivation-comb-full)). The dominant answer "Efficacy" can be seen in figure (fig:motivation-count), were "Efficacy" was the most often picked by above 60% of the participants, followed by "Side effects on bees" and "Residues". The answer "Costs", which is the main topic of my research question, was only picked by 6.8% beekeepers.
+The question "Which main motivations are most likely to apply to you when choosing the Varroa control method (max. 5)?" was only asked in the survey 2020/21, with a total of `r r_motivation$answers` valid answers. Even though it was possible to pick up to 5 answers, the most common answer was "Recommendations from beekeeping associations, extension workers, veterinarians, magazines, etc.", followed up by answers all including "Efficacy", see table \@ref(tab:motivation-comb). A longer list with the top 25 combinations is available in the appendix (tab. \@ref(tab:motivation-comb-full)). The dominant answer "Efficacy" can be seen in figure (fig:motivation-count), were "Efficacy" was the most often picked by above 60% of the participants, followed by "Side effects on bees" and "Residues". The answer "Costs", which is the main topic of my research question, was only picked by 6.8% beekeepers. Each state analysed separately, it shows the overall same distribution, but there are differences. For example in Styria "Side effects on bees" is on the third place and "Residues" is in Vienna on fifth place (figure \@ref(fig:motivation-state)). 
 
 ```{r motivation-comb, include=T}
 cn <- c("Motivation", "Answers", "Motivations")
@@ -26,6 +26,6 @@ rm(tab, c, cn)
 include_custom("output/figs/motivation-count.png")
 ```
 
-```{r motivation-state, include=T, messages=F, warnings=F, fig.cap="Top five motivation answers for choosing varroa control method. Stacked bar plot, representing answers for each state in Austria in relative amount to the total answers for this motivation question. Numbers in bars are in procent."}
+```{r motivation-state, include=T, messages=F, warnings=F, fig.cap="Top five motivation answers for choosing varroa control method. Stacked bar plot, representing answers for each state in Austria in relative amount to the total answers for this motivation question. Numbers in bars are in relative number of answers in procent. White background numbers indicate highest and lowest state for given motivation answer."}
 include_custom("output/figs/motivation-state.png")
 ```

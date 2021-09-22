@@ -7,3 +7,15 @@ statsAut <- tibble(
     beekeeper = c(29745, 30237, 31923),
     colonies = c(372889, 390607, 426121)
 )
+
+stateList <- c(
+    "Burgenland" = "Burgenland",
+    "Wien" = "Vienna",
+    "Niederösterreich" = "Lower Austria",
+    "Oberösterreich" = "Upper Austria",
+    "Steiermark" = "Styria",
+    "Salzburg" = "Salzburg",
+    "Kärnten" = "Carinthia",
+    "Tirol" = "Tyrol",
+    "Vorarlberg" = "Vorarlberg"
+)

@@ -2,9 +2,9 @@
 
 ```{r motivation-comb-full, include=T}
 cn <- c("Motivation", "Answers", "Motivations")
-c <- "Top 50 answers given by participants and the chosen combinations if multiple answers were selected. 'Answers' is the count this combination was picked and 'Motivations' are the number of different answers."
+c <- "Top 25 answers given by participants and the chosen combinations if multiple answers were selected. 'Answers' is the count this combination was picked and 'Motivations' are the number of different answers."
 tab <- knitr::kable(
-    r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 50),
+    r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 25),
     align = c("l", rep("r", 2)),
     booktabs = TRUE,
     row.names = FALSE,

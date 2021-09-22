@@ -164,6 +164,9 @@ p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$predictio
 
 fSaveImages(p, "model-pred", w = 8, h = 5)
 
+
+saveRDS(r_model, "output/r-model.rds")
+
 # Should report some perfomrance tests?
 # library(performance)
 # m1 <- extract_model(r_model$fitted$fitted[[1]])

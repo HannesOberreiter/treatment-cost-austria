@@ -66,7 +66,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:organic-stats) Boxplot and test results of expenses if the beekeeping operation is certified organic or not, with approximative Kruskal-Wallis test results and effect size. Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of median between groups are given as label above the boxplots.
+(ref:organic-stats) Boxplot and test results of expenses in if survey participant is certified organic or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
 ```{r organic-stats, include=T, fig.cap="(ref:organic-stats)"}
 include_custom("output/figs/organic-stats.png")
@@ -80,7 +80,7 @@ The beekeepers participating in our study were asked whether they transported th
 c <- "Migratory beekeeper distribution and measures of central tendency over the three survey years."
 cn <- c("Migratory Beekeeper", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
 tab <- kable(
-    r_operational$organic$table %>% select(-year),
+    r_operational$migratory$table %>% select(-year),
     booktabs = TRUE,
     col.names = cn,
     digits = 1,
@@ -94,7 +94,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:migratory-stats) Boxplot and test results of expenses if migratory beekeeper or not, with approximative Kruskal-Wallis test results and effect size. Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of median between groups are given as label above the boxplots.
+(ref:migratory-stats) Boxplot and test results of expenses in if migratory beekeeping operation or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
 ```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)"}
 include_custom("output/figs/migratory-stats.png")
