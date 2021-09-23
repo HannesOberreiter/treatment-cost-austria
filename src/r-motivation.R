@@ -59,13 +59,13 @@ r_motivation$counts_state <- dfMotivation %>%
     ungroup() %>%
     glimpse()
 
-
 p2 <- r_motivation$counts_state %>%
     group_by(short) %>%
     filter(first(total_count) > 400) %>%
     ungroup() %>%
     mutate(
-        short = forcats::fct_reorder(short, desc(total_count))
+        short = forcats::fct_reorder(short, desc(total_count)),
+        state_print = forcats::as_factor(state_print)
     ) %>%
     ggplot(aes(
         x = short, y = p_state, group = short,
@@ -86,7 +86,8 @@ p2 <- r_motivation$counts_state %>%
     ) +
     ylab("") +
     ggplot2::scale_fill_manual(
-        values = c("#626161", colorBlindBlack8[-1], "#60df71")
+        values = c("#a19f9f", colorBlindBlack8[-1], "#60df71"),
+        breaks = sort(unique(r_motivation$counts_state$state_print), decreasing = TRUE)
     ) +
     ggplot2::scale_color_identity() +
     labs(fill = "State") +
