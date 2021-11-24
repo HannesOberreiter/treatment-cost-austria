@@ -16,9 +16,9 @@ if (file.exists("output/r-model.rds")) {
 
 ## Survey
 
-The survey is a citizen science survey which is done each year in spring since 2008. It is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey is the yearly colony losses over winter for the Austrian Beekeeper. The survey is part of the COLOSS questionnaire and most questions are in accordance with the other countries [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success and as seen in other studies [@oberreiter2020]. The survey is not mandatory but beekeepers who want to get more official support they need a certified that they participated in the survey.
+The survey is a citizen science survey which is done each year in spring since 2008. It is a combination of online, beekeeping journal and paper submission. The main focus and question of the survey is the yearly colony losses over winter for the Austrian beekeepers'. The survey is part of the COLOSS questionnaire and most questions are in accordance with the other participating countries [@vanderzee2013]. The questions are simple and relate to possible risk factors which may influence overwintering success as seen in previous studies in Austria [@oberreiter2020;@brodschneider2010a]. The survey is not mandatory but beekeepers who participate in the survey get more official support "Förderungen" for investment into their beekeeping operation.
 
-As most questions are related to winter colony losses I am only interested in an subset of questions: Number of colonies wintered (size of operation), Number of colonies lost over winter period (due natural or queen loss, without losses due to natural disaster), state and district of main wintering apiary (as possible covariate), month(s) and type of treatment used, estimated treatment expenses per colony without labor costs. In addition two operational questions are also explored, if the beekeeper migrates with his colonies and if he/she is an organic certified beekeeper, with possible answers "Yes", "No", "Unsure".
+As most questions are related to winter colony losses I am only interested in an subset of questions for my research question: Number of colonies wintered (size of operation), Number of colonies lost over winter period (due natural or queen loss, without losses due to natural disaster), state and district of main wintering apiary (as possible covariate), month(s) and type of treatment used, estimated treatment expenses per colony without labor costs. In addition two operational questions are also explored, if the beekeeper migrates with his colonies and if he/she is an organic certified beekeeper, with possible answers "Yes", "No", "Unsure".
 
 All questions are explored in combination with the expenses per colony, this questions was only available in the Austrian questionnaire and here only in the online survey as the questionnaire printed in the beekeeping journal and handed out paper submissions are a shorter version.
 
@@ -26,7 +26,7 @@ To further understand why participants choose their varroa control method, the l
 
 The survey was anonymous and private data like IP addresses were only used in the first step to help identify double entries. If voluntary contact details were given, the data was anonymised prior analysis and only used if further inquire on questionable answers was necessary.
 
-As I analyzed three continuous survey years and the survey is anonymous I have no assumption if the same beekeepers participated in more than one survey. Only for the handful of beekeepers who did always give the same contact details. Therefore, I can not say that both years are independent or not and analyzed them separately or use year as random effect. The advantages to compare multiple years is, that I may have a better overview if the survey is representative, as there should not much change in the expenses and distribution of beekeepers apiary location and size of operations over the survey years. Furthermore, overall winter loss rates fluctuate between years of survey. This means I can check if a given treatment did result in both years in low/high winter mortality or not.
+As I analyzed three continuous survey years and the survey is anonymous I have no assumption if the same beekeepers participated in more than one survey. Only for the handful of beekeepers who did always give the same contact details. Therefore, I can not say that both years are independent or not and analysed them separately or use year as random effect. The advantages to compare multiple years is, that I may have a better overview if the survey is representative, as there should not much change in the expenses and distribution of beekeepers apiary location and size of operations over the survey years. Furthermore, overall winter loss rates fluctuate between years of survey. This means I can check if a given treatment did result in both years in low/high winter mortality or not.
 
 ## Expenses Estimation
 
@@ -105,7 +105,7 @@ The short version of the survey, which was printed in a beekeeping journal and p
 
 ### No Answers on Expenses
 
-Not all participants did answers the question on expeneses even when they had the possiblity to do so. These participates were also excluded as this question is the main focus of the study. In numbers these are in 2018/19 a total of `r mmList$internet_no_answer %>% filter(year == "18/19") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "18/19") %>% pull(np)`%), 2019/20 a total of `r mmList$internet_no_answer %>% filter(year == "19/20") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "19/20") %>% pull(np)`%) and in the last survey year 2020/21 a total of `r mmList$internet_no_answer %>% filter(year == "20/21") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "20/21") %>% pull(np)`%) answers.
+Not all participants did answers the question on expenses even when they had the possibility to do so. These participates were also excluded as this question is the main focus of the study. In numbers these are in 2018/19 a total of `r mmList$internet_no_answer %>% filter(year == "18/19") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "18/19") %>% pull(np)`%), 2019/20 a total of `r mmList$internet_no_answer %>% filter(year == "19/20") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "19/20") %>% pull(np)`%) and in the last survey year 2020/21 a total of `r mmList$internet_no_answer %>% filter(year == "20/21") %>% pull(nn)` (`r mmList$internet_no_answer %>% filter(year == "20/21") %>% pull(np)`%) answers.
 
 ### No Treatment
 
@@ -121,7 +121,7 @@ In total `r nrow(mmList$cost_zero$data)` participants said their treatment expen
 
 ### Outlier detection and imputation
 
-To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary descision if the expenses per colony is double or more than the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in \@ref(eq:extreme-outliers).
+To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary decision if the expenses per colony is double or more than the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in \@ref(eq:extreme-outliers).
 
 ```{=tex}
 \begin{equation}
@@ -134,7 +134,7 @@ To detect outliers in the dataset two methods were used. For the upper limit I d
 
 This did detect `r nrow(mmList$cost_upper$data)` anomaly values based on the upper limit and without any information of the given treatment method. The second one is model based with the isolation forest approach [@liu2008], implemented in the R package [@isotree2021]. Input for the model was the expenses per colony and a dummy column which was encoded for each treatment method combination without drone brood removal. The parameters were set to take all rows of our dataset, 100 binary trees and split on a single variable. I defined values above 0.6 in the resulting standardized outlier score, as described in @liu2008, as anomaly values, which resulted in a list of `r nrow(mmList$cost_upper$forest)`. The two approaches did mostly overlap in their results and the lists were combined, which resulted in `r nrow(mmList$cost_upper$combined_list)` possible outliers. Further investigating of the outlier answers revealed that most of them did answer total expenses per operation and not expenses per colony as asked in the survey. As this is only an assumption, I removed from the outliers list participants which used Hyperthermia as treatment method, which could involve big investment, especially if it was only used for one year. As for the rest of the extreme outliers (*n* = `r nrow(mmList$cost_upper$new_data)`), I divided for each answers the expenses by the reported number of colonies going into winter. This means the manipulative impact was higher for participants which had high expenses above the limit and also reported a large number of colonies and less for small operations, were the expensive costs are possible true. The new calculated costs were inspected to be plausible, eg. not too low, and were updated in the cleaned dataset for further analysis.
 
-```{r isolation-forest, include=T, fig.cap="Isolation forest standardized outlier score to expenses per colony of the whole dataset. Black points are within the defined average range and pink coloured points indicating possible outliers. Red background area above the set average limit >= 0.6 outlier score. "}
+```{r isolation-forest, include=T, fig.cap="Isolation forest standardized outlier score to expenses per colony of the whole dataset. Black points are within the defined average range and pink coloured points indicating possible outliers. Red background area above the set average limit >= 0.6 outlier score."}
 include_custom("output/figs/isolation_forest.png")
 ```
 
@@ -162,20 +162,22 @@ rm(cn, c, tab)
 
 ## Statistics
 
-The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with Tidyverse [@tidyverse2019]. For full reproducibility the code and a list of all other packages are available on GitHub[^mm-2].
+The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with the tidyverse package collection [@tidyverse2019]. For full reproducibility the code and a list of all other packages are available on GitHub[^mm-2]. As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics and visualise the data behind it. The use of inference based statistics is only used for this explorative purpose and no focus on the *p*-value is given, but as it is still common the *p*-value will be reported. Inference based statistics should normally only be used for a predefined hypothesis and experimental design directly related to the research question. 
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
-As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics. The use of inference based statistics is minimized, as it should only be used for a predefined hypothesis and experimental design directly related to the research question. 
 
 ### Single Factor Analysis
 
-The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers "Yes", "No", "Uncertain". The category "Uncertain" and participants which did not answers the question were not used in statistical analysis. As it is still common to underlay the results with statistics tests, I will report the *p*-values from the median difference between given groups based on permutation generated null distribution (5,000 permutations). For the median point estimate is also a confidence interval (95%) calculated based on 1,000 bootstrap resamples. The visual difference and null distribution from the permutation test is attached in the appendix section.
+The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers "Yes", "No", "Uncertain". The category "Uncertain" and participants which did not answers the question were not used in statistical analysis. The *p*-value is generated from the median difference between groups in comparison to the permutation generated null distribution (5,000 permutations). For the median point estimate is also a confidence interval (95%) calculated based on 1,000 bootstrap resamples. This method allows me to visualise the statistical test from the difference, which is attached in the appendix section.
 
 ### Multiple Regression
 
-To evaluate if the analysed factors are independent of each other and also to the treatment methods a multiple regression model with treatment expenses per colony as dependent variable was fitted. The model was done with the @tidymodels2020 package Data preprocessing included removing the single zero expenses answer and $log_10$ transform of expenses and number of colonies wintered and only participants which did not answers the afore mentioned operational factors or did answer "Uncertain" were removed, to simplify the model parameters. Treatment methods were binary transformed if the participants did use it in any of the month in the survey to 1 otherwise to 0. Model fitting was done with 3/4 of the original dataset (n = `r nrow(r_model$train_data)`), first model evaluation was done with standard parameters (eg. $R^2$, AIC, BIC) and out of sample evaluation was done with `r nrow(r_model$test_data)` rows. Importance plot of variables based on @vip2020.
+To evaluate if the analysed factors are independent of each other and also to the treatment methods a multiple regression model with treatment expenses per colony as dependent variable was fitted. The model was done with the tidymodels package [@tidymodels2020]. 
 
+(Insert log10 Distribution results)
+
+Data preprocessing included removing the single zero expenses answer and $log_10$ transform of expenses and number of colonies wintered and only participants which did not answers the afore mentioned operational factors or did answer "Uncertain" were removed, to simplify the model parameters. Treatment methods were binary transformed, if the participants did use it in any of the month in the survey to 1 (True) otherwise if not applied to 0 (False). Model fitting was done with 3/4 of the original dataset (n = `r nrow(r_model$train_data)`), first model evaluation was done with standard parameters (eg. $R^2$, AIC, BIC) and out of sample evaluation was done with `r nrow(r_model$test_data)` rows to account for possible overfitting. Importance plot of variables based on @vip2020.
 
 ### Loss Rate
 
