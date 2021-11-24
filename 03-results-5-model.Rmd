@@ -1,6 +1,6 @@
 ## Multiple Regression
 
-Starting with the base model including only the reported number of colonies wintered, the linear regression model did improve by adding the operational factors and as the last step the treatment methods \@ref(tab:model-table). The best model was with all predictors included, to evaluate eventual overfitting the predictive ability for out of sample and training set was evaluated, which shows that the training set (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 3)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Test") %>% pull(.estimate) %>% round(., 3)`) have a similar root mean square error.
+Starting with the base model including only the reported number of colonies wintered ($log_{10}$), the linear regression model did improve by adding the operational factors and as the last step the treatment methods \@ref(tab:model-table). The best model was with all predictors included, to evaluate eventual overfiting the predictive ability for out of sample and training set was evaluated, which shows that the training set (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 3)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Test") %>% pull(.estimate) %>% round(., 3)`) have a similar root mean square error.
 
 
 ```{r model-table, include=T}
