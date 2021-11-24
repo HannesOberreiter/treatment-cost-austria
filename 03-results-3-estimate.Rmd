@@ -36,7 +36,7 @@ kable(
     caption = c,
 ) %>%
     add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>%
-    footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods")
+    footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.")
 rm(c, cn, d)
 ```
 
