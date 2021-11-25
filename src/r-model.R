@@ -17,7 +17,7 @@ r_model$data <- dfClean %>%
     filter(op_cert_org_beek %in% c("Ja", "Nein") & op_migratory_beekeeper %in% c("Ja", "Nein")) %>%
     mutate(
         # log for somewhat normal distribution
-        # costs = log(costs),
+        costs = log(costs),
         op_cert_org_beek = forcats::as_factor(op_cert_org_beek),
         op_migratory_beekeeper = forcats::as_factor(op_migratory_beekeeper),
     ) %>%
@@ -26,7 +26,7 @@ r_model$data <- dfClean %>%
     ) %>%
     select(-T_vcount_total_yn, -T_drone_total_yn)
 
-# Put 3/4 of the data into the training set
+# Put 90% of the data into the training set
 r_model$data_split <- rsample::initial_split(r_model$data, prop = 9 / 10, strata = c_short_od)
 r_model$train_data <- rsample::training(r_model$data_split)
 r_model$test_data <- rsample::testing(r_model$data_split)
@@ -96,11 +96,11 @@ r_model$fitted <- r_model$fitted %>%
         stat_values = map(fitted, glance)
     ) %>%
     unnest(stat_values)
-r_model$fitted
-(r_model$best_model <- r_model$fitted$fitted[[5]])
+
+(r_model$best_model <- r_model$fitted$fitted[[4]])
 
 # Remove intercept only model otherwise we get an error
-r_model$vi_scores <- r_model$fitted[2:4, ] %>%
+r_model$vi_scores <- r_model$fitted[2:5, ] %>%
     select(wflow_id, fitted) %>%
     mutate(
         vi_scores = map(
@@ -136,7 +136,7 @@ r_model$prediction <-
             mutate(type = "Training"))
     )
 
-r_model$performance_accuracy <- r_model$fitted[2:4, ] %>%
+r_model$performance_accuracy <- r_model$fitted[2:5, ] %>%
     select(wflow_id, fitted) %>%
     mutate(
         accuracy = map(
@@ -145,17 +145,17 @@ r_model$performance_accuracy <- r_model$fitted[2:4, ] %>%
         )
     )
 
-r_model$performance_accuracy$accuracy[[1]]["Accuracy"]
+r_model$performance_accuracy$accuracy[[3]]["Accuracy"]
 
 r_model$prediction_stats <- bind_rows(
-    r_model$prediction %>% filter(wflow_id == "Treatment3_lm") %>% unnest(prediction_test) %>%
+    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_test) %>%
         yardstick::rmse(., costs, .pred) %>% mutate(type = "Training"),
-    r_model$prediction %>% filter(wflow_id == "Treatment3_lm") %>% unnest(prediction_train) %>%
+    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_train) %>%
         yardstick::rmse(., costs, .pred) %>% mutate(type = "Test"),
 )
 
 p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$prediction %>% unnest(prediction_train)) %>%
-    filter(wflow_id %in% c("Intercept_lm", "Treatment3_lm")) %>%
+    filter(wflow_id %in% c("Intercept_lm", "Treatment_lm")) %>%
     mutate(wflow_id = ifelse(wflow_id == "Intercept_lm", "Intercept Only", "Best Model")) %>%
     ggplot(aes(costs, .pred, color = wflow_id, group = wflow_id)) +
     ylab("Prediction [log(Euro)]") +
