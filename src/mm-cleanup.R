@@ -159,3 +159,24 @@ mmList$reports <- dfData %>%
   mutate(
     percent = round(valid_n / survey_n * 100)
   )
+
+## Count Uncertain and No Answers for Single Factor Analyses --------------------------------------------------------------
+
+mmList$single_factor_drop <- bind_rows(
+  dfClean %>%
+    filter(is.na(op_cert_org_beek) | op_cert_org_beek == "Unsicher") %>%
+    count(year, op_cert_org_beek) %>%
+    pivot_longer(op_cert_org_beek) %>%
+    mutate(
+      name = "Certified Organic Beekeeper",
+      value = stringr::str_replace_na(value, "No Answer") %>% str_replace("Unsicher", "Uncertain")
+    ),
+  dfClean %>%
+    filter(is.na(op_migratory_beekeeper) | op_migratory_beekeeper == "Unsicher") %>%
+    count(year, op_migratory_beekeeper) %>%
+    pivot_longer(op_migratory_beekeeper) %>%
+    mutate(
+      name = "Migratory Beekeeper",
+      value = stringr::str_replace_na(value, "No Answer") %>% str_replace("Unsicher", "Uncertain")
+    )
+)

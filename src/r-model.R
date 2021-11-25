@@ -13,10 +13,11 @@ r_model$zero_expenses <- dfClean %>%
     nrow()
 r_model$data <- dfClean %>%
     filter(costs != 0) %>%
+    # filter(costs < 100) %>%
     filter(op_cert_org_beek %in% c("Ja", "Nein") & op_migratory_beekeeper %in% c("Ja", "Nein")) %>%
     mutate(
         # log for somewhat normal distribution
-        costs = log(costs),
+        # costs = log(costs),
         op_cert_org_beek = forcats::as_factor(op_cert_org_beek),
         op_migratory_beekeeper = forcats::as_factor(op_migratory_beekeeper),
     ) %>%
@@ -26,7 +27,7 @@ r_model$data <- dfClean %>%
     select(-T_vcount_total_yn, -T_drone_total_yn)
 
 # Put 3/4 of the data into the training set
-r_model$data_split <- rsample::initial_split(r_model$data, prop = 3 / 4)
+r_model$data_split <- rsample::initial_split(r_model$data, prop = 9 / 10, strata = c_short_od)
 r_model$train_data <- rsample::training(r_model$data_split)
 r_model$test_data <- rsample::testing(r_model$data_split)
 
@@ -53,6 +54,13 @@ r_model$rec_treatment <-
     step_log(hives_winter, base = 10) %>%
     prep(training = r_model$train_data)
 
+r_model$rec_state <-
+    recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
+        T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + op_cert_org_beek + op_migratory_beekeeper + state, data = r_model$train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    prep(training = r_model$train_data)
+
 # Models -----------------------------
 r_model$lm_mod <-
     linear_reg() %>%
@@ -65,7 +73,8 @@ r_model$data_wflows <-
             Intercept = r_model$rec_intercept_only,
             Base = r_model$rec_base,
             Operational = r_model$rec_operational,
-            Treatment = r_model$rec_treatment
+            Treatment = r_model$rec_treatment,
+            State = r_model$rec_state
         ),
         models = list(
             lm = r_model$lm_mod
@@ -78,9 +87,7 @@ r_model$fitted <- r_model$data_wflows %>%
     unnest() %>%
     mutate(
         fitted = map(workflow, fit, data = r_model$train_data)
-    ) %>%
-    glimpse()
-
+    )
 
 r_model$fitted <- r_model$fitted %>%
     mutate(
@@ -89,8 +96,8 @@ r_model$fitted <- r_model$fitted %>%
         stat_values = map(fitted, glance)
     ) %>%
     unnest(stat_values)
-
-r_model$best_model <- r_model$fitted$fitted[[3]]
+r_model$fitted
+(r_model$best_model <- r_model$fitted$fitted[[5]])
 
 # Remove intercept only model otherwise we get an error
 r_model$vi_scores <- r_model$fitted[2:4, ] %>%
@@ -102,6 +109,8 @@ r_model$vi_scores <- r_model$fitted[2:4, ] %>%
         )
     )
 
+pull_workflow_fit(r_model$best_model) %>%
+    vi()
 
 r_model$pvalues <- r_model$fitted %>%
     select(wflow_id, fitted) %>%
@@ -136,17 +145,17 @@ r_model$performance_accuracy <- r_model$fitted[2:4, ] %>%
         )
     )
 
-# r_model$performance_accuracy$accuracy[[1]]["Accuracy"]
+r_model$performance_accuracy$accuracy[[1]]["Accuracy"]
 
 r_model$prediction_stats <- bind_rows(
-    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_test) %>%
+    r_model$prediction %>% filter(wflow_id == "Treatment3_lm") %>% unnest(prediction_test) %>%
         yardstick::rmse(., costs, .pred) %>% mutate(type = "Training"),
-    r_model$prediction %>% filter(wflow_id == "Treatment_lm") %>% unnest(prediction_train) %>%
+    r_model$prediction %>% filter(wflow_id == "Treatment3_lm") %>% unnest(prediction_train) %>%
         yardstick::rmse(., costs, .pred) %>% mutate(type = "Test"),
 )
 
 p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$prediction %>% unnest(prediction_train)) %>%
-    filter(wflow_id %in% c("Intercept_lm", "Treatment_lm")) %>%
+    filter(wflow_id %in% c("Intercept_lm", "Treatment3_lm")) %>%
     mutate(wflow_id = ifelse(wflow_id == "Intercept_lm", "Intercept Only", "Best Model")) %>%
     ggplot(aes(costs, .pred, color = wflow_id, group = wflow_id)) +
     ylab("Prediction [log(Euro)]") +
@@ -168,17 +177,18 @@ fSaveImages(p, "model-pred", w = 8, h = 5)
 saveRDS(r_model, "output/r-model.rds")
 
 # Should report some perfomrance tests?
-# library(performance)
-# m1 <- extract_model(r_model$fitted$fitted[[1]])
-# m2 <- extract_model(r_model$fitted$fitted[[2]])
-# m3 <- extract_model(r_model$best_model)
-#
-# performance::check_collinearity(m) # looks good
-# performance::check_autocorrelation(m) # looks good
-# performance::check_heteroscedasticity(m) # http://www.statsmakemecry.com/smmctheblog/confusing-stats-terms-explained-heteroscedasticity-heteroske.html
-# performance::check_homogeneity(m, method = "auto") # looks good
-# performance::check_normality(m) # fails but test will most often resul tin non-normality
-# performance::check_outliers(m) # ok
-# performance::performance_accuracy(m) # we could report this
-# performance::test_performance(m1, m2, m3)
-# performance::compare_performance(m1, m2, m3)
+library(performance)
+m <- extract_model(r_model$best_model)
+
+m1 <- extract_model(r_model$fitted$fitted[[1]])
+m2 <- extract_model(r_model$fitted$fitted[[2]])
+m3 <- extract_model(r_model$best_model)
+performance::check_collinearity(m) # looks good
+performance::check_autocorrelation(m) # looks good
+performance::check_heteroscedasticity(m) # http://www.statsmakemecry.com/smmctheblog/confusing-stats-terms-explained-heteroscedasticity-heteroske.html
+performance::check_homogeneity(m, method = "auto") # looks good
+performance::check_normality(m) # fails but test will most often result in non-normality
+performance::check_outliers(m) # ok
+performance::performance_accuracy(m) # we could report this
+performance::test_performance(m2, m3, denominator = m1)
+bayestestR::bayesfactor_models(m2, m3, denominator = m1)

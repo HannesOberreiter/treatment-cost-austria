@@ -6,6 +6,7 @@
 
 ```{r}
 library(tidymodels)
+library(multilevelmod)
 library(dotwhisker) # for visualizing regression results
 library(embed)
 library(vip) # variable importance plots
@@ -46,7 +47,7 @@ tmp <- dfClean %>%
 nrow(tmp)
 
 # Put 3/4 of the data into the training set
-data_split <- rsample::initial_split(tmp, prop = 3 / 4)
+data_split <- rsample::initial_split(tmp, prop = 9 / 10)
 nrow(data_split)
 train_data <- rsample::training(data_split)
 test_data <- rsample::testing(data_split)
