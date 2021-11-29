@@ -170,15 +170,14 @@ The operational factor question analysis (Migratory Beekeeper and Certified Orga
 
 ### Multiple Regression - Prediction
 
-To evaluate how good the selected questions can be used for prediction of the treatment expenses multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. 
+To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_10$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer "Yes" or "No" for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Tab. \@ref(tab:factor-removed)).
 
-(Insert log10 Distribution results)
+(ref:model-qq) QQ-Plot of $\log_10$ transformed normalization of (A) treatment expenses per colony and (B) number of honeybee colonies wintered.
+```{r model-qq, include=T, fig.cap="(ref:model-qq)"}
+include_custom("output/figs/model-qq.png")
+```
 
-Data preprocessing included removing the single zero expenses answer. Normalization  $log_10$ transform of expenses and number of colonies wintered
-
-So, these two features are in very different ranges. When we do further analysis, like multivariate linear regression, for example, the attributed income will intrinsically influence the result more due to its larger value. But this doesn’t necessarily mean it is more important as a predictor. So we normalize the data to bring all the variables to the same range.
-
- only participants which did not answers the afore mentioned operational factors or did answer "Uncertain" were removed, to simplify the model parameters (Tab. \@ref(tab:factor-removed)). Treatment methods were binary transformed, if the participants did use it in any of the month in the survey to 1 (True) otherwise if not applied to 0 (False). Model fitting was done with 3/4 of the original dataset (n = `r nrow(r_model$train_data)`), first model evaluation was done with standard parameters (eg. $R^2$, AIC, BIC) and out of sample evaluation was done with `r nrow(r_model$test_data)` rows to account for possible overfitting. Importance plot of variables based on @vip2020.
+Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`. Best model selection was selected based on lowest AIC and BIC value. Importance plot of variables based on @vip2020.
 
 ```{r factor-removed, include=T}
 cn <- c("Question", "Year", "Participants [n]", "Answer")
@@ -202,6 +201,6 @@ rm(cn, c, tab)
 
 ### Loss Rate
 
-Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013]. To minimize the variation in the varroa control methods and their combination, the drone brood removal was removed, as it led to only low common combinations. For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
+Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013], which corresponds to the observed total loss rate in each group. To minimize the variation in the varroa control methods and their combination, the drone brood removal was removed, as it led to only low common combinations. For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
 
 For the analysis of expenses and operation size, we grouped survey participants by the number of colonies wintered into following groups: 1-20, 21-50 and more than 50. Data distribution analysis was done with QQ-plots and boxplots. The operation factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers "Yes", "No", "Uncertain". The category "Uncertain" and participants which did not answers the question were not used in statistical analysis.

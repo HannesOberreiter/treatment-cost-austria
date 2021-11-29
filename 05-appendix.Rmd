@@ -30,3 +30,7 @@ include_custom("output/figs/organic-permutation.png")
 ```{r migratory-permutation, include=T, fig.cap="(ref:size-permutation)"}
 include_custom("output/figs/migratory-permutation.png")
 ```
+
+```{r model-qq-residuals, include=T, fig.cap="Distribution of model residuals after fitting from the selected best model on the training dataset."}
+include_custom("output/figs/model-qq-residuals.png")
+```
