@@ -177,7 +177,7 @@ To evaluate if and how well the selected questions can be used for prediction of
 include_custom("output/figs/model-qq.png")
 ```
 
-Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`. Best model selection was selected based on lowest AIC and BIC value. Importance plot of variables based on @vip2020.
+Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`. Best model selection was selected based on lowest AIC and BIC value.
 
 ```{r factor-removed, include=T}
 cn <- c("Question", "Year", "Participants [n]", "Answer")
@@ -185,7 +185,7 @@ c <- "Number of participants which were removed in the single factor analysis an
 tab <- knitr::kable(
   mmList$single_factor_drop %>%
     mutate(
-      year = paste0("20", year)
+      year = paste0("20", year),
     ) %>%
     select(name, year, n, value),
   booktabs = TRUE,

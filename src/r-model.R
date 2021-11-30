@@ -193,7 +193,7 @@ r_model$coeff <- extract_fit_parsnip(r_model$best_model) %>%
             name == "hives_winter" ~ "Number of colonies",
             name == "op_cert_org_beekJa" ~ "Certified Organic",
             name == "op_migratory_beekeeperJa" ~ "Migratory Beekeeper",
-            TRUE ~ paste0("(T) ", tname)
+            TRUE ~ paste0("T. ", tname)
         ),
         tname = forcats::fct_reorder(tname, estimate)
     )
@@ -223,7 +223,8 @@ p <- r_model$coeff %>%
     ylab("Coefficients") +
     theme(
         panel.grid.major.y = element_line(),
-        panel.grid.major.x = element_line()
+        panel.grid.major.x = element_line(),
+        axis.text.y = element_text(hjust = 0)
     )
 
 fSaveImages(p, "model-whisker", w = 8, h = 5)
@@ -281,17 +282,20 @@ r_model$prediction_stats <- bind_rows(
 
 p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$prediction %>% unnest(prediction_train)) %>%
     filter(wflow_id %in% c("Intercept_lm", "Treatment_lm")) %>%
-    mutate(wflow_id = ifelse(wflow_id == "Intercept_lm", "Intercept Only", "Best Model")) %>%
+    mutate(
+        wflow_id = ifelse(wflow_id == "Intercept_lm", "Intercept Only", "Best Model"),
+        wflow_id = forcats::fct_relevel(wflow_id, "Best Model", after = 1)
+    ) %>%
     left_join(r_model$prediction_stats) %>%
     mutate(label = glue("{type} (RMSE: {round(.estimate,2)})")) %>%
     ggplot(aes(costs, .fitted, color = wflow_id, group = wflow_id)) +
     ylab("Prediction [log(Euro)]") +
     xlab("Survey [log(Euro)]") +
-    geom_point(alpha = .15, show.legend = FALSE) +
+    geom_point(alpha = .15, show.legend = FALSE, color = "black") +
     geom_smooth(method = "lm") +
     geom_abline(color = colorBlindBlack8[8]) +
     labs(color = "") +
-    ggplot2::scale_color_manual(values = colorBlindBlack8[1:2]) +
+    ggplot2::scale_color_manual(values = colorBlindBlack8[2:3]) +
     coord_obs_pred() +
     facet_wrap(~label) +
     # https://stackoverflow.com/questions/21066077/remove-fill-around-legend-key-in-ggplot
