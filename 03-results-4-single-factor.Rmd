@@ -1,0 +1,101 @@
+## Operational factor analysis
+```{r, include=FALSE}
+if (file.exists("output/r-operational.rds")) {
+    r_operational <- readRDS("output/r-operational.rds")
+} else {
+    source("src/r-operational.R", local = knitr::knit_global())
+}
+```
+
+Most questions in the survey are related to winter colony losses but two operational questions could give more insight into the expenses spend by beekeepers for their treatment method. This two are if the beekeeper migrates with his colonies and if it is an organic certified beekeeping operation, with possible answers "Yes", "No". If survey participants did answer "Unsure" or did not answer at all it was not used for the factor analysis. Additionally I look at the operation size, which can also be seen as operational questions.
+
+### Operation size
+
+Operation sizes and number of participants in our survey are not normally distributed, with most participants managing less than 20 colonies and a few big operation with over one hundred colonies, see figure \@ref(fig:size-distr). The participants were grouped into two groups, beekeepers with 25 or less colonies, which should represent recreational beekeepers, and the ones with more than 25 colonies, which should represent side-line and professional operations (table \@ref(tab:size-table)). The given operation size groups show statistical significant difference in all survey years, whereas the smaller beekeeping operations spend on average and median more per colony as the beekeepers with more than 25 colonies (figure \@ref(fig:size-stats)). The absolute median difference between the groups is between `r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` Euro per colony. 
+
+
+(ref:size-distr) Distribution of operation size over the three survey years. Colonie numbers based on the reported colonies going into winter.
+
+```{r size-distr, include=T, fig.cap="(ref:size-distr)", out.width="80%"}
+include_custom("output/figs/size-distr.png")
+```
+
+```{r size-table, include=T}
+c <- "Operation size distribution and measures of central tendency over the three survey years."
+cn <- c("Operation Size", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+tab <- kable(
+    r_operational$size$table %>% select(-year),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", rep("r", 4)),
+    caption = c
+) %>%
+    pack_rows("2018/19", 1, 2) %>%
+    pack_rows("2019/20", 3, 4) %>%
+    pack_rows("2020/21", 5, 6)
+tab
+rm(cn, c, tab)
+```
+
+(ref:size-stats) Boxplot and test results of expenses in the two given operation size groups, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
+
+```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="80%"}
+include_custom("output/figs/size-stats.png")
+```
+
+### Certified organic beekeeping operation
+
+Only `r r_operational$organic$summary$np[[2]]`% of the survey participants are certified organic, see table \@ref(tab:organic-table). Participants who are a certified organic operation have signifikant lower treatment expenses per colony on average and median than participants without certificate \@ref(fig:organic-stats). The absolute median difference between the groups is between `r min(r_operational$organic$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` Euro per colony.
+
+```{r organic-table, include=T}
+c <- "Certified organic beekeeping operation distribution and measures of central tendency over the three survey years."
+cn <- c("Certified Organic", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+tab <- kable(
+    r_operational$organic$table %>% select(-year),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", rep("r", 4)),
+    caption = c
+) %>%
+    pack_rows("2018/19", 1, 2) %>%
+    pack_rows("2019/20", 3, 4) %>%
+    pack_rows("2020/21", 5, 6)
+tab
+rm(cn, c, tab)
+```
+
+(ref:organic-stats) Boxplot and test results of expenses in if survey participant is certified organic or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
+
+```{r organic-stats, include=T, fig.cap="(ref:organic-stats)", out.width="80%"}
+include_custom("output/figs/organic-stats.png")
+```
+
+### Migratory beekeeper
+
+The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). A total of `r r_operational$migratory$summary$np[[2]]`% of the survey participants are migrating with their colonies, see table \@ref(tab:migratory-table). Participants who migrate their colonies have signifikant lower treatment expenses per colony on average and median than non-migratory beekeepers \@ref(fig:migratory-stats). The absolute median difference between the groups is between `r min(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` Euro per colony.
+
+```{r migratory-table, include=T}
+c <- "Migratory beekeeper distribution and measures of central tendency over the three survey years."
+cn <- c("Migratory Beekeeper", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
+tab <- kable(
+    r_operational$migratory$table %>% select(-year),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", rep("r", 4)),
+    caption = c
+) %>%
+    pack_rows("2018/19", 1, 2) %>%
+    pack_rows("2019/20", 3, 4) %>%
+    pack_rows("2020/21", 5, 6)
+tab
+rm(cn, c, tab)
+```
+
+(ref:migratory-stats) Boxplot and test results of expenses in if migratory beekeeping operation or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
+
+```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="80%"}
+include_custom("output/figs/migratory-stats.png")
+```

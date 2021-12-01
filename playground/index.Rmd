@@ -1,0 +1,15 @@
+```{r}
+
+# Set a seed for your jitter
+# afaik not supported in the geom_jitter
+jitter <- position_jitter(width = 0.1, seed = 666)
+iris %>%
+    mutate(ID = 1:nrow(.)) %>%
+    pivot_longer(c("Sepal.Length", "Petal.Length")) %>%
+    # We need to arrange our group and values
+    # https://github.com/tidyverse/ggplot2/issues/3535
+    arrange(ID, value) %>%
+    ggplot(aes(x = name, y = value, group = ID)) +
+    geom_line(position = jitter) +
+    geom_point(position = jitter)
+```

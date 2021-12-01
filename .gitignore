@@ -10,10 +10,15 @@
 
 .DS_Store
 
+# Bookdown
+_bookdown_files/
+_book/ 
 
 # knitr and R markdown default cache directories
 *_cache/
 /cache/
+/libs/
+/Treatment-Costs_files/
 
 # Temporary files created by R markdown
 *.utf8.md

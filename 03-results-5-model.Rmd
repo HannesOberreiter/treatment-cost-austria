@@ -1,0 +1,76 @@
+## Multiple Regression
+
+Starting with the base model including only the reported number of colonies wintered ($log_{10}$), the linear regression model did improve by adding the operational factors and treatment methods. Adding states as covariate did improve the $R^2$ value (0.142) but showed higher AIC and BIC, indicating that the penalization of the additional factors is higher than the gain and could lead to possible overfitting \@ref(tab:model-table). The best model with lowest AIC and BIC scores was with all predictors without states (AIC: 1844, BIC: 1939). The residual of the best model fit show a normal distribution (Appendix Fig: \@ref(fig:model-qq-residuals)).
+
+```{r model-table, include=T}
+c <- "Summary of model fit. Base model only includes number of colonies wintered, operational the two questions migratory beekeeper and certified organic beekeeper. The eleven treatment methods are binary encoded, excluded is drone brood removal."
+cn <- c("Model", "$R^2$", "adj. $R^2$", "df", "logLik", "AIC", "BIC")
+tab <- kable(
+    r_model$fitted %>%
+        mutate(
+            model = c("Intercept", "Base", "$+$ Operational", "$+$ Treatment Methods", "$+$ States"),
+            df = ifelse(is.na(df), 0, df),
+            across(logLik:BIC, round)
+        ) %>%
+        select(model, r.squared, adj.r.squared, df:BIC),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 3,
+    align = c("l", rep("r", 9)),
+    caption = c,
+    escape = FALSE
+)
+tab
+rm(cn, c, tab)
+```
+
+The intercept of the best model, which would be a hypotheical beekeeper without any colonies, no migratory, no certified organic and no applied treatments is at `r round(r_model$coeff_intercept[2], 2)` Euro (SE: `r round(r_model$coeff_intercept[1], 2)`). 
+
+```{r model-best, include=T}
+c <- "Summary of the coefficients of the selected best model and statistic results. Terms starting with 'T.' are treatment methods. Significant stars are labeled based on the p-value (*** < 0.001, ** < 0.01, * <= 0.05, n.s. (not significant) > 0.5). SE = Standard Error."
+cn <- c("Term", "Estimate", "SE", "Statistic (t)", "p", "")
+tab <- kable(
+    r_model$coeff %>%
+        mutate(
+            tname = str_replace(tname, "T.", "T."),
+            p.star = case_when(
+                p.value < 0.001 ~ "***",
+                p.value < 0.01 ~ "**",
+                p.value <= 0.5 ~ "*",
+                TRUE ~ "n.s."
+            ),
+            p.value = ifelse(
+                p.value > 0.5,
+                base::format(round(p.value, 2), digits = 3, scientific = FALSE, nsmall = 1),
+                base::format(p.value, digits = 3, scientific = TRUE, nsmall = 1)
+            ),
+        ) %>%
+        select(tname, estimate:p.value, p.star),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 3,
+    align = c("l", rep("r", 4), "c"),
+    caption = c
+)
+tab
+rm(cn, c, tab)
+```
+
+```{r model-whisker, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods.", out.width="80%"}
+include_custom("output/figs/model-whisker.png")
+```
+
+The predictive ability of our model and selected predcitors is low with an accuracy based on correlation between observed and predicted in the training set of `r round(r_model$performance_accuracy_best$Accuracy, 2)`% (SE: `r round(r_model$performance_accuracy_best$SE, 2)`). The root mean square error for the training dataset (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 2)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Testing") %>% pull(.estimate) %>% round(., 2)`) are similar, showing low probability of overfitting (Fig. \@ref(fig:model-pred)).
+
+```{r model-pred, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red).", out.width="80%"}
+include_custom("output/figs/model-pred.png")
+```
+
+
+
+
+
+
+
+
+

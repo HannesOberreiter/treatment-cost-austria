@@ -1,0 +1,37 @@
+# Appendix {-}
+
+```{r motivation-comb-full, include=T}
+cn <- c("Motivation", "Answers", "Motivations")
+c <- "Top 25 answers given by participants and the chosen combinations if multiple answers were selected. 'Answers' is the count this combination was picked and 'Motivations' are the number of different answers."
+tab <- knitr::kable(
+    r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 25),
+    align = c("l", rep("r", 2)),
+    booktabs = TRUE,
+    row.names = FALSE,
+    col.names = cn,
+    # format = "markdown",
+    caption = c
+) %>%
+    kable_styling(latex_options = "scale_down")
+tab
+rm(tab, c, cn)
+```
+
+
+(ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red Line point estimate for median difference, yellow area 95% confidence interval of point estimate. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. If *p*-value is reported as "\*\*\*" more permutation would be needed to calculate a precise *p*-value.
+
+```{r size-permutation, out.width="80%", include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/size-permutation.png")
+```
+
+```{r organic-permutation, out.width="80%", include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/organic-permutation.png")
+```
+
+```{r migratory-permutation, out.width="80%", include=T, fig.cap="(ref:size-permutation)"}
+include_custom("output/figs/migratory-permutation.png")
+```
+
+```{r model-qq-residuals, out.width="50%", include=T, fig.cap="Distribution of model residuals after fitting from the selected best model on the training dataset."}
+include_custom("output/figs/model-qq-residuals.png")
+```

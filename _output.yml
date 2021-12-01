@@ -1,0 +1,8 @@
+pdf_document2:
+  citation_package: biblatex
+  toc: false
+  keep_tex: true
+  includes:
+    in_header: "latex/preamble.tex"
+    before_body: "latex/header.tex"
+    after_body: "latex/footer.tex"

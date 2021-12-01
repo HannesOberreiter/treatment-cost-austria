@@ -1,0 +1,67 @@
+# Results
+## Survey Data
+### Representative and distribution of sample
+
+```{r, include=FALSE}
+source("src/r-survey.R", local = knitr::knit_global())
+```
+
+Compared to the number of registered beekeeper and honey bee colonies with the reported numbers from the national beekeeping association "Biene Österreich"[^r-vis], the number of participation with valid answers including costs for survey year 2018/19 with `r r_survey$response$rate_beekeeper[[1]]`%, survey year 2019/20 with `r r_survey$response$rate_beekeeper[[2]]`% and 2020/21 with `r r_survey$response$rate_beekeeper[[3]]`%, see table \@ref(tab:registered). The distribution map of participants shows good coverage all over Austria for all survey years (figure \@ref(fig:distr-map)).
+
+[^r-vis]: In Austria the registration of beekeepers, apiaries and honeybee colonies in the Consumer Health Information System (Verbrauchergesundheitsinformationssystem - VIS) has been implemented into the national Animal Identification and Registration Regulation 2009 (Tierkennzeichnungs- und Registrierungsverordnung, § 1 TKZVO 2009 idF II 193/2015) from 8th of July 2015.
+
+```{r registered, include=T}
+cn <- c("Year", "Total", "Survey", "%", "Total", "Survey", "%")
+c <- "Percentage of survey participants in relation to the amount of registered beekeepers with the national beekeeping association Biene Österreich (2018 and 2019)."
+tab <- knitr::kable(
+  r_survey$response %>%
+    select(year, beekeeper, survey_beekeeper, rate_beekeeper, colonies, survey_colonies, rate_colonies),
+  booktabs = TRUE,
+  row.names = FALSE,
+  col.names = cn,
+  # format = "markdown",
+  caption = c
+) %>%
+  kableExtra::add_header_above(c("", "Beekeeper [n]" = 3, "Colonies [n]" = 3))
+tab
+rm(tab, c, cn)
+```
+
+```{r distr-map, include=T, fig.cap="Distribution map of approximnate main winter apiary position for our survey participants. Shapefiles under Creative Commons https://www.data.gv.at/"}
+include_custom("output/figs/map.png")
+```
+
+The over all survey years the mean equals to `r r_survey$summary$survey_total$mean` euro and the median to `r r_survey$summary$survey_total$median`, see table \@ref(tab:central). The distribution of treatment expenses per colony is right skewed with high values above 100 euro. The years are similar in their distribution, see figure \@ref(fig:distr-year). The distribution shows that participants preferable answer in round estimates eg. 5.00, 10.00, 15.00 Euros.
+
+```{r distr-year, out.width="80%", include=T, messages=F, warnings=F, fig.cap="Disitrubtion of the expenses for each survey year, values above 50 are not visible."}
+include_custom("output/figs/distr-year.png")
+```
+
+```{r central, include=T}
+cn <- c("Year", "Minimum", "Mean", "Median", "Max", "n")
+c <- "Survey central tendency values for treatment expenses per colony for all years and additionaly over all years."
+tab <- knitr::kable(
+  dplyr::bind_rows(r_survey$summary$survey_table, r_survey$summary$survey_total) %>%
+    select(-type) %>%
+    mutate(
+      year = ifelse(year == "total", "All Years", paste0("20", year))
+    ),
+  align = c("l", rep("r", 5)),
+  booktabs = TRUE,
+  row.names = FALSE,
+  col.names = cn,
+  # format = "markdown",
+  caption = c
+) %>%
+  kableExtra::pack_rows(start_row = 4, end_row = 4, indent = FALSE)
+tab
+rm(tab, c, cn)
+```
+
+### Distribution of Participants in groups of interest
+
+The most common group in the survey are recreational beekeepers, which I defined as participants with 25 or less colonies (figure \@ref(fig:distr-groups)). Second most are beekeepers with more than 25 colonies. Only a small portion of participants are certified organic or migratory beekeepers and even less both combined. The observed distribution is similar over all three survey years, a small decline in recreational beekeepers which are also report to migrate their colonies can be seen.
+
+```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants in groups of interest for each year. Percentage reported stands respectivley for the survey years 2018/19, 2019/20 and 2020/21. Recreational Beekeepers are participants with 25 or less colonies going into winter.", out.width="80%"}
+include_custom("output/figs/distr-groups.png")
+```

@@ -1,0 +1,12 @@
+# Discussion
+
+## Estimates
+
+
+
+
+
+
+## Limitations and Sample Representative 
+
+The survey was only online available and was not mandatory. Therefore, we cannot say that our sample represents the beekeeper population in Austria as the sample was not selected randomly from the population [@vanderzee2013]. In Austria all Beekeeprs must officially register with the "Veterinärinformationssystem" part of the Statistics Austria, but access to this data is limited and only available for prevention of diseases and therefore we cannot use this dataset to select a random sampel of the beekeepers population. Therefore, estimates should be viewed with cautions, and could have a potential selection biases and survey errors [@heeringa2010]. The experience from previous surveys results about the colony losses and the relatively high participation rate and different operation sizes are still a good indicator for a good sample.
