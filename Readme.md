@@ -16,7 +16,7 @@ Because of privacy concerns the data is not public available but can be requests
 
 ## LaTeX Template
 
-This thesis was typeset with \LaTeXe. It uses the \textit{Clean Thesis} style developed by Ricardo Langner. The design of the \textit{Clean Thesis} style is inspired by user guide documents from Apple Inc.
+This thesis was typeset with LaTeX. It uses the *Clean Thesis* style developed by Ricardo Langner. The design of the *Clean Thesis* style is inspired by user guide documents from Apple Inc.
 
 ## Shape Files
 
