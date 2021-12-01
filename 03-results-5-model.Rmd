@@ -8,7 +8,7 @@ cn <- c("Model", "$R^2$", "adj. $R^2$", "df", "logLik", "AIC", "BIC")
 tab <- kable(
     r_model$fitted %>%
         mutate(
-            model = c("Intercept", "Base", "\\+ Operational", "\\+ Treatment Methods", "\\+ States"),
+            model = c("Intercept", "Base", "$+$ Operational", "$+$ Treatment Methods", "$+$ States"),
             df = ifelse(is.na(df), 0, df),
             across(logLik:BIC, round)
         ) %>%
@@ -32,11 +32,11 @@ cn <- c("Term", "Estimate", "SE", "Statistic (t)", "p", "")
 tab <- kable(
     r_model$coeff %>%
         mutate(
-            tname = str_replace(tname, "T.", "\\T."),
+            tname = str_replace(tname, "T.", "T."),
             p.star = case_when(
-                p.value < 0.001 ~ "\\***",
-                p.value < 0.01 ~ "\\**",
-                p.value <= 0.5 ~ "\\*",
+                p.value < 0.001 ~ "***",
+                p.value < 0.01 ~ "**",
+                p.value <= 0.5 ~ "*",
                 TRUE ~ "n.s."
             ),
             p.value = ifelse(
@@ -56,13 +56,13 @@ tab
 rm(cn, c, tab)
 ```
 
-```{r model-whisker, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods."}
+```{r model-whisker, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods.", out.width="80%"}
 include_custom("output/figs/model-whisker.png")
 ```
 
 The predictive ability of our model and selected predcitors is low with an accuracy based on correlation between observed and predicted in the training set of `r round(r_model$performance_accuracy_best$Accuracy, 2)`% (SE: `r round(r_model$performance_accuracy_best$SE, 2)`). The root mean square error for the training dataset (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 2)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Testing") %>% pull(.estimate) %>% round(., 2)`) are similar, showing low probability of overfitting (Fig. \@ref(fig:model-pred)).
 
-```{r model-pred, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red)."}
+```{r model-pred, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red).", out.width="80%"}
 include_custom("output/figs/model-pred.png")
 ```
 

@@ -1,34 +1,31 @@
 ---
-title: Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa Destructor*
-subtitle: Analysis of varroacide expenses and honey bee colony winter mortality on operation level in Austria
-author: 
-  - name: "Hannes Oberreiter (01619771)"
-    affiliation: University of Graz, Institute for Biology
-    url: https://info.btree.at
-date: 'XXX 2021'
-output:
-  bookdown::gitbook:
-    split_bib: no
-    config:
-      fontsettings:
-        theme: night
-        family: sans
-        size: 2
-  bookdown::pdf_document2:
-    keep_tex: yes
-site: bookdown::bookdown_site
+documentclass: scrreprt
 header-includes:
 - \usepackage{hyperref}
 - \usepackage{float}
-- \usepackage{caption}
-- \captionsetup[figure]{font=small}
 - \usepackage{siunitx}
 - \usepackage{threeparttable}
-bibliography: bib.bibtex
-biblio-style: authoryear
+- \usepackage{multirow}
+bibliography: bib-refs.bib
+biblatexoptions: [
+    backend=biber,
+    style=authoryear,
+		natbib=true,				
+		hyperref=true,			
+		backref=false,		
+		isbn=false,						
+		url=false,					
+		doi=false,
+    date=year,			
+		urldate=long,	
+		maxnames=3,
+		minnames=1,
+		maxbibnames=99,
+		minbibnames=1,
+		maxcitenames=2,
+		mincitenames=1,
+    ]
 link-citations: yes
-urlcolor: blue
-abstract: Exploratory analysis on the yearly colony loss survey in Austria, with the focus on treatment expenses. Bigger beekeeping operations have on average lower varrocide expenses than smaller operations. Certified organic beekeeper and migratory beekeeper spend also on average less money on the consumeables. 
 ---
 ```{r, warning=F, echo=F, include=F}
 # special case for PDF and table as they otherwise wont work
@@ -38,7 +35,3 @@ if (knitr::is_latex_output()) {
   options(knitr.table.format = "html")
 }
 ```
-
-# Preface {-}
-
-This book represents my master thesis in all its glory. The foundation of the work is a citizen science survey of the yearly managed bee colony overwinter losses in Austria. I did work with this data already intensive as part of my bachelor degree and was further involved in the project "Zukunft Biene 2" were this survey is part of. This means I already have a good and deep knowledge about the data. The analysis for my master thesis includes three survey years 2018/19, 2019/20 and 2020/21. The difference do the previous work I did with the data is that this time I wanted to generate a bridge between biological analysis and a more economic driven thematic. The main questions of interest is the expenses per colony of consumables to treat against the aggressor *Varroa destructor*. The work was meant to be helpful for beekeepers in further decision making which treatment is not only effective but also keeps the expenses in mind. Another big point on my list was that the analysis is  reproducibility in the mindset of open source, I publish all of my cleaned and commented code in a GitHub repository. This should help to understand the approach and gives a good starting point for other studies and countries who want to carry out a similar study.

@@ -5,7 +5,6 @@ Statistical analysis of the treatment expenses against **Varroa Desctructor** wi
 ## Build Book
 
 `bookdown::render_book("index.Rmd", "pdf_document2")`
-`bookdown::render_book("index.Rmd", "gitbook")`
 
 ## Version Control
 
@@ -14,6 +13,10 @@ Version control is done with the package renv, the `renv.lock` can be found in t
 ## Data Availability
 
 Because of privacy concerns the data is not public available but can be requests if good reason is given.
+
+## LaTeX Template
+
+This thesis was typeset with \LaTeXe. It uses the \textit{Clean Thesis} style developed by Ricardo Langner. The design of the \textit{Clean Thesis} style is inspired by user guide documents from Apple Inc.
 
 ## Shape Files
 

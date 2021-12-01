@@ -1,0 +1,82 @@
+% **************************************************
+% Files' Character Encoding
+% **************************************************
+\PassOptionsToPackage{utf8}{inputenc}
+\usepackage{inputenc}
+\DeclareUnicodeCharacter{2212}{-}
+
+% **************************************************
+% Information and Commands for Reuse
+% **************************************************
+%\newcommand{\thesisTitle}{Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa Destructor*}
+%\newcommand{\thesisTitle}{Analysis of varroacide expenses and honey bee colony winter mortality on operation level in Austria}
+\newcommand{\thesisTitle}{Beekeeper Citizen Science Survey, comparing Expenses and Efficiency of Treatment Methods against the introduced Varroa Mite.}
+\newcommand{\thesisName}{Hannes Oberreiter (01619771)}
+\newcommand{\thesisSubject}{Master's Thesis}
+\newcommand{\thesisDate}{2021}
+\newcommand{\thesisVersion}{Dev}
+
+\newcommand{\thesisFirstReviewer}{}
+\newcommand{\thesisFirstReviewerUniversity}{\protect{ }}
+\newcommand{\thesisFirstReviewerDepartment}{ }
+
+\newcommand{\thesisSecondReviewer}{ }
+\newcommand{\thesisSecondReviewerUniversity}{\protect{ }}
+\newcommand{\thesisSecondReviewerDepartment}{}
+
+\newcommand{\thesisFirstSupervisor}{Robert Brodschneider}
+\newcommand{\thesisSecondSupervisor}{}
+
+\newcommand{\thesisUniversity}{\protect{University of Graz}}
+\newcommand{\thesisUniversityDepartment}{}
+\newcommand{\thesisUniversityInstitute}{Institute of Biology}
+\newcommand{\thesisUniversityGroup}{}
+\newcommand{\thesisUniversityCity}{Graz}
+\newcommand{\thesisUniversityStreetAddress}{Universitätsplatz 3}
+\newcommand{\thesisUniversityPostalCode}{8010}
+
+
+% **************************************************
+% Debug LaTeX Information
+% **************************************************
+%\listfiles
+
+
+% **************************************************
+% Load and Configure Packages
+% **************************************************
+\usepackage[english]{babel} % babel system, adjust the language of the content
+\PassOptionsToPackage{% setup clean thesis style
+    figuresep=colon,%
+    hangfigurecaption=false,%
+    hangsection=true,%
+    hangsubsection=true,%
+    sansserif=false,%
+    configurelistings=true,%
+    colorize=full,%
+    colortheme=unigraz,%
+    configurebiblatex=false,%
+    %bibsys=biber,%
+    %bibfile=bib-refs,%
+    %bibstyle=alphabetic,%
+    %bibsorting=nty,%
+}{cleanthesis}
+\usepackage{latex/cleanthesis}
+
+\hypersetup{% setup the hyperref-package options
+    pdftitle={\thesisTitle},    %   - title (PDF meta)
+    pdfsubject={\thesisSubject},%   - subject (PDF meta)
+    pdfauthor={\thesisName},    %   - author (PDF meta)
+    plainpages=false,           %   -
+    colorlinks=true,           %   - colorize links?
+    pdfborder={0 0 0},          %   -
+    breaklinks=true,            %   - allow line break inside links
+    bookmarksnumbered=true,     %
+    bookmarksopen=true          %
+    colorlinks = true,
+    linkcolor=.,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+

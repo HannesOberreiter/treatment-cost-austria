@@ -43,7 +43,7 @@ libs <- c(
 # Load Libraries with function, install binary if not installed (mac binaries are defined!)
 # x = Libraries name as String
 fLoadLibs <- function(x) {
-  if (!require(x, character.only = TRUE)) install.packages(x, type = "mac.binary")
+  #if (!require(x, character.only = TRUE)) install.packages(x, type = "mac.binary")
   library(x, character.only = TRUE)
   return(T)
 }
