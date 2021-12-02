@@ -1,0 +1,7 @@
+## Treatment Methods Overview
+
+
+
+```{r treatment-heat, include=T, fig.cap="Summary of treatment methods over all years and how many participants did answer in one month. Amount is color coded as heatmap with more answer in darker colors and less answer in lighter colors. Months with zero answers for a treatment are in gray. 'Oxalic acid - pure' trickling or spraying without ready made mixtures, synthetic methods includes Amitraz, Coumaphos, and other synthetic methods.", out.width="100%"}
+include_custom("output/figs/model-pred.png")
+```
