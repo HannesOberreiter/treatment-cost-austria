@@ -37,13 +37,14 @@ r_motivation$counts_state <- dfMotivation %>%
     filter(value == "Ja") %>%
     group_by(state) %>%
     mutate(
-        state = stringr::str_replace_all(state, stateList),
+        state_de = state,
+        state_en = stringr::str_replace_all(state_de, stateList),
         state_print = glue::glue("{state} (n={length(unique(id))})")
     ) %>%
     ungroup() %>%
     add_count(short, name = "total_count") %>%
     add_count(state, name = "state_count") %>%
-    group_by(desc, short, state_print) %>%
+    group_by(desc, short, state_print, state_de) %>%
     summarise(
         total_count = first(total_count),
         state_count = first(state_count),

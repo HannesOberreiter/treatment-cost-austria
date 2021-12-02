@@ -13,3 +13,69 @@ iris %>%
     geom_line(position = jitter) +
     geom_point(position = jitter)
 ```
+
+
+```{r}
+library(vegan)
+# https://stackoverflow.com/questions/23686028/how-the-command-distx-method-binary-calculates-the-distance-matrix
+m <- dfClean %>%
+    # dplyr::slice_sample(n = 500) %>%
+    dplyr::select(T_drone_01:T_other_12) %>%
+    mutate(
+        across(everything(), replace_na, replace = 0)
+    ) %>%
+    # zero columns have no value
+    dplyr::select(where(~ sum(.x) > 0)) # %>%
+# filter(rowSums(.) > 1)
+
+# https://stackoverflow.com/questions/48788876/mds-plots-of-binary-data-counterintuitive-clustering
+mds <- vegan::metaMDS(
+    m,
+    k = 3,
+    trace = TRUE,
+    autotransform = FALSE,
+    parallel = 8,
+    wascores = FALSE,
+    maxit = 999,
+    try = 200,
+    trymax = 500,
+    distance = "jaccard",
+    binary = FALSE
+)
+mds
+plot(mds)
+stressplot(mds)
+plot(mds, "sites")
+text(mds, "sites", pos = 3)
+```
+
+
+```{r}
+wordcloud <- r_motivation$counts_state %>%
+    group_by(state_de) %>%
+    slice_max(n = 3, order_by = p_state)
+
+centers <- mfStatesSimplify$geometry %>%
+    sf::st_centroid() %>%
+    st_coordinates() %>%
+    as_tibble()
+mfStatesC <- dplyr::bind_cols(mfStatesSimplify, centers)
+great_words <- mfStatesC %>%
+    left_join(wordcloud, by = c("BL" = "state_de"))
+
+p <- great_words %>%
+    ggplot2::ggplot(aes(x = X, y = Y, color = BL)) +
+    # Dirty helper for legend
+    geom_point() +
+    ggplot2::geom_sf(color = "gray20", fill = "lightgray") +
+    ggwordcloud::geom_text_wordcloud(
+        aes(label = desc, size = p_state),
+        grid_size = 0.5
+    ) +
+    ggplot2::scale_size(range = c(2, 5)) +
+    ggplot2::scale_colour_manual(values = c(colorBlindBlack8, "#882255")) +
+    ggplot2::coord_sf(clip = "off") +
+    xlab("") +
+    ylab("")
+fSaveImages(p, "temp", w = 15, h = 6)
+```
