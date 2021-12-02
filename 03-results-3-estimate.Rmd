@@ -36,7 +36,8 @@ kable(
     caption = c,
 ) %>%
     add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>%
-    footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.")
+    footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.") %>%
+    kable_styling(font_size = 7)
 rm(c, cn, d)
 ```
 
@@ -46,6 +47,6 @@ The $\log_2$ change can be seen as follows, one represent a double of the origin
 
 (ref:estimated-bland) $\log_2$ transformed mean difference between survey and estimated expenses of the treatment combinations with at least 10 beekeepers using it, over the three years of survey. Lines indicating mean and lower and upper two times standard deviations each with 95% confidence interval. Point size is the frequency count of each treatment method. Treatment combination above the two times standard deviations are colour coded and labeled, the label meaning is explained in \@ref(tab:common-comb).
 
-```{r estimates-bland, include=T, fig.cap="(ref:estimated-bland)", out.width="80%"}
+```{r estimates-bland, include=T, fig.cap="(ref:estimated-bland)", out.width="100%"}
 include_custom("output/figs/bland-altman.png")
 ```

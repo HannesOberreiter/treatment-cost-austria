@@ -46,16 +46,17 @@ With this method an estimate was calculated for each survey participants with th
 ```{r standard-cost, include=T}
 c <- "The calculated estimates for treatment expenses per method. Investments can be used long term (we calculate 10 years, eg. hyperthermia equipment) and are divided by the number of colonies. Material can also be used long term (7 years, eg. queen cages) but needs to be bought for each colony. Consumables are used for each colony (eg. formic acid long term was calculated with 200ml use of formic acid)."
 cn <- c("Methode", "Investment", "Material", "Consumables")
-kable(
+tab <- kbl(
   treatmentList[-1, c(3, 5:7)],
   booktabs = TRUE,
   row.names = FALSE,
-  format = "markdown",
+  # format = "markdown",
   caption = c,
   col.names = cn
 ) %>%
-  footnote(threeparttable = T, general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods; Other biotechnical methods do not include drone brood removal or hypothermia; Another method excludes synthetic methods.")
-
+  footnote(threeparttable = T, general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods; Other biotechnical methods do not include drone brood removal or hypothermia; Another method excludes synthetic methods.") %>%
+  kable_styling(font_size = 7)
+tab
 rm(c, cn)
 ```
 
@@ -89,9 +90,11 @@ kable(
   booktabs   = TRUE,
   row.names = FALSE,
   col.names  = cn,
-  format = "markdown",
+  # format = "markdown",
   caption    = c
-) # %>% kable_classic()
+) %>%
+  kable_styling(font_size = 7)
+
 rm(cn, c, common_single, nu, sin, col, m_colonies)
 ```
 
@@ -151,9 +154,9 @@ tab <- knitr::kable(
   booktabs = TRUE,
   row.names = FALSE,
   col.names = cn,
-  format = "markdown",
   caption = c
-)
+) %>%
+  kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
@@ -180,21 +183,26 @@ include_custom("output/figs/model-qq.png")
 Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`. Best model selection was selected based on lowest AIC and BIC value.
 
 ```{r factor-removed, include=T}
-cn <- c("Question", "Year", "Participants [n]", "Answer")
+# cn <- c("Question", "Year", "Participants [n]", "Answer")
+cn <- c("Year", "Participants [n]", "Answer")
 c <- "Number of participants which were removed in the single factor analysis and multiple regression model."
 tab <- knitr::kable(
   mmList$single_factor_drop %>%
     mutate(
       year = paste0("20", year),
+      year = ifelse(lag(year, default = "0") == year, "", year)
     ) %>%
-    select(name, year, n, value),
+    # select(name, year, n, value),
+    select(year, n, value),
   booktabs = TRUE,
   row.names = FALSE,
   col.names = cn,
   align = c("r", "c"),
   caption = c
 ) %>%
-  kableExtra::collapse_rows(columns = 1:2, valign = "top")
+  pack_rows("Certified Organic Beekeeper", 1, 6) %>%
+  pack_rows("Migratory Beekeeper", 7, 9) %>%
+  kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```

@@ -16,7 +16,7 @@ Operation sizes and number of participants in our survey are not normally distri
 
 (ref:size-distr) Distribution of operation size over the three survey years. Colonie numbers based on the reported colonies going into winter.
 
-```{r size-distr, include=T, fig.cap="(ref:size-distr)", out.width="80%"}
+```{r size-distr, include=T, fig.cap="(ref:size-distr)", out.width="100%"}
 include_custom("output/figs/size-distr.png")
 ```
 
@@ -33,14 +33,15 @@ tab <- kable(
 ) %>%
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
-    pack_rows("2020/21", 5, 6)
+    pack_rows("2020/21", 5, 6) %>%
+    kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
 
 (ref:size-stats) Boxplot and test results of expenses in the two given operation size groups, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
-```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="80%"}
+```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="100%"}
 include_custom("output/figs/size-stats.png")
 ```
 
@@ -61,14 +62,15 @@ tab <- kable(
 ) %>%
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
-    pack_rows("2020/21", 5, 6)
+    pack_rows("2020/21", 5, 6) %>%
+    kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
 
 (ref:organic-stats) Boxplot and test results of expenses in if survey participant is certified organic or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
-```{r organic-stats, include=T, fig.cap="(ref:organic-stats)", out.width="80%"}
+```{r organic-stats, include=T, fig.cap="(ref:organic-stats)", out.width="100%"}
 include_custom("output/figs/organic-stats.png")
 ```
 
@@ -89,13 +91,14 @@ tab <- kable(
 ) %>%
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
-    pack_rows("2020/21", 5, 6)
+    pack_rows("2020/21", 5, 6) %>%
+    kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
 
 (ref:migratory-stats) Boxplot and test results of expenses in if migratory beekeeping operation or not, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
 
-```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="80%"}
+```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="100%"}
 include_custom("output/figs/migratory-stats.png")
 ```
