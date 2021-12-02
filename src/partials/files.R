@@ -80,7 +80,7 @@ dfData$submitted[grepl("Z", dfData$id, fixed = TRUE)] <- "Newspaper"
 # Helper, change this do change months for grouping
 seasons <- tibble(
   name = c("spring", "summer", "winter"),
-  rcol = c("0[1-2]", "0[3-7]", "0[8-9]"),
+  rcol = c("0[1-2]", "0[3-7]", "[0,1][8-9,0]"),
   short = c("SP", "SU", "WI"),
   desc = c("SPRING", "SUMMER", "WINTER")
 )
@@ -287,8 +287,8 @@ dfData <- dfData %>%
       "op_plastic_hives"
     )
   ) %>%
-  select(-c(op_varroatolerant:crippled_bees)) %>%
-  select(-c(T_vcount_01:T_other_12))
+  select(-c(op_varroatolerant:crippled_bees)) # %>%
+# select(-c(T_vcount_01:T_other_12))
 
 # Add a Long Year Format -----------------------------------------------
 dfData <- dfData %>%
