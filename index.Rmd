@@ -30,8 +30,9 @@ link-citations: yes
 ```{r, warning=F, echo=F, include=F}
 # special case for PDF and table as they otherwise wont work
 if (knitr::is_latex_output()) {
-  options(knitr.table.format = "latex")
+    options(knitr.table.format = "latex")
 } else {
-  options(knitr.table.format = "html")
+    options(knitr.table.format = "html")
 }
+knitr::opts_chunk$set(fig.pos = "htp", out.extra = "")
 ```
