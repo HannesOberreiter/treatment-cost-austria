@@ -3,5 +3,50 @@
 
 
 ```{r treatment-heat, include=T, fig.cap="Summary of treatment methods over all years and how many participants did answer in one month. Amount is color coded as heatmap with more answer in darker colors and less answer in lighter colors. Months with zero answers for a treatment are in gray. 'Oxalic acid - pure' trickling or spraying without ready made mixtures, synthetic methods includes Amitraz, Coumaphos, and other synthetic methods.", out.width="100%"}
-include_custom("output/figs/model-pred.png")
+include_custom("output/figs/treatment-heat.png")
+```
+
+
+```{r efficient-economic, include=T, fig.cap="Treatment combinations 20 participants reporting it over the three years. ", out.width="100%"}
+include_custom("output/figs/efficient-economic.png")
+```
+
+
+```{r ee-table, include=T}
+c <- "test"
+cn <- c(" ", "Treatment", "Year", "Geom. Mean", "Geom. SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
+cell_colors_price <- c("high-price" = "cred!80", "low-price" = "cgreen!80")
+cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
+
+tab <- kable(
+    r_treatment$tab %>%
+        mutate(
+            c_short_od = str_replace_all(c_short_od, "&", " - "),
+            across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
+            across(observed_costs:observed_costs_sd, ~ ifelse(lag(.x, default = 0) == .x, "", round(.x, 2)))
+        ) %>%
+        mutate(
+            letter = cell_spec(letter, bold = TRUE),
+            efficient = cell_spec(
+                efficient,
+                background = cell_colors_loss[efficient]
+            ),
+            economical = cell_spec(
+                economical,
+                background = cell_colors_price[economical]
+            )
+        ),
+    linesep = c("", "", "\\addlinespace"),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", "l", "c", rep("r", 5), "c", "c"),
+    caption = c,
+    escape = FALSE
+) %>%
+    add_header_above(c(" " = 3, "Expenses" = 2, "Observed Loss Rate" = 3, " " = 2)) %>%
+    # landscape()
+    kable_styling(latex_options = "scale_down")
+tab
+rm(cn, c, tab)
 ```

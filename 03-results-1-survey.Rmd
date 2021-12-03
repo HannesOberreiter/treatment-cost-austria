@@ -38,8 +38,8 @@ include_custom("output/figs/distr-year.png")
 ```
 
 ```{r central, include=T}
-cn <- c("Year", "Minimum", "Mean", "Median", "Max", "n")
-c <- "Survey central tendency values for treatment expenses per colony for all years and additionaly over all years."
+cn <- c("Year", "Minimum", "Mean", "Geometric Mean", "Median", "Max", "n")
+c <- "Survey central tendency values for treatment expenses per colony for all years and additionally over all years."
 tab <- knitr::kable(
   dplyr::bind_rows(r_survey$summary$survey_table, r_survey$summary$survey_total) %>%
     select(-type) %>%

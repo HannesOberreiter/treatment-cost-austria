@@ -173,9 +173,9 @@ The operational factor question analysis (Migratory Beekeeper and Certified Orga
 
 ### Multiple Regression - Prediction
 
-To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_10$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer "Yes" or "No" for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Tab. \@ref(tab:factor-removed)).
+To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_{10}$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer "Yes" or "No" for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Tab. \@ref(tab:factor-removed)).
 
-(ref:model-qq) QQ-Plot of $\log_10$ transformed normalization of (A) treatment expenses per colony and (B) number of honeybee colonies wintered.
+(ref:model-qq) QQ-Plot of $\log_{10}$ transformed normalization of (A) treatment expenses per colony and (B) number of honeybee colonies wintered.
 ```{r model-qq, include=T, fig.cap="(ref:model-qq)"}
 include_custom("output/figs/model-qq.png")
 ```
@@ -208,6 +208,11 @@ rm(cn, c, tab)
 ```
 
 ### Loss Rate
+
+
+Geometric Mean for Costs to reduce effects of outliers.
+
+
 
 Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013], which corresponds to the observed total loss rate in each group. To minimize the variation in the varroa control methods and their combination, the drone brood removal was removed, as it led to only low common combinations. For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
 

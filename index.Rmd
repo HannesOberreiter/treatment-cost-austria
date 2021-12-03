@@ -6,6 +6,8 @@ header-includes:
 - \usepackage{siunitx}
 - \usepackage{threeparttable}
 - \usepackage{multirow}
+- \usepackage{pdflscape}
+- \usepackage{colortbl}
 bibliography: bib-refs.bib
 biblatexoptions: [
     backend=biber,

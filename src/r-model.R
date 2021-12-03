@@ -34,31 +34,32 @@ r_model$test_data <- rsample::testing(r_model$data_split)
 # QQ Plots ------------------------------
 # for M & M section to show how good the transformation is
 p1 <- r_model$data %>%
-    ggplot(aes(sample = log(costs))) +
+    ggplot(aes(sample = log10(costs))) +
     geom_qq() +
     geom_qq_line() +
     ylab(TeX("Expenses/Colony \\[$\\log_{10}$ Euro\\]"))
 
 p2 <- r_model$data %>%
-    ggplot(aes(sample = log(hives_winter))) +
+    ggplot(aes(sample = log10(hives_winter))) +
     geom_qq() +
     geom_qq_line() +
     ylim(-2, 6.5) +
-    ylab(TeX("Operation Size / Number of Colonies \\[$\\log_{10}$ #\\]"))
+    ylab(TeX("Number of Colonies \\[$\\log_{10}$ #\\]"))
 
 p <- (p1 | p2) +
     patchwork::plot_annotation(tag_levels = "A") &
     xlab("Theoretical Normal Distribution Quantiles") &
+    coord_equal() &
     scale_y_continuous(
-        breaks = c(-2, 0, 2, 4, 6),
-        limits = c(-2, 6)
+        breaks = c(-2, 0, 2, 4),
+        limits = c(-2, 4)
     ) &
     scale_x_continuous(
         breaks = c(-4, -2, 0, 2, 4),
         limits = c(-4, 4)
     )
 
-fSaveImages(p, "model-qq", w = 8, h = 5)
+fSaveImages(p, "model-qq", w = 10, h = 4)
 
 # Recipes ------------------------------
 r_model$rec_intercept_only <-
@@ -138,12 +139,13 @@ p <- pull_workflow_fit(r_model$best_model)$fit$residuals %>%
     ggplot(aes(sample = value)) +
     geom_qq() +
     geom_qq_line() +
+    coord_equal() +
     labs(
         x = "Theoretical Quantiles (Normal Distribution)",
         y = "Training Dataset - Model Residuals Quantiles"
     )
 
-fSaveImages(p, "model-qq-residuals", w = 8, h = 5)
+fSaveImages(p, "model-qq-residuals", w = 8, h = 4)
 
 # Performance Tests ------------------------
 # library(performance)
@@ -249,13 +251,13 @@ r_model$prediction <-
         prediction_test = map(fitted, ~ tibble(.fitted = predict(.x, r_model$test_data, type = "raw"), costs = r_model$test_data$costs) %>%
             mutate(
                 type = "Testing",
-                costs = log(costs)
+                costs = log10(costs)
             )),
         prediction_train = map(fitted, ~ augment(extract_model(.x), r_model$train_data) %>%
             select(costs, .fitted) %>%
             mutate(
                 type = "Training",
-                costs = log(costs)
+                costs = log10(costs)
             ))
     )
 
@@ -289,8 +291,8 @@ p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$predictio
     left_join(r_model$prediction_stats) %>%
     mutate(label = glue("{type} (RMSE: {round(.estimate,2)})")) %>%
     ggplot(aes(costs, .fitted, color = wflow_id, group = wflow_id)) +
-    ylab("Prediction [log(Euro)]") +
-    xlab("Survey [log(Euro)]") +
+    ylab(TeX("Prediction \\[$\\log_{10}$ Euro\\]")) +
+    xlab(TeX("Survey \\[$\\log_{10}$ Euro\\]")) +
     geom_point(alpha = .15, show.legend = FALSE, color = "black") +
     geom_smooth(method = "lm") +
     geom_abline(color = colorBlindBlack8[8]) +
