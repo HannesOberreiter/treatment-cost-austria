@@ -3,6 +3,12 @@
 
 ```{r, include=FALSE}
 source("src/r-estimate.R", local = knitr::knit_global())
+if (file.exists("output/r-extrapolation.rds")) {
+    r_extrapolation <- readRDS("output/r-extrapolation.rds")
+} else {
+    source("src/r-extrapolation.R", local = knitr::knit_global())
+    saveRDS(r_extrapolation, "output/r-extrapolation.rds")
+}
 ```
 
 The calculated estimated expenses mean and median are higher but similar in each year, than in the survey given by participants, see table \@ref(tab:table-estimates). The most common combinations, without drone brood removal, over the survey years and the corresponding estimates can be seen in table \@ref(tab:common-comb). For the tables the estimated expenses are calculated for each beekeeper in the survey and then the average was taken as with the survey expenses.
@@ -25,7 +31,7 @@ rm(c, cn, tab)
 ```
 
 ```{r common-comb, include=T}
-c <- paste0("Top 10 most used treatment combination for all three survey years. Total and Percent correspond to participants. Mean and median expenses from the survey and in comparison to the estimate in Euro. Drone brood removal method is excluded from the combinations.")
+c <- "Top 11 most used treatment combination for all three survey years. Total and Percent correspond to participants. Mean and median expenses from the survey and in comparison to the estimate in Euro. Drone brood removal method is excluded from the combinations."
 cn <- c("Method", "Total [n]", "Percent [%]", "Mean", "Median", "Mean", "Median")
 kable(
     r_estimate$data %>% dplyr::slice_max(n, n = 10) %>% select(c_short_od:med_estimate),
@@ -34,10 +40,11 @@ kable(
     digits = 1,
     col.names = cn,
     caption = c,
+    linesep = c("", "", "", "", "\\addlinespace"),
 ) %>%
     add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>%
     footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.") %>%
-    kable_styling(font_size = 7)
+    kable_styling(font_size = 8)
 rm(c, cn, d)
 ```
 
@@ -49,4 +56,39 @@ The $\log_2$ change can be seen as follows, one represent a double of the origin
 
 ```{r estimates-bland, include=T, fig.cap="(ref:estimated-bland)", out.width="100%"}
 include_custom("output/figs/bland-altman.png")
+```
+
+### Expenses Extrapolation
+
+The rough extrapolation of the survey mean expenses with the total sum of colonies in Austria is based on the reported numbers by the national beekeeping association "Biene Österreich"[^r-vis]. This extrapolation with the arithmetic mean sum in 2018/19 to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[1], big.mark = ",")` Euro (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[1], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[1], big.mark = ",")`), 2019/20 to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[2], big.mark = ",")` Euro (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[2], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[2], big.mark = ",")`) and 2020/21 to to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[3], big.mark = ",")` Euro (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[3], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[3], big.mark = ",")`) (table \@ref(tab:extrapolation-tab), figure \@ref(fig:extrapolation)).
+In addition the same extrapolation was calculated with the geometric mean, in this case zero values in the dataset were replaced with 0.01 Euro. The geometric mean is less influenced by outliers and unit less. The confidence intervals are based on the logarithmic distribution (REFERENZ?). The extrapolation with the geometric mean sum in 2018/19 to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[4], big.mark = ",")` (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[4], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[4], big.mark = ",")`), 2019/20 to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[2], big.mark = ",")` (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[5], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[5], big.mark = ",")`) and 2020/21 to to `r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[3], big.mark = ",")` (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[6], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[6], big.mark = ",")`) (table \@ref(tab:extrapolation-tab), figure \@ref(fig:extrapolation)).
+
+
+```{r extrapolation-tab, include=T}
+c <- "Extrapolation with multiplication of the average treatment expenses per colony with the reported number of survey colonies wintered and number of colonies for Austria as reported from the national beekeeping association 'Biene Österreich'. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean."
+cn <- c("Year", "Mean [Euro]", "CI Lower", "CI Higher", "Colonies [n]", "Mean Sum [Euro]", "Colonies [n]", "Mean Sum [Euro]")
+kable(
+    r_extrapolation$data %>%
+        select(year, statistic, conf.low, conf.high, colonies_survey, survey_estimate, colonies, extrapolation_estimate) %>%
+        mutate(
+            across(statistic:conf.high, round, digits = 2),
+            across(colonies_survey:extrapolation_estimate, round)
+        ),
+    align = c("c", rep("r", 7)),
+    booktabs = TRUE,
+    row.names = FALSE,
+    col.names = cn,
+    caption = c,
+    escape = TRUE,
+) %>%
+    add_header_above(c(" " = 4, "Survey" = 2, "Extrapolation" = 2)) %>%
+    pack_rows("Arithmetic Mean", 1, 3) %>%
+    pack_rows("Geometric Mean", 4, 6) %>%
+    kable_styling(latex_options = "scale_down")
+rm(c, cn)
+```
+
+(ref:extrapolation) Extrapolation with multiplication of the average treatment expenses per colony with the reported number of survey colonies wintered and number of colonies for Austria as reported from the national beekeeping association 'Biene Österreich'. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean. Basis of the calculation are the mean expenses for one colony, see table \@ref(tab:extrapolation-tab).
+```{r extrapolation, include=T, fig.cap="(ref:extrapolation)", out.width="100%"}
+include_custom("output/figs/extrapolation.png")
 ```

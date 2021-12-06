@@ -34,7 +34,7 @@ tab <- kable(
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
     pack_rows("2020/21", 5, 6) %>%
-    kable_styling(font_size = 7)
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
@@ -63,7 +63,7 @@ tab <- kable(
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
     pack_rows("2020/21", 5, 6) %>%
-    kable_styling(font_size = 7)
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
@@ -92,7 +92,7 @@ tab <- kable(
     pack_rows("2018/19", 1, 2) %>%
     pack_rows("2019/20", 3, 4) %>%
     pack_rows("2020/21", 5, 6) %>%
-    kable_styling(font_size = 7)
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```

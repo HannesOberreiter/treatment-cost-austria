@@ -1,9 +1,12 @@
 ## Treatment Methods Overview
 
-
-
-```{r treatment-heat, include=T, fig.cap="Summary of treatment methods over all years and how many participants did answer in one month. Amount is color coded as heatmap with more answer in darker colors and less answer in lighter colors. Months with zero answers for a treatment are in gray. 'Oxalic acid - pure' trickling or spraying without ready made mixtures, synthetic methods includes Amitraz, Coumaphos, and other synthetic methods.", out.width="100%"}
-include_custom("output/figs/treatment-heat.png")
+```{r, include=FALSE}
+if (file.exists("output/r-treatment.rds")) {
+    r_treatment <- readRDS("output/r-treatment.rds")
+} else {
+    source("src/r-treatment.R", local = knitr::knit_global())
+    saveRDS(r_treatment, "output/r-treatment.rds")
+}
 ```
 
 
@@ -14,14 +17,14 @@ include_custom("output/figs/efficient-economic.png")
 
 ```{r ee-table, include=T}
 c <- "test"
-cn <- c(" ", "Treatment", "Year", "Geom. Mean", "Geom. SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
+cn <- c(" ", "Treatment", "Year", "Median", "Mean", "SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
 cell_colors_price <- c("high-price" = "cred!80", "low-price" = "cgreen!80")
 cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
 
 tab <- kable(
     r_treatment$tab %>%
         mutate(
-            c_short_od = str_replace_all(c_short_od, "&", " - "),
+            c_short_od = str_replace_all(c_short_od, "&", " \\\\& "),
             across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
             across(observed_costs:observed_costs_sd, ~ ifelse(lag(.x, default = 0) == .x, "", round(.x, 2)))
         ) %>%
@@ -44,7 +47,7 @@ tab <- kable(
     caption = c,
     escape = FALSE
 ) %>%
-    add_header_above(c(" " = 3, "Expenses" = 2, "Observed Loss Rate" = 3, " " = 2)) %>%
+    add_header_above(c(" " = 3, "Expenses" = 3, "Observed Loss Rate" = 3, " " = 2)) %>%
     # landscape()
     kable_styling(latex_options = "scale_down")
 tab

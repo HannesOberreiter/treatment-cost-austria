@@ -20,7 +20,7 @@ tab <- kable(
     caption = c,
     escape = FALSE
 ) %>%
-    kable_styling(font_size = 7)
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
@@ -53,18 +53,20 @@ tab <- kable(
     align = c("l", rep("r", 4), "c"),
     caption = c
 ) %>%
-    kable_styling(font_size = 7)
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
 
-```{r model-whisker, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods.", out.width="100%"}
+```{r model-whisker, include=T, fig.cap="Geometric mean estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods.", out.width="100%"}
+# I write geometric mean because back transformation of log transformed data is actually the same as the geometric mean
+# abstract: https://www.researchgate.net/publication/5402553_The_logarithmic_transformation_and_the_geometric_mean_in_reporting_experimental_IgE_results_What_are_they_and_when_and_why_to_use_them
 include_custom("output/figs/model-whisker.png")
 ```
 
 The predictive ability of our model and selected predcitors is low with an accuracy based on correlation between observed and predicted in the training set of `r round(r_model$performance_accuracy_best$Accuracy, 2)`% (SE: `r round(r_model$performance_accuracy_best$SE, 2)`). The root mean square error for the training dataset (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 2)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Testing") %>% pull(.estimate) %>% round(., 2)`) are similar, showing low probability of overfitting (Fig. \@ref(fig:model-pred)).
 
-```{r model-pred, include=T, fig.cap="Converted log to normal estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red).", out.width="100%"}
+```{r model-pred, include=T, fig.cap="Model prediction of expenses on training and testing dataset. Orange and blue line are linear fit with standard error of intercept only model without any predictors and selected best model. Red line represents theoretical line of perfect fit.", out.width="100%"}
 include_custom("output/figs/model-pred.png")
 ```
 

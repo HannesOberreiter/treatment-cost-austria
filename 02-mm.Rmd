@@ -24,11 +24,11 @@ To further understand why participants choose their varroa control method, the l
 
 The survey was anonymous and private data like IP addresses were only used in the first step to help identify possible double entries. In order to protect the personal data of the participants, a privacy statement was drawn up between the main persons involved in the evaluation. If voluntary contact details was given, it was only used for enquiries to correct missing or incorrect data. All personal data was anonymised prior analysis. 
 
-As I analysed three continuous survey years and the survey is anonymous I have no assumption if the same beekeepers participated in more than one survey. Only for the handful of beekeepers who did always give the same contact details. Therefore, I can not say that the years are independent or not and analysed them separately or use year as random effect. The advantages to compare multiple years is, that I may have a better overview if the survey is representative, as there should not be much change in the expenses and distribution of beekeepers apiary location and size of operations over the survey years. Furthermore, overall winter loss rates fluctuate between years of survey. This means I can check if a given treatment method did result in all survey years in low or high winter mortality or not.
+As I analysed three continuous survey years and the survey is anonymous I have no assumption if the same beekeepers participated in more than one survey. Only for the handful of beekeepers who did always give the same contact details. Therefore, I can not say that the years are independent or not and analysed them separately. The advantages to compare multiple years is, that I may have a better overview if the survey is representative, as there should not be much change in the expenses and distribution of beekeepers apiary location and size of operations over the survey years. Furthermore, overall winter loss rates fluctuate between years of survey. This means I can check if a given treatment method did result in all survey years in low or high winter mortality or not.
 
 ## Expenses Estimation
 
-Expenses estimation was carried out to check if there are discrepancies between participants answers and estimate. To calculate the estimates I researched online store prices in 2020 in Austria for official registered medication[^mm-1] and used common application amount from beekeeping school materials and manufacturer instructions (Tab. \@ref(tab:standard-cost)). An example calculation, based on \@ref(eq:estimate-calculation), with the given estimates, with average month of usage and an estimated of 10 colonies can be seen in table \@ref(tab:common). 
+Expenses estimation was carried out to check if there are discrepancies between participants answers and estimate. To calculate the estimates I researched online store prices in 2020 in Austria for official registered medication[^mm-1] and used common application amount from beekeeping school materials and manufacturer instructions (Tab. \@ref(tab:standard-cost)). An example calculation, based on equation \@ref(eq:estimate-calculation), with the given estimates, with average month of usage and an estimated of 10 colonies can be seen in table \@ref(tab:common). 
 
 ```{=tex}
 \begin{equation}
@@ -52,7 +52,8 @@ tab <- kbl(
   row.names = FALSE,
   # format = "markdown",
   caption = c,
-  col.names = cn
+  col.names = cn,
+  linesep = c("", "", "\\addlinespace"),
 ) %>%
   footnote(threeparttable = T, general = "Synthetic methods are combined and include Amitraz, Coumaphos, and other synthetic methods; Other biotechnical methods do not include drone brood removal or hypothermia; Another method excludes synthetic methods.") %>%
   kable_styling(font_size = 7)
@@ -91,7 +92,8 @@ kable(
   row.names = FALSE,
   col.names  = cn,
   # format = "markdown",
-  caption    = c
+  caption    = c,
+  linesep = c("", "", "\\addlinespace"),
 ) %>%
   kable_styling(font_size = 7)
 
@@ -155,15 +157,15 @@ tab <- knitr::kable(
   row.names = FALSE,
   col.names = cn,
   caption = c
-) %>%
-  kable_styling(font_size = 7)
+) # %>%
+# kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
 
 ## Statistics
 
-The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with the tidyverse package collection [@tidyverse2019]. For full reproducibility the code and a list of all other packages are available on GitHub[^mm-2]. As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics and visualise the data behind it. The use of inference based statistics is only used for this explorative purpose and no focus on the *p*-value is given, but as it is still common the *p*-value will be reported. Inference based statistics should normally only be used for a predefined hypothesis and experimental design directly related to the research question. 
+The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with the tidyverse package collection [@tidyverse2019]. The code, including a listing of the remaining packages not mentioned here, is available on GitHub under an MIT licence[^mm-2]. As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics and visualise the data behind it. The use of inference based statistics is only used for this explorative purpose and no focus on the *p*-value is given, but as it is still common the *p*-value will be reported. Inference based statistics should normally only be used for a predefined hypothesis and experimental design directly related to the research question. 
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
@@ -201,19 +203,45 @@ tab <- knitr::kable(
   caption = c
 ) %>%
   pack_rows("Certified Organic Beekeeper", 1, 6) %>%
-  pack_rows("Migratory Beekeeper", 7, 9) %>%
-  kable_styling(font_size = 7)
+  pack_rows("Migratory Beekeeper", 7, 9) # %>%
+# kable_styling(font_size = 7)
 tab
 rm(cn, c, tab)
 ```
 
-### Loss Rate
+### Treatment Methods and Loss Rate
 
+In the survey a total of 18 different treatment methods as varroa control were selectable by the participants and in addition as binary question the time of application. The treatment methods included "Drone brood removal", "Oxalic acid" (sublimation and mixture or pure trickling), "Formic acid" (long or short term), "Other biotechnical methods" (excluding drone brood removal and hyperthermia), "Thymol", "Hyperthermia", "Lactic acid", "Another method" and "Synthetic methods" which were combined from the questions "Amitraz (in strips or sublimation), Coumaphos (Perizin or Checkmite+) or Flumethrin (Bayvarol, Polyvar), Tau-fluvalinat (Apistan)" because of the low number of replies in Austria concerning this methods. The treatment methods are selected in accordance with COLOSS and the same list of treatment methods are used in every participating country [@vanderzee2013].
 
-Geometric Mean for Costs to reduce effects of outliers.
+To generate treatment method combinations for participants the months were grouped following seasons "Spring" (April-May), "Summer" (June-October) and "Winter" (November - January) [@oberreiter2020]. The months february and march of the next year were not used in the combinations. In addition to reduce the number of different treatment method combination the method "Drone brood removal" was excluded, as it led to only low common combination. The estimate of loss rates of this treatment combinations were calculated as observed total loss rates based on equation \@ref(eq:lossrate). 
 
+```{=tex}
+\begin{equation}
+\begin{aligned}
+\frac
+    {
+      \sum{\text{Loss of colonies}}-\sum{\text{Loss due to natural hazards}}
+    }
+    {
+      \sum{\text{Colonies wintered}}
+    }
+      *100
+\end{aligned}
+(\#eq:lossrate)
+\end{equation}
+```
 
+The reported 95% confidence interval (CI) were created for each analysed treatment combination from a separate null model, which was calculated using a Generalised Linear Model (GZLM) with quasi-binomial distribution and the link function \enquote{logit}. The generation was carried out according to scientifically established methods \citep{vanderzee2013}.
 
-Loss rate and corresponding CI were compute with a quasibinominal generalized linear model (GZLM) and link "logit" function [@vanderzee2013], which corresponds to the observed total loss rate in each group. To minimize the variation in the varroa control methods and their combination, the drone brood removal was removed, as it led to only low common combinations. For the analysis of the combination of different varroa control methods, a usage histogram for each method was generated and grouped into spring, summer, and winter. After that, a vector of all applied methods with at least 15 answers and without drone brood removal was generated to minimize calculation time and to generate statistically relevant results. Mapping of participants main wintering apiary location was done with modified k-means cluster search method [@oberreiter2020].
+### Efficacy & Economical
 
-For the analysis of expenses and operation size, we grouped survey participants by the number of colonies wintered into following groups: 1-20, 21-50 and more than 50. Data distribution analysis was done with QQ-plots and boxplots. The operation factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers "Yes", "No", "Uncertain". The category "Uncertain" and participants which did not answers the question were not used in statistical analysis.
+To test if varroa treatment combinations, with at least 30 answers over all three years, are efficient and also economical the observed loss rates and reported mean expenses were plotted and grouped into four categories for each survey years. The categories are the combination of low or high losses (colony winter losses) and low or high price (expenses per colony) for each method. The assignment to this categories is based on the value for each treatment combination method in comparison to the total observed loss rate and total mean expenses per colony for each year. If the expenses for a method is lower or equal to the average it will get the category "Low-Price" and if higher "High-Price". The same method applies to the loss rate, but here the treatment methods loss rates are compared to the total observed loss rate, see figure \@ref(fig:efficient-economic-mm) for a graphical explanation. This assignment was done for each year separately as I have no assumption if the same beekeepers participated in more than one survey.
+
+```{r}
+# we could do the geometric mean for costs to reduce effects of outliers, but the result is not straightforward interpretable and the mean is maybe more true in this case, as we already to a lot of pre filtering to reduce the outliers.
+```
+
+(ref:efficient-economic-mm) Graphical explanation of the assignment of efficacy and economical categories for the treatment methods. This assignment was done for each year separately.
+```{r efficient-economic-mm, include=T, fig.cap="(ref:efficient-economic-mm)"}
+include_custom("output/figs/efficient-economic-mm.png")
+```
