@@ -17,6 +17,29 @@ tab
 rm(tab, c, cn)
 ```
 
+```{r motivation-state-rank, include=T}
+cn <- c("State", "Category", "Answers [%]", "Rank")
+c <- "Top 7 Answers for each state."
+tab <- knitr::kable(
+    r_motivation$state_rank,
+    align = c("l", "l", "r", "c"),
+    booktabs = TRUE,
+    row.names = FALSE,
+    col.names = cn,
+    caption = c
+) %>%
+    kable_styling(latex_options = "scale_down") %>%
+    kableExtra::collapse_rows(
+        1,
+        valign = "top",
+        latex_hline = "major",
+    )
+tab
+rm(tab, c, cn)
+```
+
+r_motivation$state_rank 
+
 
 (ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red Line point estimate for median difference, yellow area 95% confidence interval of point estimate. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. If *p*-value is reported as "\*\*\*" more permutation would be needed to calculate a precise *p*-value.
 

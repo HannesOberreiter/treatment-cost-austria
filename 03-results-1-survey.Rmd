@@ -26,7 +26,7 @@ tab
 rm(tab, c, cn)
 ```
 
-```{r distr-map, include=T, fig.cap="Distribution map of the participants main winter apiary on district level. Shapefiles under Creative Commons https://www.data.gv.at/"}
+```{r distr-map, include=T, fig.cap="Distribution heatmap of the participants main winter apiary on district level. Darker colours are more participants in corresponding district and lighter colours are less. Shapefiles under Creative Commons https://www.data.gv.at/"}
 include_custom("output/figs/map.png")
 ```
 

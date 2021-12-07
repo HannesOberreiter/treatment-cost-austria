@@ -28,7 +28,7 @@ As I analysed three continuous survey years and the survey is anonymous I have n
 
 ## Expenses Estimation
 
-Expenses estimation was carried out to check if there are discrepancies between participants answers and estimate. To calculate the estimates I researched online store prices in 2020 in Austria for official registered medication[^mm-1] and used common application amount from beekeeping school materials and manufacturer instructions (Tab. \@ref(tab:standard-cost)). An example calculation, based on equation (\@ref(eq:estimate-calculation)), with the given estimates, with average month of usage and an estimated of 10 colonies  can be seen in Table \@ref(tab:common). 
+Expenses estimation was carried out to check if there are discrepancies between participants answers and estimate. To calculate the estimates I researched online store prices in 2020 in Austria for official registered medication[^mm-1] and used common application amount from beekeeping school materials and manufacturer instructions (Table \@ref(tab:standard-cost)). An example calculation, based on equation \@ref(eq:estimate-calculation), with the given estimates, with average month of usage and an estimated of 10 colonies  can be seen in Table \@ref(tab:common). 
 
 ```{=tex}
 \begin{equation}
@@ -124,7 +124,7 @@ In total `r nrow(mmList$cost_zero$data)` participants said their treatment expen
 
 ### Outlier detection and imputation
 
-To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary decision if the expenses per colony is equal or more than double of the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in equation (\@ref(eq:extreme-outliers)).
+To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary decision if the expenses per colony is equal or more than double of the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in equation \@ref(eq:extreme-outliers).
 
 ```{=tex}
 \begin{equation}
@@ -165,7 +165,7 @@ rm(cn, c, tab)
 
 ## Statistics
 
-The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with the tidyverse package collection [@tidyverse2019]. The code, including a listing of the remaining packages not mentioned here, is available on GitHub under an MIT licence[^mm-2]. As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics and visualise the data behind it. The use of inference based statistics is only used for this explorative purpose and no focus on the *p*-value is given, but as it is still common the *p*-value will be reported. Inference based statistics should normally only be used for a predefined hypothesis and experimental design directly related to the research question. 
+The analysis of the data was carried out with R [@r2020], plotting and data manipulation was done mainly with the tidyverse package collection [@tidyverse2019]. The code, including a listing of the remaining packages not mentioned here, is available on GitHub under an MIT licence[^mm-2]. As the main goal of the study is an exploratory data analyses (EDA) I try to rely mostly on descriptive statistics and visualise the data behind it. The use of inference based statistics is only used for this explorative purpose and no focus on the *p*-value alone is given. Reported *p*-values are not corrected for alpha error accumulation, which would mean incorrectly rejecting the null hypothesis. Inference based statistics should normally only be used for a predefined hypothesis and experimental design directly related to the research question, which is not true for this analysis.
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
@@ -175,14 +175,14 @@ The operational factor question analysis (Migratory Beekeeper and Certified Orga
 
 ### Multiple Regression - Prediction
 
-To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_{10}$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer "Yes" or "No" for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Table \@ref(tab:factor-removed)).
+To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_{10}$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer 'Yes' or 'No' for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Table \@ref(tab:factor-removed)).
 
 (ref:model-qq) QQ-Plot of $\log_{10}$ transformed normalization of (A) treatment expenses per colony and (B) number of honeybee colonies wintered.
 ```{r model-qq, include=T, fig.cap="(ref:model-qq)"}
 include_custom("output/figs/model-qq.png")
 ```
 
-Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`. Best model selection was selected based on lowest AIC and BIC value.
+Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`). Best model selection was selected based on lowest AIC and BIC value.
 
 ```{r factor-removed, include=T}
 # cn <- c("Question", "Year", "Participants [n]", "Answer")
@@ -213,7 +213,7 @@ rm(cn, c, tab)
 
 In the survey a total of 18 different treatment methods as varroa control were selectable by the participants and in addition as binary question the time of application. The treatment methods included 'Drone brood removal', 'Oxalic acid' (sublimation and mixture or pure trickling), 'Formic acid' (long or short term), 'Other biotechnical methods' (excluding drone brood removal and hyperthermia), 'Thymol', 'Hyperthermia', 'Lactic acid', 'Another method' and 'Synthetic methods' which were combined from the questions 'Amitraz (in strips or sublimation), Coumaphos (Perizin or Checkmite+) or Flumethrin (Bayvarol, Polyvar), Tau-fluvalinat (Apistan)' because of the low number of replies in Austria concerning this methods. The treatment methods are selected in accordance with COLOSS and the same list of treatment methods are used in every participating country [@vanderzee2013].
 
-To generate treatment method combinations for participants the months were grouped following seasons 'Spring' (April-May), 'Summer' (June-October) and 'Winter' (November - January) [@oberreiter2020]. The months february and march of the next year were not used in the combinations. In addition to reduce the number of different treatment method combination the method 'Drone brood removal' was excluded, as it led to only low common combination. The estimate of loss rates of this treatment combinations were calculated as observed total loss rates based on equation (\@ref(eq:lossrate). 
+To generate treatment method combinations for participants the months were grouped following seasons 'Spring' (April-May), 'Summer' (June-October) and 'Winter' (November - January) [@oberreiter2020]. The months february and march of the next year were not used in the combinations. In addition to reduce the number of different treatment method combination the method 'Drone brood removal' was excluded, as it led to only low common combination. The estimate of loss rates of this treatment combinations were calculated as observed total loss rates based on equation \@ref(eq:lossrate). 
 
 ```{=tex}
 \begin{equation}

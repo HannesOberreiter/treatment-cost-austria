@@ -37,9 +37,10 @@ r_motivation$counts_state <- dfMotivation %>%
     filter(value == "Ja") %>%
     group_by(state) %>%
     mutate(
+        state_count = length(unique(id)),
         state_de = state,
         state_en = stringr::str_replace_all(state_de, stateList),
-        state_print = glue::glue("{state} (n={length(unique(id))})")
+        state_print = glue::glue("{state_en} (n={state_count})"),
     ) %>%
     ungroup() %>%
     add_count(short, name = "total_count") %>%
@@ -55,7 +56,7 @@ r_motivation$counts_state <- dfMotivation %>%
     ungroup() %>%
     group_by(desc, short) %>%
     mutate(
-        highest_lowest = max(p_state) == p_state | min(p_state) == p_state
+        highest_lowest = max(p_state) == p_state | min(p_state) == p_state,
     ) %>%
     ungroup() %>%
     glimpse()
@@ -65,8 +66,7 @@ p2 <- r_motivation$counts_state %>%
     filter(first(total_count) > 400) %>%
     ungroup() %>%
     mutate(
-        short = forcats::fct_reorder(short, desc(total_count)),
-        state_print = forcats::as_factor(state_print)
+        short = forcats::fct_reorder(short, desc(total_count))
     ) %>%
     ggplot(aes(
         x = short, y = p_state, group = short,
@@ -105,9 +105,11 @@ fSaveImages(p2, "motivation-state", h = 5.5)
 p <- r_motivation$counts %>%
     # dplyr::slice_max(count, n = 15) %>%
     mutate(
-        short = forcats::fct_reorder(short, count, .desc = FALSE)
+        short = forcats::fct_reorder(short, count, .desc = FALSE),
+        desc = stringr::str_trunc(desc, width = 47),
+        desc = forcats::fct_reorder(desc, count, .desc = FALSE),
     ) %>%
-    ggplot2::ggplot(aes(x = short, y = count)) +
+    ggplot2::ggplot(aes(x = desc, y = count)) +
     geom_col() +
     geom_text(
         aes(label = paste0(percentage_of_participants, "% (", count, ")")),
@@ -121,13 +123,22 @@ p <- r_motivation$counts %>%
     ) +
     xlab("") +
     ylab("Count (#)") +
-    coord_flip(ylim = c(0, 1200)) +
+    coord_flip(ylim = c(0, 1100), expand = FALSE) +
     ggplot2::theme(
         legend.position = "none",
         panel.grid.major.x = element_line(),
         panel.grid.minor.x = element_line(),
         axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
-        axis.text.y = ggplot2::element_text(color = "black", margin = margin(t = 0, r = -20, b = 0, l = 0, unit = "pt"))
+        axis.text.y = ggplot2::element_text(color = "black")
     )
 fSaveImages(p, "motivation-count", h = 5.5)
+
+
+r_motivation$state_rank <- r_motivation$counts_state %>%
+    group_by(state_de) %>%
+    slice_max(n = 7, order_by = p_state) %>%
+    mutate(rank = rank(desc(p_state))) %>%
+    ungroup() %>%
+    mutate(state = stringr::str_replace_all(state_de, stateList)) %>%
+    select(state, desc, p_state_label, rank)
