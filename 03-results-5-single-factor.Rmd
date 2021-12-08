@@ -7,21 +7,22 @@ if (file.exists("output/r-operational.rds")) {
 }
 ```
 
-Most questions in the survey are related to winter colony losses but two operational questions could give more insight into the expenses spend by beekeepers for their treatment method. This two are if the beekeeper migrates with his colonies and if it is an organic certified beekeeping operation, with possible answers "Yes", "No". If survey participants did answer "Unsure" or did not answer at all it was not used for the factor analysis. Additionally I look at the operation size, which can also be seen as operational questions.
+The three selected operational factors of interest are shown in this analysis as single factor, although the groups interact and cohort sizes are different [Section \@ref(operational-survey)]. The factors include the two survey questions 'Migratory Beekeeper' and 'Certified Organic Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' and participants which did not answer on these questions were ignored. 
 
 ### Operation size
 
-Operation sizes and number of participants in our survey are not normally distributed, with most participants managing less than 20 colonies and a few big operation with over one hundred colonies, see figure \@ref(fig:size-distr). The participants were grouped into two groups, beekeepers with 25 or less colonies, which should represent recreational beekeepers, and the ones with more than 25 colonies, which should represent side-line and professional operations (table \@ref(tab:size-table)). The given operation size groups show statistical significant difference in all survey years, whereas the smaller beekeeping operations spend on average and median more per colony as the beekeepers with more than 25 colonies (figure \@ref(fig:size-stats)). The absolute median difference between the groups is between `r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` Euro per colony. 
+The number of honeybee colonies managed by participants follow a heavy tailed count distribution (Mean = 21-23 Colonies, Median = 11 Colonies), with most participants managing less than 20 colonies and a few big operation with over one hundred colonies (Fig. \@ref(fig:size-distr)). The participants were grouped into two levels. Beekeeper with 25 or less colonies (<=25) as 'Recreational Beekeeper'. Over the survey years the 'Recreational Beekeeper' made up the majority of the survey responses with 78% in 2018/19, 80% in 2019/20 and 76% in 2020/21. The second level which is the minority are the 'Professional Beekeeper' with more than 25 colonies (>25) (Table \@ref(tab:size-table)). 
 
+Comparing these two levels and the reported expenses per colony on treatment, shows that the 'Recreational Beekeeper' spend on average and in median more per colony as the 'Professional Beekeeper' with more than 25 colonies. The absolute median difference between the groups is between `r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and `r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` Euro per colony. Inference based statistic based on the median difference with permutation test (R = 5,000) shows significant difference in all years (*p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: 4.1-5.9; 2019/20: 2.6-5.4; 2020/21: 2.6-5.4 Euro) is not overlapping with zero difference in any survey year (Fig. \@ref(fig:size-stats)).
 
-(ref:size-distr) Distribution of operation size over the three survey years. Colonie numbers based on the reported colonies going into winter.
+(ref:size-distr) Distribution of operation size / number of colonies over the three survey years. Numbers are based on the reported colonies going into winter, as reported by survey participants. Different years are colour coded (orange = 2018/19, green = 2019/20, blue = 2020/21). Total number of participants and colonies are reported in each years plot header.
 
 ```{r size-distr, include=T, fig.cap="(ref:size-distr)", out.width="100%"}
 include_custom("output/figs/size-distr.png")
 ```
 
 ```{r size-table, include=T}
-c <- "Operation size distribution and measures of central tendency over the three survey years."
+c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeeper' and with more are 'Professional Beekeeper' ('>25')."
 cn <- c("Operation Size", "Beekeeper [n]", "Colonies [n]", "Mean [Euro]", "Median [Euro]")
 tab <- kable(
     r_operational$size$table %>% select(-year),
@@ -39,7 +40,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:size-stats) Boxplot and test results of expenses in the two given operation size groups, with median difference based on permutation test and bootstrap confidence interval of the difference. Exact *p*-value and test results see fig. \@ref(fig:size-permutation). Gray points indicating individual datapoints, survey answers above 80 euros per colony are not shown. Pink rhombus indicating mean of sample group. Pairwise comparison of mean between groups are given as label above the boxplots.
+(ref:size-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median difference between the given operation size groups, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig. \@ref(fig:size-permutation). Survey answers above 80 euros per colony are not shown.  
 
 ```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="100%"}
 include_custom("output/figs/size-stats.png")
