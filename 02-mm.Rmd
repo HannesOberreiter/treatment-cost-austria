@@ -182,7 +182,7 @@ To evaluate if and how well the selected questions can be used for prediction of
 include_custom("output/figs/model-qq.png")
 ```
 
-Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (n = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (n = `r nrow(r_model$test_data)`). Best model selection was selected based on lowest AIC and BIC value.
+Treatment methods were binary transformed, if the participants did use it in any month to 1 (True) otherwise if not at all applied to 0 (False). Model fitting was done with 90% of the original dataset (*n* = `r nrow(r_model$train_data)`) and out of sample evaluation of accuracy was done with 10% (*n* = `r nrow(r_model$test_data)`). Best model selection was selected based on lowest AIC and BIC value.
 
 ```{r factor-removed, include=T}
 # cn <- c("Question", "Year", "Participants [n]", "Answer")
@@ -213,7 +213,9 @@ rm(cn, c, tab)
 
 In the survey a total of 18 different treatment methods as varroa control were selectable by the participants and in addition as binary question the time of application. The treatment methods included 'Drone brood removal', 'Oxalic acid' (sublimation and mixture or pure trickling), 'Formic acid' (long or short term), 'Other biotechnical methods' (excluding drone brood removal and hyperthermia), 'Thymol', 'Hyperthermia', 'Lactic acid', 'Another method' and 'Synthetic methods' which were combined from the questions 'Amitraz (in strips or sublimation), Coumaphos (Perizin or Checkmite+) or Flumethrin (Bayvarol, Polyvar), Tau-fluvalinat (Apistan)' because of the low number of replies in Austria concerning this methods. The treatment methods are selected in accordance with COLOSS and the same list of treatment methods are used in every participating country [@vanderzee2013].
 
-To generate treatment method combinations for participants the months were grouped following seasons 'Spring' (April-May), 'Summer' (June-October) and 'Winter' (November - January) [@oberreiter2020]. The months february and march of the next year were not used in the combinations. In addition to reduce the number of different treatment method combination the method 'Drone brood removal' was excluded, as it led to only low common combination. The estimate of loss rates of this treatment combinations were calculated as observed total loss rates based on equation \@ref(eq:lossrate). 
+To generate treatment method combinations for participants the months were grouped following seasons 'Spring' (April-May), 'Summer' (June-October) and 'Winter' (November - January) [@oberreiter2020]. The months february and march of the next year were not used in the combinations. In addition to reduce the number of different treatment method combination the method 'Drone brood removal' was excluded, as it led to only low common combination.
+
+The observed total loss rate for these treatment combinations were calculated based on equation \@ref(eq:lossrate). The reported 95% confidence interval (CI) were created for each analysed treatment combination from a separate null model, which was calculated using a Generalised Linear Model (GZLM) with quasi-binomial distribution and the link function \enquote{logit}. The generation was carried out according to scientifically established methods \citep{vanderzee2013}.
 
 ```{=tex}
 \begin{equation}
@@ -231,15 +233,14 @@ To generate treatment method combinations for participants the months were group
 \end{equation}
 ```
 
-The reported 95% confidence interval (CI) were created for each analysed treatment combination from a separate null model, which was calculated using a Generalised Linear Model (GZLM) with quasi-binomial distribution and the link function \enquote{logit}. The generation was carried out according to scientifically established methods \citep{vanderzee2013}.
 
 ### Efficacy & Economical
 
 To test if varroa treatment combinations, with at least 30 answers over all three years, are efficient and also economical the observed loss rates and reported mean expenses were plotted and grouped into four categories for each survey years. The categories are the combination of low or high losses (colony winter losses) and low or high price (expenses per colony) for each method. The assignment to this categories is based on the value for each treatment combination method in comparison to the total observed loss rate and total mean expenses per colony for each year. If the expenses for a method is lower or equal to the average it will get the category 'Low-Price' and if higher 'High-Price'. The same method applies to the loss rate, but here the treatment methods loss rates are compared to the total observed loss rate, see Fig. \@ref(fig:efficient-economic-mm) for a graphical explanation. This assignment was done for each year separately as I have no assumption if the same beekeepers participated in more than one survey.
 
-```{r}
+<!--
 # we could do the geometric mean for costs to reduce effects of outliers, but the result is not straightforward interpretable and the mean is maybe more true in this case, as we already to a lot of pre filtering to reduce the outliers.
-```
+-->
 
 (ref:efficient-economic-mm) Graphical explanation of the assignment of efficacy and economical categories for the treatment methods. This assignment was done for each year separately.
 ```{r efficient-economic-mm, include=T, fig.cap="(ref:efficient-economic-mm)"}

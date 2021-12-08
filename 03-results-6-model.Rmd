@@ -19,8 +19,8 @@ tab <- kable(
     align = c("l", rep("r", 9)),
     caption = c,
     escape = FALSE
-) %>%
-    kable_styling(latex_options = "scale_down")
+) # %>%
+# kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```

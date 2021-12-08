@@ -79,3 +79,12 @@ p <- r_extrapolation$data %>%
   )
 
 fSaveImages(p, "extrapolation", h = 6)
+
+# difference
+r_extrapolation$data %>%
+  group_by(type) %>%
+  summarise(mean(extrapolation_estimate)) %>%
+  .[, 2] %>%
+  unlist() %>%
+  as.numeric() %>%
+  diff()
