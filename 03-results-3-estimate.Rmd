@@ -2,11 +2,11 @@
 ## Expenses Estimations {#r-estimations}
 
 ```{r, include=FALSE}
-if (file.exists("output/r-extrapolation.rds")) {
-    r_extrapolation <- readRDS("output/r-extrapolation.rds")
+if (file.exists("output/r_estimate.rds")) {
+    r_estimate <- readRDS("output/r_estimate.rds")
 } else {
-    source("src/r-extrapolation.R", local = knitr::knit_global())
-    saveRDS(r_extrapolation, "output/r-extrapolation.rds")
+    source("src/r-estimate.R", local = knitr::knit_global())
+    saveRDS(r_estimate, "output/r_estimate.rds")
 }
 ```
 

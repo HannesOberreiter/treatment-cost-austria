@@ -115,14 +115,19 @@ r_operational$organic$data <- dfClean %>%
         op_cert_org_beek = forcats::as_factor(op_cert_org_beek)
     )
 
-r_operational$organic$summary <- r_operational$organic$data %>%
+r_operational$organic$summary <- dfClean %>%
     dplyr::count(op_cert_org_beek) %>%
     mutate(
-        np = round(prop.table(n) * 100)
+        np = round(prop.table(n) * 100, 1)
     ) %>%
     glimpse()
 
-r_operational$organic$table <- r_operational$organic$data %>%
+r_operational$organic$table <- dfClean %>%
+    mutate(
+        op_cert_org_beek = stringr::str_replace_na(op_cert_org_beek, "Not Answered"),
+        op_cert_org_beek = stringr::str_replace_all(op_cert_org_beek, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Unsure")),
+        op_cert_org_beek = forcats::fct_relevel(op_cert_org_beek, "No", "Yes", "Unsure")
+    ) %>%
     group_by(year, op_cert_org_beek) %>%
     summarise(
         beekeeper = n(),
@@ -159,14 +164,19 @@ r_operational$migratory$data <- dfClean %>%
         op_migratory_beekeeper = forcats::as_factor(op_migratory_beekeeper)
     )
 
-r_operational$migratory$summary <- r_operational$migratory$data %>%
+r_operational$migratory$summary <- dfClean %>%
     dplyr::count(op_migratory_beekeeper) %>%
     mutate(
-        np = round(prop.table(n) * 100)
+        np = round(prop.table(n) * 100, 1)
     ) %>%
     glimpse()
 
-r_operational$migratory$table <- r_operational$migratory$data %>%
+r_operational$migratory$table <- dfClean %>%
+    mutate(
+        op_migratory_beekeeper = stringr::str_replace_na(op_migratory_beekeeper, "Not Answered"),
+        op_migratory_beekeeper = stringr::str_replace_all(op_migratory_beekeeper, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Unsure")),
+        op_migratory_beekeeper = forcats::fct_relevel(op_migratory_beekeeper, "No", "Yes", "Unsure")
+    ) %>%
     group_by(year, op_migratory_beekeeper) %>%
     summarise(
         beekeeper = n(),

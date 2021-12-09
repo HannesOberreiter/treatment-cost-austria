@@ -122,7 +122,7 @@ In total `r nrow(mmList$no_method)` participants did answer varroa expenses (min
 
 In total `r nrow(mmList$cost_zero$data)` participants said their treatment expenses were zero. Only one answer were kept, as the treatment was a combination of hyperthermia and biotechnical and I can make no assumption about the real expenses of the participant. Ofcourse the equipment for the hyperthermia do cost something, but I do not know more details, as he could already have the equipment for a long time. A total of `r length(mmList$cost_zero$id_remove)-length(mmList$cost_zero$id_sponsor)` were removed as they said zero expenses but actually did treatment with organic acids, which is illogical as the organic acids are consumed and not for free. Additionally `r length(mmList$cost_zero$id_sponsor)` participants got a sponsorship (beekeeping club or local community) for their treatment expenses and had therefore zero expenses, which were also removed.
 
-### Outlier detection and imputation
+### Outlier Detection and Imputation
 
 To detect outliers in the dataset two methods were used. For the upper limit I decided to filter the dataset based on the arbitrary decision if the expenses per colony is equal or more than double of the whole dataset extreme outlier (`r mmList$cost_upper$upper_limit` Euro), as defined in equation \@ref(eq:extreme-outliers).
 
@@ -171,7 +171,7 @@ The analysis of the data was carried out with R [@r2020], plotting and data mani
 
 ### Single Factor Analysis
 
-The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers 'Yes', 'No' and 'Uncertain'. The category 'Uncertain' and participants which did not answers the question were not used in the single factor statistical analysis (Table \@ref(tab:factor-removed)). The *p*-value is generated from the median difference between groups in comparison to the permutation generated null distribution (5,000 permutations). For the median point estimate a confidence interval (95%) was calculated based on 1,000 bootstrap resamples. The visual statistical test results of the the difference between groups is attached in the appendix section.
+The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers 'Yes', 'No' and 'Uncertain'. The category 'Uncertain' and participants which did not answers the question were not used in the statistical two levels factor analysis (Table \@ref(tab:factor-removed)). The *p*-value is generated from the median difference between groups in comparison to the permutation generated null distribution (5,000 permutations), significant results are *p* $\leq$ 0.05. For the median point estimate a confidence interval (95%) was calculated based on 1,000 bootstrap resamples. The visual statistical test results of the the difference between groups is attached in the appendix section.
 
 ### Multiple Regression - Prediction
 

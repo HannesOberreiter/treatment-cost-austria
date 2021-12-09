@@ -1,6 +1,6 @@
 # Results
 ## Survey Data
-### Representative and distribution of sample
+### Representative and Distribution of Sample
 
 ```{r, include=FALSE}
 source("src/r-survey.R", local = knitr::knit_global())
@@ -62,7 +62,7 @@ rm(tab, c, cn)
 
 ### Distribution of Participants for Operational Questions {#operational-survey}
 
-As overview for correlation and distribution of the included operational factors of interest, the participants where grouped into bins of combination of these factors (Fig. \@ref(fig:distr-groups)). The two survey questions 'Migratory Beekeeper' and 'Certified Organic Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' and participants which did not answer on these questions were ignored. The answer on operation size (number colonies going into winter, any positive integer number was possible) was grouped into the two levels, 'Recreational Beekeeper' with 25 or less colonies and 'Professional Beekeeper' with more colonies. Based on these three operational questions the most common and dominating group in the survey are recreational beekeepers, who are neither migratory or certified organic with 63-65%. Second most are professional beekeepers with more than 25 colonies with 8-11%. All other combinations of these operational factors are below 10% in each survey year. A small decline in recreational beekeepers which report to migrate their colonies can be seen over the three survey years (2018/19: 7,7%; 2019/20: 6.2%; 2020/21: 5.4%) (Fig. \@ref(fig:distr-groups)).
+As overview for correlation and distribution of the included operational factors of interest, the participants where grouped into bins of combination of these factors (Fig. \@ref(fig:distr-groups)). The two survey questions 'Migratory Beekeeper' and 'Certified Organic Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' and participants which did not answer on these questions were ignored. The answer on operation size (number colonies going into winter, any positive integer number was possible) was grouped into the two levels for factor analysis. These levels are 'Recreational Beekeeper' with 25 or less colonies and 'Professional Beekeeper' with more colonies. Based on these three operational questions the most common and dominating group in the survey are recreational beekeepers, who are neither migratory or certified organic with 63-65%. Second most are professional beekeepers with more than 25 colonies with 8-11%. All other combinations of these operational factors are below 10% in each survey year. A small decline in recreational beekeepers which report to migrate their colonies can be seen over the three survey years (2018/19: 7,7%; 2019/20: 6.2%; 2020/21: 5.4%) (Fig. \@ref(fig:distr-groups)).
 
 ```{r distr-groups, include=T, messages=F, warnings=F, fig.cap="Count and distribution of participants grouped into operational factors and their combination for each year. The three operational factors and combination bins are below the bar plots, whereas black dots indicate 'Yes'/'True' for given factor. Percentage reported above the bars stands respectively for the survey years 2018/19, 2019/20 and 2020/21. Recreational Beekeepers are participants with 25 or less colonies going into winter.", out.width="100%"}
 include_custom("output/figs/distr-groups.png")
