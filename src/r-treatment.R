@@ -90,18 +90,20 @@ r_treatment$top <- dfClean %>%
     mutate(
         year_n = n(),
         year_loss = (sum(hives_lost_e) / sum(hives_winter)) * 100,
+        year_loss_ci = list(fLossCI(hives_lost_e, hives_spring_e)),
         # year_costs = mean(log10(costs))
         # year_costs = fGeoMean(costs),
         # year_costs = median(costs),
         year_costs = mean(costs)
     ) %>%
     filter(nn >= 30) %>%
+    ungroup() %>%
     group_by(c_short_od) %>%
     mutate(
         # observed_costs = fGeoMean(costs),
         # observed_costs_sd = fGeoSD(costs),
     ) %>%
-    group_by(year, c_short_od, year_n, year_loss, year_costs) %>%
+    group_by(year, c_short_od, year_n, year_loss, year_costs, year_loss_ci) %>%
     summarise(
         n = n(),
         observed_loss = (sum(hives_lost) / sum(hives_winter)) * 100,
@@ -116,12 +118,18 @@ r_treatment$top <- dfClean %>%
         observed_costs = first(observed_costs),
         observed_costs_sd = first(observed_costs_sd),
         efficient = ifelse(observed_loss > first(year_loss), "high-loss", "low-loss"),
-        # economical = ifelse(observed_costs > first(year_costs), "high-price", "low-price")
-        economical = ifelse(observed_costs > first(year_costs), "high-price", "low-price")
+        # economical = ifelse(observed_costs > first(year_costs), "high-expense", "low-expense")
+        economical = ifelse(observed_costs > first(year_costs), "high-expense", "low-expense")
     ) %>%
     ungroup() %>%
     unnest_wider(observed_loss_ci)
 
+r_treatment$year_loss <- r_treatment$top %>%
+    group_by(year, year_loss_ci) %>%
+    summarise(
+        year_loss = first(year_loss)
+    ) %>%
+    unnest_wider(year_loss_ci)
 
 r_treatment$letter <- r_treatment$top %>%
     group_by(c_short_od) %>%
@@ -186,17 +194,17 @@ p <- r_treatment$top %>%
 
 fSaveImages(p, "efficient-economic", h = 10, w = 9)
 
-# r_treatment$tab <- r_treatment$top %>%
-#    left_join(r_treatment$letter) %>%
-#    arrange(letter) %>%
-#    select(letter, c_short_od, year, observed_costs_median, observed_costs, observed_costs_sd, observed_loss, loss_lower_ci, loss_upper_ci, efficient, economical)
+r_treatment$tab <- r_treatment$top %>%
+    left_join(r_treatment$letter) %>%
+    arrange(letter) %>%
+    select(letter, c_short_od, year, n, observed_costs_median, observed_costs, observed_costs_sd, observed_loss, loss_lower_ci, loss_upper_ci, efficient, economical)
 
 # Create dummy plot for m&m
 
 dummy_df <- tibble(
     observed_costs = c(2.5, 2.5, 7.5, 7.5),
     observed_loss = c(2.5, 7.5, 2.5, 7.5),
-    label_color = c("Low-Loss & Low-Price", "High-Loss & Low-Price", "Low-Loss & High-Price", "High-Loss & High-Price"),
+    label_color = c("Low-Loss & Low-Expense", "High-Loss & Low-Expense", "Low-Loss & High-Expense", "High-Loss & High-Expense"),
     year_loss = 5,
     year_costs = 5,
     loss_lower_ci = c(1.5, 6.5, 1.5, 6.5),
