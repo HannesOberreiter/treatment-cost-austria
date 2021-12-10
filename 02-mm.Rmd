@@ -169,13 +169,13 @@ The analysis of the data was carried out with R [@r2020], plotting and data mani
 
 [^mm-2]: Github: <https://github.com/HannesOberreiter/treatment-expenses-austria>
 
-### Single Factor Analysis
+### Operational Factor Analysis
 
 The operational factor question analysis (Migratory Beekeeper and Certified Organic Beekeeper) did include as possible answers 'Yes', 'No' and 'Uncertain'. The category 'Uncertain' and participants which did not answers the question were not used in the statistical two levels factor analysis (Table \@ref(tab:factor-removed)). The *p*-value is generated from the median difference between groups in comparison to the permutation generated null distribution (5,000 permutations), significant results are *p* $\leq$ 0.05. For the median point estimate a confidence interval (95%) was calculated based on 1,000 bootstrap resamples. The visual statistical test results of the the difference between groups is attached in the appendix section.
 
 ### Multiple Regression - Prediction
 
-To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $log_{10}$ transform of number of colonies wintered and expenses of treatment, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the single factor analysis to simplify the model interpretation only participants which did answer 'Yes' or 'No' for the two operational factor questions were used in the model and dummy transformed to 0 (False) if the answer was no and 1 (True) if the answer was yes (Table \@ref(tab:factor-removed)).
+To evaluate if and how well the selected questions can be used for prediction of the treatment expenses a simple linear multiple regression model with treatment expenses per colony as dependent variable was fitted. The model creation and evaluation was done with the tidymodels package [@tidymodels2020]. Data preprocessing included normalization with $\log_{10}$ transform of number of colonies wintered and expenses of treatment to remove the effect of the right skewed data distribution, whereas beforehand one single zero expenses answer was removed (Fig. \@ref(fig:model-qq)). Same as in the two level operational factor analysis in the multiple regression model only participants which did answer 'Yes' or 'No' for the two operational factor questions were used in the model to simplify it, the levels were dummy transformed to 0 (False) for 'No' and 1 (True) for 'Yes' (Table \@ref(tab:factor-removed)).
 
 (ref:model-qq) QQ-Plot of $\log_{10}$ transformed normalization of (A) treatment expenses per colony and (B) number of honeybee colonies wintered.
 ```{r model-qq, include=T, fig.cap="(ref:model-qq)"}

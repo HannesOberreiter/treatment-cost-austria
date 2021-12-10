@@ -1,35 +1,49 @@
+
 ## Multiple Regression
 
-Starting with the base model including only the reported number of colonies wintered ($log_{10}$), the linear regression model did improve by adding the operational factors and treatment methods. Adding states as covariate did improve the $R^2$ value (0.142) but showed higher AIC and BIC, indicating that the penalization of the additional factors is higher than the gain and could lead to possible overfitting \@ref(tab:model-table). The best model with lowest AIC and BIC scores was with all predictors without states (AIC: 1844, BIC: 1939). The residual of the best model fit show a normal distribution (Appendix Fig: \@ref(fig:model-qq-residuals)).
+To better understand if the collected survey data can be used as predictor variables a linear model with treatment expenses per colony as target was used. Starting with the base model including only the reported number of colonies wintered (numerical, $log_{10}$ transformed), which showed the highest difference in the two level factor analysis between groups [Section \@ref(operational-size-single)]. Adding the two other operational questions 'Migratory Beekeeper' and 'Certified Organic Beekeeper' (Two levels: 'Yes', 'No') did lead to no improvement and resulting in a higher BIC value. The base model and the treatment methods (binary encoded) was the best model, it showed the lowest AIC (`r round(r_model$fitted$AIC[5])`) and BIC (`r round(r_model$fitted$BIC[5])`) value and $R^2$ of 0.127. Adding states as additional covariate did improve the $R^2$ value (0.131) but showed higher AIC and BIC, indicating that the penalization of the additional factors is higher than the gain and could lead to possible overfitting. The same is true for the addition of 'Survey Year', which did only slightly increase the $R^2$ value (0.128) but again showed higher AIC and BIC values (Table \@ref(tab:model-table)).
 
 ```{r model-table, include=T}
-c <- "Summary of model fit. Base model only includes number of colonies wintered, operational the two questions migratory beekeeper and certified organic beekeeper. The eleven treatment methods are binary encoded, excluded is drone brood removal."
+c <- "Summary of model fit. Base model only included number of colonies wintered. The two questions migratory beekeeper and certified organic beekeeper were added as two level factor ('Yes', 'No'). The eleven treatment methods are binary encoded, excluded is drone brood removal. The covariates 'States' and 'Survey Year' were dummy encoded. Selection of best model, indicated as bold font, based on AIC and BIC value."
 cn <- c("Model", "$R^2$", "adj. $R^2$", "df", "logLik", "AIC", "BIC")
-tab <- kable(
+tab <- kbl(
     r_model$fitted %>%
         mutate(
-            model = c("Intercept", "Base", "$+$ Operational", "$+$ Treatment Methods", "$+$ States"),
+            model = c("Intercept Only", "Base (Operation Size)", "Base $+$ Certified Organic", "Base $+$ Migratory Beekeeper", "Base $+$ Treatment Methods", "Base $+$ Treatment Methods $+$ States", "Base $+$ Treatment Methods $+$ Year"),
             df = ifelse(is.na(df), 0, df),
-            across(logLik:BIC, round)
+            across(logLik:BIC, round),
         ) %>%
         select(model, r.squared, adj.r.squared, df:BIC),
     booktabs = TRUE,
     col.names = cn,
     digits = 3,
+    linesep = "",
     align = c("l", rep("r", 9)),
     caption = c,
     escape = FALSE
-) # %>%
-# kable_styling(latex_options = "scale_down")
+) %>%
+    kableExtra::row_spec(5, bold = TRUE) %>%
+    kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
 
-The intercept of the best model, which would be a hypotheical beekeeper without any colonies, no migratory, no certified organic and no applied treatments is at `r round(r_model$coeff_intercept[2], 2)` Euro (SE: `r round(r_model$coeff_intercept[1], 2)`). 
+The residuals of the best model fit ('Base $+$ Treatment Methods') showed a normal distribution (Appendix Fig. \@ref(fig:model-qq-residuals)). The geometric mean intercept of the best model, which would be a hypothetical beekeeper with one colony ($\log_{10} 1$) and no applied treatments is at `r round(r_model$coeff_intercept$estimate_conv, 2)` Euro (SE: `r round(r_model$coeff_intercept$error_conv, 2)`). All predictors are statistically significant except for the treatment method 'Lactic acid' (*p* = 0.64), which is used by 3% of the survey participants (*n* = 117) (Table \@ref(tab:model-best)). The coefficient direction is increasing for most of treatment methods if they are applied. Only two treatment method are decreasing the intercept if applied, 'Lactic acid' with standard error crossing zero difference and 'Another biotechnical method' which decreases the estimated expenses by 9.5% (SE: 3.6%). The decrease for 'Number of colonies' is different to interpret as in this case as both dependent and independent variables are log transformed, therefore the increase of colonies by 10% leads to a mean decrease of expenses by 1.7% (SE: 0.1%) (Fig. \@ref(fig:model-whisker)).
+
+
+The predictive ability of the selected best model ('Base $+$ Treatment Methods') is low with a relative accuracy based on correlation between observed and predicted in the training set of `r round(r_model$performance_accuracy_best$Accuracy, 2)`% (SE: `r round(r_model$performance_accuracy_best$SE, 2)`). The root mean square error (rmse) for the training dataset (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 2)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Testing") %>% pull(.estimate) %>% round(., 2)`) are similar, showing low probability of overfitting (Fig. \@ref(fig:model-pred)).
+
+<!--
+https://stats.stackexchange.com/questions/18480/interpretation-of-log-transformed-predictor-and-or-response
+https://data.library.virginia.edu/interpreting-log-transformations-in-a-linear-model/
+# Old one if we use geometric mean:
+# I write geometric mean because back transformation of log transformed data is actually the same as the geometric mean
+# abstract: https://www.researchgate.net/publication/5402553_The_logarithmic_transformation_and_the_geometric_mean_in_reporting_experimental_IgE_results_What_are_they_and_when_and_why_to_use_them
+-->
 
 ```{r model-best, include=T}
-c <- "Summary of the coefficients of the selected best model and statistic results. Terms starting with 'T.' are treatment methods. Significant stars are labeled based on the p-value (*** < 0.001, ** < 0.01, * <= 0.05, n.s. (not significant) > 0.5). SE = Standard Error."
-cn <- c("Term", "Estimate", "SE", "Statistic (t)", "p", "")
+c <- "Summary of the coefficients of the selected best model and statistic results. Terms starting with 'T.' are treatment methods. Significant stars are labelled based on the \\textit{p}-value (*** < 0.001, ** < 0.01, * <= 0.05, n.s. (not significant) > 0.5). SE = Standard Error."
+cn <- c("Term", "Estimate", "SE", "Statistic (t)", "\\textit{p}", "")
 tab <- kable(
     r_model$coeff %>%
         mutate(
@@ -46,10 +60,12 @@ tab <- kable(
                 base::format(p.value, digits = 3, scientific = TRUE, nsmall = 1)
             ),
         ) %>%
-        select(tname, estimate:p.value, p.star),
+        select(tname, estimate:p.value, p.star) %>%
+        arrange(tname),
     booktabs = TRUE,
     col.names = cn,
     digits = 3,
+    escape = FALSE,
     align = c("l", rep("r", 4), "c"),
     caption = c
 ) %>%
@@ -58,23 +74,12 @@ tab
 rm(cn, c, tab)
 ```
 
-```{r model-whisker, include=T, fig.cap="Geometric mean estimate and standard error as dot-and-whisker plot of the best model regression coefficients without intercept. Coefficients ordered by estimate value. Color coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods.", out.width="100%"}
-# I write geometric mean because back transformation of log transformed data is actually the same as the geometric mean
-# abstract: https://www.researchgate.net/publication/5402553_The_logarithmic_transformation_and_the_geometric_mean_in_reporting_experimental_IgE_results_What_are_they_and_when_and_why_to_use_them
+(ref:model-whisker) Dot-and-whisker plot for the best model ('Base $+$ Treatment Methods') regression coefficients. The coefficients are ordered by the mean estimate value and direction, with highest positive at the top and lowest negative at the bottom. Colour coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods. The values are plotted to the mean increase or decrease of the estimate in percent, which means for the treatment methods if applied they increase/decrease the value of the target by shown percentage. In the case of 'Number of colonies' [$\log_{10}$] the effect of percentage change on the expenses is shown if the number of colonies increases by 10%.
+
+```{r model-whisker, include=T, fig.cap="(ref:model-whisker)", out.width="100%"}
 include_custom("output/figs/model-whisker.png")
 ```
 
-The predictive ability of our model and selected predcitors is low with an accuracy based on correlation between observed and predicted in the training set of `r round(r_model$performance_accuracy_best$Accuracy, 2)`% (SE: `r round(r_model$performance_accuracy_best$SE, 2)`). The root mean square error for the training dataset (rmse = `r r_model$prediction_stats %>% filter(type == "Training") %>% pull(.estimate) %>% round(., 2)`) and testing set (rmse = `r r_model$prediction_stats %>% filter(type == "Testing") %>% pull(.estimate) %>% round(., 2)`) are similar, showing low probability of overfitting (Fig. \@ref(fig:model-pred)).
-
-```{r model-pred, include=T, fig.cap="Model prediction of expenses on training and testing dataset. Orange and blue line are linear fit with standard error of intercept only model without any predictors and selected best model. Red line represents theoretical line of perfect fit.", out.width="100%"}
+```{r model-pred, include=T, fig.cap="Model prediction of expenses on training and testing dataset to the observed data from the survey. Orange and blue line are the linear fit with standard error of the intercept only model without any predictors and selected best model ('Base $+$ Treatment Methods'). Red line represents the theoretical perfect fit between estimate and observed data.", out.width="100%"}
 include_custom("output/figs/model-pred.png")
 ```
-
-
-
-
-
-
-
-
-

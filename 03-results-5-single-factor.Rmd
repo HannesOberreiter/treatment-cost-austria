@@ -9,7 +9,7 @@ if (file.exists("output/r-operational.rds")) {
 
 The separate analysis of each of the three selected operational questions are shown in following factor analysis with two levels each for each year. Interpretation of the results need to factor in possible interactions and the different cohort sizes in the survey [Section \@ref(operational-survey)].
 
-### Operation Size
+### Operation Size {#operational-size-single}
 
 The number of honeybee colonies managed by participants follow a heavy tailed count distribution (Mean = 21-23 Colonies, Median = 11 Colonies), with most participants managing less than 20 colonies and a few big operation with over one hundred colonies (Fig. \@ref(fig:size-distr)). The participants were grouped into two levels for factor analysis. Beekeeper with 25 or less colonies (<=25) as 'Recreational Beekeeper'. Over the survey years the 'Recreational Beekeeper' made up the majority of the survey responses with 78% in 2018/19, 80% in 2019/20 and 76% in 2020/21. The second level which is the minority are the 'Professional Beekeeper' with more than 25 colonies (>25) (Table \@ref(tab:size-table)). 
 
