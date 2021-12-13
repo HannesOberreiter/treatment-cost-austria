@@ -1,4 +1,4 @@
-## Operational Factor Analysis
+## Operational Factor Analysis {#two-level}
 ```{r, include=FALSE}
 if (file.exists("output/r-operational.rds")) {
     r_operational <- readRDS("output/r-operational.rds")
