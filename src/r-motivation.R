@@ -122,7 +122,7 @@ p <- r_motivation$counts %>%
         breaks = scales::breaks_pretty()
     ) +
     xlab("") +
-    ylab("Count (#)") +
+    ylab("Count [#]") +
     coord_flip(ylim = c(0, 1100), expand = FALSE) +
     ggplot2::theme(
         legend.position = "none",
