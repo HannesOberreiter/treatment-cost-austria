@@ -37,7 +37,7 @@ p1 <- r_model$data %>%
     ggplot(aes(sample = log10(costs))) +
     geom_qq() +
     geom_qq_line() +
-    ylab(TeX("Expenses/Colony \\[$\\log_{10}$ Euro\\]"))
+    ylab(TeX("Expenses/Colony \\[$\\log_{10}$ EUR\\]"))
 
 p2 <- r_model$data %>%
     ggplot(aes(sample = log10(hives_winter))) +
@@ -261,7 +261,7 @@ p <- r_model$coeff %>%
     scale_colour_manual(
         values = c("#D55E00", "#009E73")
     ) +
-    # xlab("Estimate + Standard Error [Euro]") +
+    # xlab("Estimate + Standard Error [EUR]") +
     xlab("Increase of Estimate + Standard Error [%]") +
     ylab("Coefficients") +
     theme(
@@ -331,8 +331,8 @@ p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$predictio
     left_join(r_model$prediction_stats) %>%
     mutate(label = glue("{type} (RMSE: {round(.estimate,2)})")) %>%
     ggplot(aes(costs, .fitted, color = wflow_id, group = wflow_id)) +
-    ylab(TeX("Prediction \\[$\\log_{10}$ Euro\\]")) +
-    xlab(TeX("Survey \\[$\\log_{10}$ Euro\\]")) +
+    ylab(TeX("Prediction \\[$\\log_{10}$ EUR\\]")) +
+    xlab(TeX("Survey \\[$\\log_{10}$ EUR\\]")) +
     geom_point(alpha = .15, show.legend = FALSE, color = "black") +
     geom_smooth(method = "lm") +
     geom_abline(color = colorBlindBlack8[8]) +

@@ -102,8 +102,8 @@ p <- ggplot() +
         ),
         size = 2
     ) +
-    xlab("Mean of Estimate and Survey [Euro]") +
-    ylab(TeX("Difference (Estimate-Survey) \\[Euro\\]")) +
+    xlab("Mean of Estimate and Survey [EUR]") +
+    ylab(TeX("Difference (Estimate-Survey) \\[EUR\\]")) +
     labs(size = "Beekeeper [n]") +
     ggplot2::scale_size_continuous(breaks = c(min(r_estimate$data$n), 50, 100, 150, max(r_estimate$data$n)), limits = c(min(r_estimate$data$n), max(r_estimate$data$n))) +
     scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-12, 12, 2)) +

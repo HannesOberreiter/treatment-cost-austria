@@ -92,7 +92,7 @@ p <- ggplot(dfClean, aes(x = year, y = costs, fill = year)) +
         aesthetics = "fill", name = "Survey"
     ) +
     xlab("") +
-    ylab("Expenses / Colony [Euro]") +
+    ylab("Expenses / Colony [EUR]") +
     # Our three extension arrows
     geom_segment(
         x = 1, y = 45,

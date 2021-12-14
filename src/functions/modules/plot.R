@@ -35,7 +35,7 @@ fPlotFactor <- function(df, col, statistic, sigY) {
     facetLabels <- tibble(
         year_long = df %>% pull(year_long) %>% sort() %>% unique(),
         label = fPermFacetLabel(statistic),
-        #label = fCoinLabel(statistic)
+        # label = fCoinLabel(statistic)
     )
 
 
@@ -102,7 +102,7 @@ fPlotFactor <- function(df, col, statistic, sigY) {
             inherit.aes = FALSE,
             size = 3
         ) +
-        ylab("Expenses/Colony [Euro]") +
+        ylab("Expenses/Colony [EUR]") +
         facet_wrap(
             ~year_long,
             labeller = labeller(
@@ -112,4 +112,3 @@ fPlotFactor <- function(df, col, statistic, sigY) {
             )
         )
 }
-

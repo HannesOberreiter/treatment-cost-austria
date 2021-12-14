@@ -181,7 +181,7 @@ p <- r_treatment$top %>%
     ggplot2::scale_color_manual(
         values = c("#D55E00", "#CC79A7", "#E69F00", "#009E73")
     ) +
-    ylab("Mean Expenses/Colony [Euro] ± SE") +
+    ylab("Mean Expenses/Colony [EUR] ± SE") +
     xlab("Mean Observed Colony Winter Loss [%] ± CI (95%)") +
     labs(color = "") +
     ggplot2::theme(
@@ -284,7 +284,7 @@ p <- dummy_df %>%
     ggplot2::scale_color_manual(
         values = c("#D55E00", "#CC79A7", "#E69F00", "#009E73")
     ) +
-    ylab("Mean Expenses/Colony [Euro] ± SE") +
+    ylab("Mean Expenses/Colony [EUR] ± SE") +
     xlab("Mean Observed Colony Winter Loss [%] ± CI (95%)") +
     labs(color = "") +
     ggplot2::theme(

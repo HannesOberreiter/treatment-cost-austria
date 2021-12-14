@@ -72,7 +72,7 @@ p <- r_extrapolation$data %>%
   facet_wrap(~type) +
   labs(
     x = "",
-    y = "Extrapolated Total Expenses [Euro] + 95% CI"
+    y = "Extrapolated Total Expenses [EUR] + 95% CI"
   ) +
   ggplot2::theme(
     panel.grid.major.y = element_line()
