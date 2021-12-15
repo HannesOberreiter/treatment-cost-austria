@@ -15,7 +15,7 @@ biblatexoptions: [
 	natbib=true,				
 	hyperref=true,			
 	backref=false,		
-	isbn=false,						
+	isbn=false,					
 	url=false,					
 	doi=false,
     date=year,			

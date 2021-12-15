@@ -39,6 +39,14 @@ r_extrapolation$data <- dfClean %>%
     extrapolation_estimate_upper = conf.high * colonies,
   )
 
+r_extrapolation$data <- r_extrapolation$data %>%
+  left_join(dfClean %>%
+    group_by(year) %>%
+    summarise(
+      year = paste0("20", first(year)),
+      survey_real = sum(hives_winter * costs)
+    ))
+
 p <- r_extrapolation$data %>%
   ggplot(aes(y = extrapolation_estimate, x = year, fill = year)) +
   geom_col(show.legend = FALSE) +
