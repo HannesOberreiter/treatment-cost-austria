@@ -4,6 +4,7 @@
 \PassOptionsToPackage{utf8}{inputenc}
 \usepackage{inputenc}
 \DeclareUnicodeCharacter{2212}{-}
+\DeclareUnicodeCharacter{00A0}{ }
 
 % **************************************************
 % Information and Commands for Reuse
@@ -51,7 +52,7 @@
     hangfigurecaption=false,%
     hangsection=true,%
     hangsubsection=true,%
-    sansserif=false,%
+    sansserif=true,%
     configurelistings=true,%
     colorize=full,%
     colortheme=unigraz,%
@@ -88,3 +89,6 @@
 % colors for table
 \definecolor{cred}{cmyk}{0,0.47,0.84,0.16}
 \definecolor{cgreen}{cmyk}{0.62, 0, 0.17, 0.38}
+
+%% This did solve a lot of problems for me when twosides and tables jumping around and going ashtray
+\raggedbottom

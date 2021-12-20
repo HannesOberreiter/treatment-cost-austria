@@ -1,5 +1,8 @@
 ---
 documentclass: scrreprt
+papersize: a4
+classoption:
+- twoside
 header-includes:
 - \usepackage{hyperref}
 - \usepackage{float}
@@ -12,6 +15,7 @@ bibliography: bib-refs.bib
 biblatexoptions: [
     backend=biber,
     style=authoryear,
+	sortcites=false,
 	natbib=true,				
 	hyperref=true,			
 	backref=false,		
@@ -33,5 +37,5 @@ if (knitr::is_latex_output()) {
 } else {
     options(knitr.table.format = "html")
 }
-knitr::opts_chunk$set(fig.pos = "htp", out.extra = "")
+knitr::opts_chunk$set(fig.pos = "pht", out.extra = "")
 ```
