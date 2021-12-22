@@ -3,6 +3,72 @@ r_motivation <- list()
 
 r_motivation$answers <- length(unique(dfMotivation$id))
 
+# Operation Size and Common Selection
+
+p <- dfData %>%
+    filter(year == "20/21" & submitted == "Internet") %>%
+    filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
+    select(starts_with("motivation_"), hives_winter) %>%
+    mutate(
+        operation = ifelse(hives_winter > 25, "> 25 Colonies", "<= 25 Colonies"),
+        operation = as.factor(operation)
+    ) %>%
+    select(-hives_winter) %>%
+    add_count(operation) %>%
+    pivot_longer(starts_with("motivation_")) %>%
+    drop_na(value) %>%
+    filter(value == "Ja") %>%
+    left_join(motivationList, by = c("name" = "cname")) %>%
+    count(short, desc, name, operation, n) %>%
+    glimpse() %>%
+    group_by(operation, desc, short) %>%
+    summarise(
+        count = nn,
+        perc = count / n * 100,
+        perc_f = format(round(perc), nsmall = 1)
+    ) %>%
+    arrange(desc(count)) %>%
+    ungroup() %>%
+    group_by(desc) %>%
+    mutate(
+        text_position = max(perc),
+        order_sum = sum(perc)
+    ) %>%
+    ungroup() %>%
+    mutate(
+        short = forcats::fct_reorder(short, order_sum, .desc = FALSE),
+        desc = stringr::str_trunc(desc, width = 47),
+        desc = forcats::fct_reorder(desc, order_sum, .desc = FALSE),
+    ) %>%
+    ggplot2::ggplot(aes(x = desc, y = perc, fill = operation)) +
+    geom_col(position = "dodge") +
+    geom_text(
+        aes(y = text_position * 1.05, label = paste0(perc_f, "% (", count, ")")),
+        # nudge_y = 30,
+        hjust = 0,
+        colour = "grey20",
+        size = 3,
+        position = position_dodge(width = .9)
+    ) +
+    ggplot2::scale_y_continuous(
+        breaks = scales::breaks_pretty()
+    ) +
+    ggplot2::scale_fill_manual(values = c("#0072B2", "#009E73")) +
+    xlab("") +
+    ylab("Count [%]") +
+    labs(fill = "Operation Size") +
+    coord_flip(ylim = c(0, 100), expand = FALSE) +
+    ggplot2::theme(
+        legend.position = "top",
+        panel.grid.major.x = element_line(),
+        panel.grid.minor.x = element_line(),
+        axis.ticks.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.text.y = ggplot2::element_text(color = "black")
+    )
+
+fSaveImages(p, "motivation-operation", h = 6.5)
+
 # Table most common combinations
 r_motivation$comb_list <- dfMotivation %>%
     filter(value == "Ja") %>%
