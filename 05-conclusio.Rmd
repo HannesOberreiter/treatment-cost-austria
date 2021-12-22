@@ -1,0 +1,3 @@
+# Conclusion
+
+The uncertainly range of the results and the need of data cleaning did show some disadvantages of our survey. An alternative approach for evaluating the economic values or impact would be to work more closely with beekeeping operations for a thorough result. This was done for example in a detailed economic breakdown of honeybee queen breeding in Canada, were they results are from three operations [@bixby2020]. Although, the advantages of the survey are probably higher, eg. using a already established survey, getting more answers.

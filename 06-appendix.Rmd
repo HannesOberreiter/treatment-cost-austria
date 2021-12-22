@@ -56,3 +56,6 @@ tab <- knitr::kable(
 tab
 rm(tab, c, cn)
 ```
+
+
+

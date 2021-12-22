@@ -4,42 +4,11 @@ Aufteilung nach <25 >25 Schema wie in den folgenden Ergebnissen:
 Robert: Super! Stratifikation nach Betriebsgröße wäre noch interessant!
 
 
-
-
-
-We need to understand what the underlying principle of not random survey means for us.
-
-
 Read:
 Lessler and Kalsbeek 1992 non response bias and missing data
 
-
 In our citizien science survey we probably have a potential selection biases and survey erros (cite applied survey data analysis).
 Read Baker et al. 2013 for nonprobability samples.
-
-
-Eine Stichprobe sollte repräsentativ für die Grundgesamtheit sein, damit ihre Ergebnisse deren Eigenschaften wahrheitsgemäß wiedergeben. Eine repräsentative Stichprobe lässt sich unter anderem dadurch erstellen, dass die Elemente der Stichprobe zufällig aus der Grundgesamtheit ausgewählt werden (van der Zee et al., 2013). Dies hieße im Falle des Virenmonitorings, dass die teilnehmenden Bienenstände zufällig aus einer Liste aller in Österreich vorhandenen Bie- nenstände gezogen werden. Ein solches Bienenstandregister liegt in Österreich seit dem Jahr 2017 im Rahmen des Veterinärinformationssystems (VIS) vor. Diese VIS-Aufzeichnungen dürfen jedoch ausschließlich zum Zwecke der Überwachung und Bekämpfung von Tierseuchen und der Überwachung der Lebensmittelsicherheit verwendet werden (TSG § 8 Abs. 6). Daher war es nicht möglich, diese Daten zur Auswahl der TeilnehmerInnen des Virenmonitorings heranzuziehen. Stattdessen wurde in der Imkerschaft für die Teilnahme am „Virenmonitoring“ geworben.
-
-
-Berechnung der notwendigen Stichprobengröße, um bei einer binomialen Verteilung der unter- schiedlichen zu erwartenden Prävalenzen ein 95% Konfidenzintervall von ±5%, ±6% und ±7% zu erreichen. Basis der Berechnung ist das Wilson-Konfidenzintervall, Berechnung durchgeführt in R mit der Version 3.4.1 (R Core Team, 2020) mit dem package „binomSamSize“ (Höhle, 2017). Die gewählte Stichprobengröße von 200 Ständen ist als rote Linie eingezeichnet. Überschreitet der graue Balken die rote Linie, wäre eine höhere Anzahl an Stichproben als die gewählten 200 notwendig um die gewünschte Schwankungsbreite des Konfidenzintervalls zu erreichen (fast immer bei ±5%, nie bei ±7%).
-
-
-Multivariates Modell (GLM mit quasibinomialer Verteilung): Einfluss auf die Wintersterblich- keit von Bienenvölkern. Prädiktoren: Virustiter von DWV-B im September vor der Einwinterung (Vergleichskategorie: negativ, K = Konzentration), Symptom „Varroamilben auf Bienen“ im Sep- tember gesehen (Vergleichskategorie: Symptom nicht gesehen) und Gesamtanzahl der Völker des
-Imkereibetriebes (Anzahl Völker). n=390 Proben.
- Prädiktor
-DWV-B geringe K DWV-B mittlere K DWV-B hohe K
-Varroa - gesehen Varroa - keine Angabe
-Anzahl Völker
-Schätzer Standardfehler
--0,039 0,360 0,502 0,337 1.204 0,355
-0,680 0,212 0,057 0,317
--0,003 0,002
-P-Wert
-0,913
-0,137 <0,001
-0,001 0,858
-0,050
-
 
 
 Wert des Honigs: Die Bestäubung der blütenpflazen durch bienen, 2000 Pickhardt schweizer zentrum bienenforschung
@@ -56,9 +25,6 @@ You can only use an observation once to confirm a hypothesis. As soon as you use
 It’s common to think about modelling as a tool for hypothesis confirmation, and visualisation as a tool for hypothesis generation. But that’s a false dichotomy: models are often used for exploration, and with a little care you can use visualisation for confirmation. The key difference is how often do you look at each observation: if you look only once, it’s confirmation; if you look more than once, it’s exploration.
 
 
-### extract pattern of treatment method 
-see:
-https://r4ds.had.co.nz/exploratory-data-analysis.html#patterns-and-models
 
 
 
@@ -145,25 +111,5 @@ Hmmm, wäre auch noch spannend für deine Arbeit, die "items" in solche Gruppen 
 
 
 
-## OLD TEXT/METHOD for upper limit costs:
-
-Nope we cant do this in my opinion :/ Next up we try to calculate the 3rd quantile and multiple by 2 for each treatment combination and compare it to this. 
-
-We defined an upper limit cost outliner with the 3rd quantile and multiplied it by two which resulted in a cost limit of `r mmList$cost_upper$limit` euros per colony. In total `r nrow(mmList$cost_upper$data_raw)` participants did answers above this limit. To remove possible expensive but plausible answers, I filtered expenses which are five or respectively three times higher than the mean of our previous calculated estimated expense (table \@ref(tab:standard-cost)), for each individual beekeeper based on the standard costs by market price, if they used "Hyperthermia" or "other biotechnical Methods" as treatment or respectively all other treatment methods, which should reflect the bigger price differences for the first two treatment methods. This did reduce the list to `r nrow(mmList$cost_upper$data)` answers.  Further investigating of these list revealed that most of them did answer total expenses per operation and not expenses per colony. Therefore, I divided the expenses by the reported number of colonies going into winter. This means the manipulative impact was higher for participants which had high expenses above the limit and also a large number of colonies and less so for small operations, were the expensive costs are possible true. Additionally `r length(mmList$cost_upper$id_nochange)` participants were on purpose not changed because one had high expenses due to hyperthermia treatment and only few colonies and the second one did explain it by buying a power generator, which can be seen as investment for a few years.
 
 
-vom Zukunft Biene Bericht:
-
-
-\textit{Random-Forest}
-
-Random-Forest-Modelle gehören zu den sogenannten Ensemble Methoden. Das sind Methoden, die verschiedene Basismodelle kombinieren, um eine bessere Vorhersage zu erhalten als die Einzelmodelle \citep{smolyakov2017}. Bei den Random-Forest-Modellen werden verschiedene Regression Trees kombiniert. Ziel dabei ist es, möglichst verschiedene unkorrelierte Bäume zu kombinieren, damit die hohe Varianz der Regression Trees reduziert werden kann. Für die Berechnung des Random-Forest-Modells wurde das package \enquote{ranger} verwendet \citep{ranger}.
-
-Random-Forest-Modelle reduzieren die Varianz von einzelnen Regression Trees, haben aber den Nachteil, dass das Endmodell nicht mehr so klar und übersichtlich darstellbar ist, wie bei den Regression Trees. Um dennoch zu bewerten, welche Features relevant für die Vorhersage der Wintersterblichkeit sind, können sogenannte Variable-Importance-Plots erstellt werden. Diese können entweder anhand des Total Decrease in Node Impurity oder anhand der Mean Decrease Accuracy berechnet werden. Beide Werte werden hier nicht näher diskutiert. Generell gilt, je höher die Werte, desto relevanter war die Variable für die Verbesserung der Vorhersagegüte des Modells. Diese Kenngrößen sagen jedoch nichts darüber aus, von welcher Art der Einfluss auf die Wintersterblichkeit ist, d.h. ob der Prädiktor eher zu einer hohen oder einer geringeren Wintersterblichkeit beiträgt. 
-
-Für die Berechnung der Kennwerte für die Bewertung der Variable Importance und deren grafische Darstellung wurden die packages \enquote{vip} und \enquote{gridExtra} verwendet \citep{vip, gridExtra}.
-
-
-\textit{Bewertung der Modell Performance}
-
-Um die Vorhersagekraft der einzelnen Modelle zu bewerten, wurde eine Kreuzvalidierung mit dem package \enquote{caret} durchgeführt \citep{caret}. Dazu werden nur 75\% (zufällig ausgewählter „Trainingsdatensatz“) der Stichprobe für die Anpassung der Modelle herangezogen, die restlichen 25\% („Testdatensatz“) werden dafür verwendet, die Vorhersagekraft der Modelle zu testen. Als Vergleichsmodell wurde das Basismodell festgelegt. Das ist jenes Modell, das pauschal unabhängig von jeglichen Einflussgrößen die durchschnittliche Wintersterblichkeit für alle Bienenstände vorhersagt. Um die Vorhersagegüte der einzelnen Modelle zu vergleichen, wird der RMSE (Root-Mean-Square Error) einerseits für den Trainings- andererseits auch für den Testdatensatz berechnet. Dafür werden die Differenzen der vorhergesagten und tatsächlich beobachteten Wintersterblichkeitsrate für jeden Bienenstand aus dem Trainings- bzw. Testdatensatz berechnet, quadriert und aufsummiert. Aus dieser Summe wird dann noch die Wurzel gezogen. Somit erhält man eine Art durchschnittlichen Vorhersagefehler. Je geringer der RMSE für ein Modell ist, desto akkurater konnte das Modell die Wintersterblichkeitsrate für die Bienenstände vorhersagen.
