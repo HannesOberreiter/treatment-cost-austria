@@ -234,3 +234,4 @@ Generate Mixed Model to check if factor treatment type is relevant for costs.
   - http://homepages.inf.ed.ac.uk/bwebb/statistics/ANOVA_in_R.pdf
 - Varianzanalyse
   - https://www.beratung-statistik.de/statistik-beratung-infos/r-tutorial/r-varianzanalyse-post-hoc/
+

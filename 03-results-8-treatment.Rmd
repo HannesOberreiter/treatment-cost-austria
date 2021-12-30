@@ -1,3 +1,4 @@
+\newpage
 ## Efficacy & Economical
 ```{r, include=FALSE}
 if (file.exists("output/r-treatment.rds")) {
