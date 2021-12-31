@@ -13,3 +13,225 @@ iris %>%
     geom_line(position = jitter) +
     geom_point(position = jitter)
 ```
+
+
+```{r}
+library(vegan)
+# https://stackoverflow.com/questions/23686028/how-the-command-distx-method-binary-calculates-the-distance-matrix
+m <- dfClean %>%
+    # dplyr::slice_sample(n = 500) %>%
+    dplyr::select(T_drone_01:T_other_12) %>%
+    mutate(
+        across(everything(), replace_na, replace = 0)
+    ) %>%
+    # zero columns have no value
+    dplyr::select(where(~ sum(.x) > 0)) # %>%
+# filter(rowSums(.) > 1)
+
+# https://stackoverflow.com/questions/48788876/mds-plots-of-binary-data-counterintuitive-clustering
+mds <- vegan::metaMDS(
+    m,
+    k = 3,
+    trace = TRUE,
+    autotransform = FALSE,
+    parallel = 8,
+    wascores = FALSE,
+    maxit = 999,
+    try = 200,
+    trymax = 500,
+    distance = "jaccard",
+    binary = FALSE
+)
+mds
+plot(mds)
+stressplot(mds)
+plot(mds, "sites")
+text(mds, "sites", pos = 3)
+```
+
+
+```{r}
+wordcloud <- r_motivation$counts_state %>%
+    group_by(state_de) %>%
+    slice_max(n = 3, order_by = p_state)
+
+centers <- mfStatesSimplify$geometry %>%
+    sf::st_centroid() %>%
+    st_coordinates() %>%
+    as_tibble()
+mfStatesC <- dplyr::bind_cols(mfStatesSimplify, centers)
+great_words <- mfStatesC %>%
+    left_join(wordcloud, by = c("BL" = "state_de"))
+
+p <- great_words %>%
+    ggplot2::ggplot(aes(x = X, y = Y, color = BL)) +
+    # Dirty helper for legend
+    geom_point() +
+    ggplot2::geom_sf(color = "gray20", fill = "lightgray") +
+    ggwordcloud::geom_text_wordcloud(
+        aes(label = desc, size = p_state),
+        grid_size = 0.5
+    ) +
+    ggplot2::scale_size(range = c(2, 5)) +
+    ggplot2::scale_colour_manual(values = c(colorBlindBlack8, "#882255")) +
+    ggplot2::coord_sf(clip = "off") +
+    xlab("") +
+    ylab("")
+fSaveImages(p, "temp", w = 15, h = 6)
+```
+
+
+```{r}
+library(sf)
+library(tidyverse)
+
+
+    system.file("shape/nc.shp", package = "sf") |>
+    st_read() |>
+    transmute(n = map_int(geometry, length)) |>
+    filter(n > 1) |>
+    st_cast("POLYGON") |>
+
+
+
+multipolygon %>%
+    ggplot(aes(geometry = geometry, fill = rowname)) +
+    geom_sf()
+
+multipolygon %>%
+    select(rowname, geometry) %>%
+    ggplot(aes(geometry = geometry, fill = rowname)) +
+    geom_sf()
+```
+
+Playing around with linear equations
+
+```{r}
+#library(matlib)
+# https://cran.r-project.org/web/packages/matlib/vignettes/linear-equations.html
+
+d <- DATA %>% group_by(t_short) %>% summarise(
+  mc = mean(costs),
+  nu = n()
+)
+
+apply(treatmentList[-c(1:2),], 1, function(x){
+  v <- DATA %>% group_by(t_short) %>% summarise(
+    !!(paste0(x['tshort'])) :=
+      ifelse(
+        sum(
+          !!as.name(
+            (paste0(
+              x['ttotal'],12
+            )
+            )
+          )
+        ) == 0, 0,1)
+  )
+  d <<- add_column(d, v[,2])
+})
+
+# remove single combinations
+#d <- d %>% filter(str_detect(d$t_short, "&"))
+# remove low answers
+d <- d %>% filter(nu >= 30)
+# remove last columns (Chemical Producs and Other) as we don't have enough answers
+d <- d[,-c(4,8, 12:14)]
+# generate matrix
+dma <- as.matrix(d[,-(1:3)])
+
+# create variables
+A <- dma
+b <- d$mc
+x <- d$t_short
+
+#b <- c(9.19, 8.54, 11.10); A
+#x <- c("AS-KZ", "Ox-sub", "Ox-pure")
+x <- MASS::ginv(A) %*% b
+x
+# show numerically
+y <- qr.solve(A, b)
+y
+
+rm(A, d, dma, x, b)
+
+
+```
+
+
+```{r}
+# AOV ---------------------------------------------------------------
+# we could use the residuals to remove treatment effect
+# but linear function is not an good estimate for our data
+# aovSize <- DATA %>%
+#   split(.$year) %>%
+#   map(~aov(costs ~ 0 + c_short_od, data = .x)) %>%
+#   map(residuals) %>%
+#   map_dfr(~bind_cols("residuals" = .x))
+# DATA$residuals <- aovSize$residuals
+# rm(aovSize)
+
+# Operation Size ----------------------------------------------------------
+# we would except that bigger companies spend less per colony
+# we have two ways to group 1-20, 21-50 and > 50
+# or 1-20, > 21, both would make sense
+
+## Subset ------------------------------------------------------------------
+# If we want to only use treatments which are used by both groups
+# Extract Treatment Methods used by defined Factor
+STATS_certorg$treatments <- STATS_certorg$subData %>%
+  filter(op_cert_org_beek == "Yes") %>%
+  select(c_short_od) %>%
+  unique() %>%
+  pull()
+# generate second subset of data
+STATS_certorg$subDataTreatment <- STATS_certorg$subData %>%
+  filter(c_short_od %in% STATS_certorg$treatments)
+
+
+# Inactive Code Chunks --------------------------------------------------
+## Dunn-Test ---------------------------------------------------------------
+
+# pwc1819 <- DATA %>% filter(year == "18/19") %>%
+#   rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") %>%
+#   add_column(year = "18/19")
+# pwc1920 <- DATA %>% filter(year == "19/20") %>%
+#   rstatix::dunn_test(costs ~ 0 + tri_size, p.adjust.method = "holm") %>%
+#   add_column(year = "19/20")
+# Binding Position for Plotting of Significant Values
+# resPWC <- rbind(pwc1819, pwc1920) %>% rstatix::add_xy_position(x = "tri_size")
+# rm(pwc1819, pwc1920)
+```
+
+# Treatment
+
+
+ We use normal parameters, same results as with lm
+ ~ 0 to check not between groups
+ https://www.researchgate.net/post/R_stats_It_is_possible_to_fix_the_intercept_of_a_GLS_model_with_both_categorical_and_continuous_predictors
+ https://stats.stackexchange.com/questions/181113/is-there-any-difference-between-lm-and-glm-for-the-gaussian-family-of-glm
+ https://stats.stackexchange.com/questions/190763/how-to-decide-which-glm-family-to-use
+ Poisson Info
+ http://www.stat.cmu.edu/~brian/463-663/week04/checking-poissonness.pdf
+ https://www.theanalysisfactor.com/generalized-linear-models-in-r-part-6-poisson-regression-count-variables/
+ lmer package
+ file:///Users/btree-mac/Downloads/v82i13.pdf
+
+## Mixed Model
+
+Generate Mixed Model to check if factor treatment type is relevant for costs.
+
+
+# Links
+
+- Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript
+  - https://elifesciences.org/articles/48175
+- What is the difference between fixed effect, random effect and mixed effect models?
+  - https://stats.stackexchange.com/questions/4700/what-is-the-difference-between-fixed-effect-random-effect-and-mixed-effect-mode
+- Check Your Residual Plots to Ensure Trustworthy Regression Results!
+  - https://statisticsbyjim.com/regression/check-residual-plots-regression-analysis/
+- ANOVA 
+  - http://homepages.inf.ed.ac.uk/bwebb/statistics/ANOVA_in_R.pdf
+- Varianzanalyse
+  - https://www.beratung-statistik.de/statistik-beratung-infos/r-tutorial/r-varianzanalyse-post-hoc/
+

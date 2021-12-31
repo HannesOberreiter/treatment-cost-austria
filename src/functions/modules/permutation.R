@@ -97,7 +97,7 @@ fPlotPermutation <- function(year_long, data, point_estimate, point_ci, null_dis
         infer::shade_p_value(obs_stat = point_estimate, direction = "two-sided", color = colorBlindBlack8[7]) +
         ggplot2::scale_y_continuous(breaks = scales::breaks_pretty()) +
         ggplot2::ylab("Count [#]") +
-        ggplot2::xlab("Median Difference [Euro]") +
+        ggplot2::xlab("Median Difference [EUR]") +
         ggplot2::labs(
             title = lab,
             subtitle = lab2

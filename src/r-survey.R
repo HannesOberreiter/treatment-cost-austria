@@ -23,6 +23,7 @@ r_survey$summary$survey_table <- dfClean %>%
     summarise(
         min = format(round(min(costs), 2), nsmall = 2),
         mean = format(round(mean(costs), 2), nsmall = 2),
+        gmean = format(round(fGeoMean(costs), 2), nsmall = 2),
         median = format(round(median(costs), 2), nsmall = 2),
         max = format(round(max(costs), 2), nsmall = 2),
         n = n()
@@ -33,6 +34,7 @@ r_survey$summary$survey_total <- tibble(
     year = "total",
     min = format(round(min(dfClean$costs), 2), nsmall = 2),
     mean = format(round(mean(dfClean$costs), 2), nsmall = 2),
+    gmean = format(round(fGeoMean(dfClean$costs), 2), nsmall = 2),
     median = format(round(median(dfClean$costs), 2), nsmall = 2),
     max = format(round(max(dfClean$costs), 2), nsmall = 2),
     n = nrow(dfClean)
@@ -43,6 +45,7 @@ r_survey$summary$estimate_table <- dfClean %>%
     summarise(
         min = format(round(min(t_estimated), 2), nsmall = 2),
         mean = format(round(mean(t_estimated), 2), nsmall = 2),
+        gmean = format(round(fGeoMean(t_estimated), 2), nsmall = 2),
         median = format(round(median(t_estimated), 2), nsmall = 2),
         max = format(round(max(t_estimated), 2), nsmall = 2),
         n = n(),
@@ -89,7 +92,7 @@ p <- ggplot(dfClean, aes(x = year, y = costs, fill = year)) +
         aesthetics = "fill", name = "Survey"
     ) +
     xlab("") +
-    ylab("Expenses / Colony [Euro]") +
+    ylab("Expenses / Colony [EUR]") +
     # Our three extension arrows
     geom_segment(
         x = 1, y = 45,

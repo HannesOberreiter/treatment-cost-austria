@@ -1,94 +1,92 @@
 # Description -------------------------------------------------------------
-# Map Loading and generation
-# Important loading order to prevent errors! (https://stackoverflow.com/questions/30790036/error-istruegpclibpermitstatus-is-not-true)
-# library( rgeos )
-# library( maptools )
-# library( rgdal )
-# Now only using sf, dont need the tools above
 # library( sf )
 
 # Import ------------------------------------------------------------------
-# Folder and Name need to be the same
-SHAPEFILE.NAME.AUSTRIA <- "VGD_modf"
-# Load MAP
-SHAPEFILE.FOLDER.AUSTRIA <- gsub(" ", "", paste(here(), SHAPEFILE.NAME.AUSTRIA, sep = "/"), fixed = TRUE)
+mapDataPath <- glue("{here()}/data/maps.RData")
 # Read MAPS
-if (!exists("MF_STATES")) {
-  if (file.exists("data/maps.RData")) {
-    load("data/maps.RData")
+if (!exists("mfStates")) {
+  if (file.exists(mapDataPath)) {
+    load(mapDataPath)
   } else {
-    MAP_AUSTRIA <- read_sf(SHAPEFILE.FOLDER.AUSTRIA)
-    MF_STATES <- MAP_AUSTRIA %>%
+    mapAustria <- read_sf(glue("{here()}/data/map"))
+    mfStates <- mapAustria %>%
       group_by(BL) %>%
       summarize(
         geometry = st_union(geometry)
       )
-    MF_DISTRICTS <- MAP_AUSTRIA %>%
+    mfStatesSimplify <- mfStates %>% st_simplify(dTolerance = 0.002)
+    mfDistricts <- mapAustria %>%
       group_by(PB) %>%
       summarize(
         geometry = st_union(geometry)
       )
+    mfDistrictsSimplify <- mfDistricts %>% st_simplify(dTolerance = 0.002)
     # save R object to prevent loading each time
-    save(MAP_AUSTRIA, MF_DISTRICTS, MF_STATES, file = "data/maps.RData")
+    save(mapAustria, mfDistricts, mfStates, mfStatesSimplify, mfDistrictsSimplify, file = mapDataPath)
   }
-  # Old Version we now use sf package, as it is quicker
-  # MAP_AUSTRIA   <- readOGR( dsn = SHAPEFILE.FOLDER.AUSTRIA, layer = SHAPEFILE.NAME.AUSTRIA )
-  # MF_STATES     <- fortify( MAP_AUSTRIA, region = "BL" )
-  # MF_DISTRICTS  <- fortify( MAP_AUSTRIA, region = "PB" )
 }
-rm(SHAPEFILE.FOLDER.AUSTRIA, SHAPEFILE.NAME.AUSTRIA)
+rm(mapDataPath)
 
-# Add Data To Map ---------------------------------------------------------
-MAP_POINTS <- dfClean %>%
-  select(year, latitude, longitude) %>%
-  split(.$year) %>%
-  map(~ fMapCluster(., 5)) %>%
-  bind_rows(.id = "year") %>%
+# Data Cleanup
+temp <- dfClean %>%
+  drop_na(longitude, latitude) %>%
+  filter(
+    # Drop "In mehr as einem Bezirk" because we cannot know which one it belongs to
+    district != "In mehr als einem Bezirk"
+  ) %>%
+  count(year, district) %>%
+  group_by(year) %>%
   mutate(
-    Survey = paste0("20", year)
-  )
+    n = n,
+    freq = proportions(n) * 100
+  ) %>%
+  # join with map source
+  left_join(mfDistrictsSimplify, by = c("district" = "PB"))
 
-# Plot --------------------------------------------------------------------
-p <- ggplot() +
-  geom_point(
-    data = MAP_POINTS,
-    aes(x = longitude, y = latitude, size = n, fill = Survey),
-    color = "black", stroke = 0.3, shape = 21, alpha = 0.8
-  ) +
-  geom_sf(data = MF_STATES, aes(group = BL), color = "black", size = 0.6, fill = "white") +
-  geom_sf(data = MF_DISTRICTS, aes(group = PB), fill = NA, color = colorBlindBlack8[1], size = 0.2) +
-  # geom_polygon(
-  #   data = MF_DISTRICTS, aes( x = long, y = lat, group = group ), fill="white", color = "black", size = 0.2
-  #   ) +
-  # geom_path(
-  #   data = MF_STATES, aes(x = long, y = lat, group = group), color = "black", size = 0.6
-  #   ) +
+temp_labels <- temp %>%
+  group_by(year) %>%
+  summarise(
+    n = sum(n),
+    n = format(n, big.mark = ".", decimal.mark = ","),
+    n = paste0("20", year[[1]], " (n = ", n, ")")
+  ) %>%
+  pull(n)
 
-  geom_point(
-    data = MAP_POINTS,
-    aes(x = longitude, y = latitude, size = n, fill = Survey),
-    color = "black", stroke = 0, shape = 21, alpha = 0.8
+names(temp_labels) <- unique(temp$year)
+temp_labels <- as_labeller(temp_labels)
+
+p <- temp %>%
+  ggplot() +
+  geom_sf(
+    data = mfStatesSimplify,
+    aes(group = BL),
+    color = "black",
+    size = 0.6,
+    fill = "white"
   ) +
-  scale_fill_discrete(type = colorBlindBlack8[c(2, 4, 6)]) +
+  geom_sf(
+    aes(group = district, fill = n, geometry = geometry),
+    color = colorBlindBlack8[1],
+    size = 0.2
+  ) +
   coord_sf() +
   xlab("") +
   ylab("") +
-  labs(size = "Beekeeper [n]") +
-  scale_size_continuous(
-    range = c(1, 4), breaks = c(1, 10, round(max(MAP_POINTS$n) / 2, digits = 0), max(MAP_POINTS$n))
-  ) +
-  ggtitle("") +
-  theme_classic() +
-  ggplot2::theme(
+  theme(
     legend.position = "bottom",
-    legend.box = "horizontal",
-    plot.title = element_text(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    panel.grid.major = element_blank(),
-    axis.line = element_blank()
+    axis.line.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank()
+  ) +
+  scale_fill_viridis_c(
+    option = "inferno",
+    direction = -1
+  ) +
+  labs(fill = "TeilnehmerInnen [#]") +
+  facet_wrap(
+    ~year,
+    ncol = 1,
+    labeller = temp_labels
   )
-
-fSaveImages(p, "map", h = 5)
-
-rm(p, MAP_POINTS, MF_DISTRICTS, MF_STATES)
+fSaveImages(p, "map", h = 10, w = 6.5)

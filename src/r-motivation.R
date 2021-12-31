@@ -3,6 +3,72 @@ r_motivation <- list()
 
 r_motivation$answers <- length(unique(dfMotivation$id))
 
+# Operation Size and Common Selection
+
+p <- dfData %>%
+    filter(year == "20/21" & submitted == "Internet") %>%
+    filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
+    select(starts_with("motivation_"), hives_winter) %>%
+    mutate(
+        operation = ifelse(hives_winter > 25, "> 25 Colonies", "<= 25 Colonies"),
+        operation = as.factor(operation)
+    ) %>%
+    select(-hives_winter) %>%
+    add_count(operation) %>%
+    pivot_longer(starts_with("motivation_")) %>%
+    drop_na(value) %>%
+    filter(value == "Ja") %>%
+    left_join(motivationList, by = c("name" = "cname")) %>%
+    count(short, desc, name, operation, n) %>%
+    glimpse() %>%
+    group_by(operation, desc, short) %>%
+    summarise(
+        count = nn,
+        perc = count / n * 100,
+        perc_f = format(round(perc), nsmall = 1)
+    ) %>%
+    arrange(desc(count)) %>%
+    ungroup() %>%
+    group_by(desc) %>%
+    mutate(
+        text_position = max(perc),
+        order_sum = sum(perc)
+    ) %>%
+    ungroup() %>%
+    mutate(
+        short = forcats::fct_reorder(short, order_sum, .desc = FALSE),
+        desc = stringr::str_trunc(desc, width = 47),
+        desc = forcats::fct_reorder(desc, order_sum, .desc = FALSE),
+    ) %>%
+    ggplot2::ggplot(aes(x = desc, y = perc, fill = operation)) +
+    geom_col(position = "dodge") +
+    geom_text(
+        aes(y = text_position * 1.05, label = paste0(perc_f, "% (", count, ")")),
+        # nudge_y = 30,
+        hjust = 0,
+        colour = "grey20",
+        size = 3,
+        position = position_dodge(width = .9)
+    ) +
+    ggplot2::scale_y_continuous(
+        breaks = scales::breaks_pretty()
+    ) +
+    ggplot2::scale_fill_manual(values = c("#0072B2", "#009E73")) +
+    xlab("") +
+    ylab("Count [%]") +
+    labs(fill = "Operation Size") +
+    coord_flip(ylim = c(0, 100), expand = FALSE) +
+    ggplot2::theme(
+        legend.position = "top",
+        panel.grid.major.x = element_line(),
+        panel.grid.minor.x = element_line(),
+        axis.ticks.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.text.y = ggplot2::element_text(color = "black")
+    )
+
+fSaveImages(p, "motivation-operation", h = 6.5)
+
 # Table most common combinations
 r_motivation$comb_list <- dfMotivation %>%
     filter(value == "Ja") %>%
@@ -37,13 +103,15 @@ r_motivation$counts_state <- dfMotivation %>%
     filter(value == "Ja") %>%
     group_by(state) %>%
     mutate(
-        state = stringr::str_replace_all(state, stateList),
-        state_print = glue::glue("{state} (n={length(unique(id))})")
+        state_count = length(unique(id)),
+        state_de = state,
+        state_en = stringr::str_replace_all(state_de, stateList),
+        state_print = glue::glue("{state_en} (n={state_count})"),
     ) %>%
     ungroup() %>%
     add_count(short, name = "total_count") %>%
     add_count(state, name = "state_count") %>%
-    group_by(desc, short, state_print) %>%
+    group_by(desc, short, state_print, state_de) %>%
     summarise(
         total_count = first(total_count),
         state_count = first(state_count),
@@ -54,7 +122,7 @@ r_motivation$counts_state <- dfMotivation %>%
     ungroup() %>%
     group_by(desc, short) %>%
     mutate(
-        highest_lowest = max(p_state) == p_state | min(p_state) == p_state
+        highest_lowest = max(p_state) == p_state | min(p_state) == p_state,
     ) %>%
     ungroup() %>%
     glimpse()
@@ -64,8 +132,7 @@ p2 <- r_motivation$counts_state %>%
     filter(first(total_count) > 400) %>%
     ungroup() %>%
     mutate(
-        short = forcats::fct_reorder(short, desc(total_count)),
-        state_print = forcats::as_factor(state_print)
+        short = forcats::fct_reorder(short, desc(total_count))
     ) %>%
     ggplot(aes(
         x = short, y = p_state, group = short,
@@ -104,9 +171,11 @@ fSaveImages(p2, "motivation-state", h = 5.5)
 p <- r_motivation$counts %>%
     # dplyr::slice_max(count, n = 15) %>%
     mutate(
-        short = forcats::fct_reorder(short, count, .desc = FALSE)
+        short = forcats::fct_reorder(short, count, .desc = FALSE),
+        desc = stringr::str_trunc(desc, width = 47),
+        desc = forcats::fct_reorder(desc, count, .desc = FALSE),
     ) %>%
-    ggplot2::ggplot(aes(x = short, y = count)) +
+    ggplot2::ggplot(aes(x = desc, y = count)) +
     geom_col() +
     geom_text(
         aes(label = paste0(percentage_of_participants, "% (", count, ")")),
@@ -119,14 +188,23 @@ p <- r_motivation$counts %>%
         breaks = scales::breaks_pretty()
     ) +
     xlab("") +
-    ylab("Count (#)") +
-    coord_flip(ylim = c(0, 1200)) +
+    ylab("Count [#]") +
+    coord_flip(ylim = c(0, 1100), expand = FALSE) +
     ggplot2::theme(
         legend.position = "none",
         panel.grid.major.x = element_line(),
         panel.grid.minor.x = element_line(),
         axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
-        axis.text.y = ggplot2::element_text(color = "black", margin = margin(t = 0, r = -20, b = 0, l = 0, unit = "pt"))
+        axis.text.y = ggplot2::element_text(color = "black")
     )
 fSaveImages(p, "motivation-count", h = 5.5)
+
+
+r_motivation$state_rank <- r_motivation$counts_state %>%
+    group_by(state_de) %>%
+    slice_max(n = 7, order_by = p_state) %>%
+    mutate(rank = rank(desc(p_state))) %>%
+    ungroup() %>%
+    mutate(state = stringr::str_replace_all(state_de, stateList)) %>%
+    select(state, desc, p_state_label, rank)

@@ -4,6 +4,7 @@
 \PassOptionsToPackage{utf8}{inputenc}
 \usepackage{inputenc}
 \DeclareUnicodeCharacter{2212}{-}
+\DeclareUnicodeCharacter{00A0}{ }
 
 % **************************************************
 % Information and Commands for Reuse
@@ -12,9 +13,9 @@
 %\newcommand{\thesisTitle}{Analysis of varroacide expenses and honey bee colony winter mortality on operation level in Austria}
 \newcommand{\thesisTitle}{Beekeeper Citizen Science Survey, comparing Expenses and Efficiency of Treatment Methods against the introduced Varroa Mite.}
 \newcommand{\thesisName}{Hannes Oberreiter (01619771)}
-\newcommand{\thesisSubject}{Master's Thesis}
+\newcommand{\thesisSubject}{Master Thesis}
 \newcommand{\thesisDate}{2021}
-\newcommand{\thesisVersion}{Dev}
+\newcommand{\thesisVersion}{0.1}
 
 \newcommand{\thesisFirstReviewer}{}
 \newcommand{\thesisFirstReviewerUniversity}{\protect{ }}
@@ -51,7 +52,7 @@
     hangfigurecaption=false,%
     hangsection=true,%
     hangsubsection=true,%
-    sansserif=false,%
+    sansserif=true,%
     configurelistings=true,%
     colorize=full,%
     colortheme=unigraz,%
@@ -79,4 +80,15 @@
     citecolor=blue
 }
 
+% https://tex.stackexchange.com/questions/32951/tables-below-footnotes-is-this-a-good-output-routine-algorithm-or-a-bug
+\makeatletter
+\renewcommand{\fps@figure}{htp}
+\renewcommand{\fps@table}{htp}
+\makeatother
 
+% colors for table
+\definecolor{cred}{cmyk}{0,0.47,0.84,0.16}
+\definecolor{cgreen}{cmyk}{0.62, 0, 0.17, 0.38}
+
+%% This did solve a lot of problems for me when twosides and tables jumping around and going ashtray
+\raggedbottom

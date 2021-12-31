@@ -21,8 +21,8 @@ r_estimate$table <- dfClean %>%
     tidyr::pivot_longer(-year) %>%
     tidyr::separate(name, into = c("type", "method"), sep = "_") %>%
     tidyr::pivot_wider(names_from = method, values_from = value) %>%
-    arrange(type) %>%
-    glimpse()
+    arrange(type) # %>%
+# glimpse()
 
 # Bland-Altmann plot variant to check difference and between survey and estimate for treatment methods -------------------------------------------------------------------
 r_estimate$data <- dfClean %>%
@@ -43,13 +43,13 @@ r_estimate$data <- dfClean %>%
         # -1 is half difference
         log_dif = log_survey - log_estimate
     ) %>%
-    filter(n >= 10) %>%
-    arrange(desc(n)) %>%
-    glimpse()
+    filter(n >= 15) %>%
+    arrange(desc(n)) # %>%
+# glimpse()
 
 ## BlandAltmanLeh -------------------------------------------------------------------
-r_estimate$ba <- BlandAltmanLeh::bland.altman.stats(r_estimate$data$log_survey, r_estimate$data$log_estimate)
-r_estimate$ba
+r_estimate$ba <- BlandAltmanLeh::bland.altman.stats(r_estimate$data$m_estimate, r_estimate$data$m_survey)
+# r_estimate$ba
 r_estimate$ba$label <- r_estimate$data$c_short_od
 
 ## Plot --------------------------------------------------------------------
@@ -62,12 +62,14 @@ limit_y <- round(
     digits = 1
 ) + 0.2
 
-labellogi <- (r_estimate$ba$diffs < r_estimate$ba$lower.limit) |
-    (r_estimate$ba$diffs > r_estimate$ba$upper.limit)
+labellogi <- (r_estimate$ba$diffs < r_estimate$ba$CI.lines["lower.limit.ci.upper"]) |
+    (r_estimate$ba$diffs > r_estimate$ba$CI.lines["upper.limit.ci.lower"])
+labellogi[1:3] <- TRUE
 colorlogi <- ifelse(labellogi, colorBlindBlack8[8], colorBlindBlack8[1])
 
 p <- ggplot() +
-    aes(x = 2^(r_estimate$ba$means), y = r_estimate$ba$diffs) +
+    # aes(x = 2^(r_estimate$ba$means), y = r_estimate$ba$diffs) +
+    aes(x = r_estimate$ba$means, y = r_estimate$ba$diffs) +
     geom_abline(
         aes(
             intercept = r_estimate$ba$lines,
@@ -93,16 +95,18 @@ p <- ggplot() +
     ) +
     ggrepel::geom_label_repel(
         aes(
-            x = 2^r_estimate$ba$means[labellogi],
+            # x = 2^r_estimate$ba$means[labellogi],
+            x = r_estimate$ba$means[labellogi],
             y = r_estimate$ba$diffs[labellogi],
             label = r_estimate$ba$label[labellogi]
         ),
         size = 2
     ) +
-    xlab("Mean of Survey and Estimates [Euro]") +
-    ylab(TeX("Differences (Survey-Estimate) \\[$\\log_2$ Euro\\]")) +
-    labs(size = "Combination [n]") +
-    scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-10, 10, 0.5)) +
+    xlab("Mean of Estimate and Survey [EUR]") +
+    ylab(TeX("Difference (Estimate-Survey) \\[EUR\\]")) +
+    labs(size = "Beekeeper [n]") +
+    ggplot2::scale_size_continuous(breaks = c(min(r_estimate$data$n), 50, 100, 150, max(r_estimate$data$n)), limits = c(min(r_estimate$data$n), max(r_estimate$data$n))) +
+    scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-12, 12, 2)) +
     scale_x_continuous(limits = c(0, NA), breaks = seq(0, 100, 2))
 
 fSaveImages(p, "bland-altman", h = 4.5)

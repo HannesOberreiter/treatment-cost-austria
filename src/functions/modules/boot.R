@@ -5,3 +5,7 @@ fBootMedian <- function(d, i) {
 fBootMean <- function(d, i) {
     mean(d[i])
 }
+fBootGeomMean <- function(d, i) {
+    d[d == 0] <- 0.01
+    exp(mean(log(d[i])))
+}

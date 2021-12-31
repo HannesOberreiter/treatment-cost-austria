@@ -249,7 +249,7 @@
 	% Using serif fonts
 	%
 	\RequirePackage{lmodern}	% font set: Latin Modern
-	%\RequirePackage{charter}	% font set: Charter
+	\RequirePackage{charter}	% font set: Charter
 	%\RequirePackage{fourier}	% font set: (basically improved utopia)
 \fi
 
@@ -273,7 +273,10 @@
 	labelfont={bf,sf,color=ctcolorfloatlabel},% 	- label in bold, sans-serif and magenta
 	labelsep=\cthesis@figuresep,				% 	- separator: none, colon, period, space, quad, newline, endash
 	singlelinecheck=false			% 	- no centered single-lined captions
-]{caption}[2008/08/24]
+]{caption}
+
+\captionsetup{belowskip=6pt,aboveskip=4pt}
+
 %\ifthenelse{\boolean{@figurecaptionoutside}}%
 \ifct@cthesis@hangfigurecaption
 %	{%
@@ -303,32 +306,7 @@
 % **************************************************
 % Bibliography
 % **************************************************
-\ifct@cthesis@configurebiblatex
-	\RequirePackage[					% use biblatex for bibliography
-		backend=\cthesis@bibsys,		% 	- use biber backend (bibtex replacement) or bibtex
-		style=\cthesis@bibstyle,		% 	- use alphabetic (or numeric) bib style
-		natbib=true,					% 	- allow natbib commands
-		hyperref=true,					% 	- activate hyperref support
-		backref=true,					% 	- activate backrefs
-		isbn=false,						% 	- don't show isbn tags
-		url=false,						% 	- don't show url tags
-		doi=false,						% 	- don't show doi tags
-		urldate=long,					% 	- display type for dates
-		maxnames=3,%
-		minnames=1,%
-		maxbibnames=5,%
-		minbibnames=3,%
-		maxcitenames=2,%
-		mincitenames=1,%,
-		sorting=\cthesis@bibsorting%
-	]{biblatex}
-	\bibliography{\cthesis@bibfile}
-	\DefineBibliographyStrings{ngerman}{%
-		andothers = {{et\,al\adddot}}, % 'et al.' instead of 'u.a.'
-		backrefpage = {{zitiert auf Seite}},%
-		backrefpages = {{zitiert auf den Seiten}},%
-	}
-\fi
+
 
 % **************************************************
 % Text Format
@@ -684,6 +662,12 @@
         {\color{ctcolorblack}\thesubsection\hspace*{10pt}}%
     }
 \fi
+
+\RedeclareSectionCommands[
+  beforeskip=-.5\baselineskip,
+  afterskip=.25\baselineskip
+]{section,subsection,subsubsection}
+
 %
 %
 % **************************************************
@@ -699,7 +683,8 @@
 % table of contents, list of figures and list of tables
 \RequirePackage{tocloft}
 % - fixes wrong fonts in the toc, thanks to magnucki
-\renewcommand{\cftchapfont}{\usefont{T1}{bch}{b}{n}\selectfont}
+%\renewcommand{\cftchapfont}{\usefont{T1}{bch}{b}{n}\selectfont}
+\renewcommand{\cfttoctitlefont}{\thesischapterfont}
 \renewcommand{\cfttoctitlefont}{\thesischapterfont}
 \renewcommand{\cftloftitlefont}{\thesischapterfont}
 \renewcommand{\cftlottitlefont}{\thesischapterfont}

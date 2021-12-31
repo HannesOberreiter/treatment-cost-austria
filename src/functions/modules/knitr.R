@@ -4,3 +4,7 @@ include_custom <- function(p) {
     }
     knitr::include_graphics(p)
 }
+
+ft <- function(x, ...) {
+    format(x, big.mark = ",", ...)
+}

@@ -1,37 +1,41 @@
 ---
 documentclass: scrreprt
+papersize: a4
+classoption:
+- twoside
 header-includes:
 - \usepackage{hyperref}
 - \usepackage{float}
 - \usepackage{siunitx}
 - \usepackage{threeparttable}
 - \usepackage{multirow}
+- \usepackage{pdflscape}
+- \usepackage{colortbl}
 bibliography: bib-refs.bib
 biblatexoptions: [
     backend=biber,
     style=authoryear,
-		natbib=true,				
-		hyperref=true,			
-		backref=false,		
-		isbn=false,						
-		url=false,					
-		doi=false,
+	sortcites=false,
+	natbib=true,				
+	hyperref=true,			
+	backref=false,		
+	isbn=false,					
+	url=false,					
+	doi=false,
     date=year,			
-		urldate=long,	
-		maxnames=3,
-		minnames=1,
-		maxbibnames=99,
-		minbibnames=1,
-		maxcitenames=2,
-		mincitenames=1,
+	urldate=long,
+	maxbibnames=99,
+	maxcitenames=2,
+	uniquelist=false
     ]
 link-citations: yes
 ---
 ```{r, warning=F, echo=F, include=F}
 # special case for PDF and table as they otherwise wont work
 if (knitr::is_latex_output()) {
-  options(knitr.table.format = "latex")
+    options(knitr.table.format = "latex")
 } else {
-  options(knitr.table.format = "html")
+    options(knitr.table.format = "html")
 }
+knitr::opts_chunk$set(fig.pos = "pht", out.extra = "")
 ```

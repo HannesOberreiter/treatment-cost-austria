@@ -51,7 +51,7 @@ treatmentList <- tibble(
     "Ox-sub",
     "Ox-mix",
     "Thy",
-    "chem. Meth.",
+    "syn. Met.",
     "Another"
   )
 ) %>%

@@ -34,70 +34,97 @@ r_model$test_data <- rsample::testing(r_model$data_split)
 # QQ Plots ------------------------------
 # for M & M section to show how good the transformation is
 p1 <- r_model$data %>%
-    ggplot(aes(sample = log(costs))) +
+    ggplot(aes(sample = log10(costs))) +
     geom_qq() +
     geom_qq_line() +
-    ylab(TeX("Expenses/Colony \\[$\\log_{10}$ Euro\\]"))
+    ylab(TeX("Expenses/Colony \\[$\\log_{10}$ EUR\\]"))
 
 p2 <- r_model$data %>%
-    ggplot(aes(sample = log(hives_winter))) +
+    ggplot(aes(sample = log10(hives_winter))) +
     geom_qq() +
     geom_qq_line() +
     ylim(-2, 6.5) +
-    ylab(TeX("Operation Size / Number of Colonies \\[$\\log_{10}$ #\\]"))
+    ylab(TeX("Number of Colonies \\[$\\log_{10}$ #\\]"))
 
 p <- (p1 | p2) +
     patchwork::plot_annotation(tag_levels = "A") &
     xlab("Theoretical Normal Distribution Quantiles") &
+    coord_equal() &
     scale_y_continuous(
-        breaks = c(-2, 0, 2, 4, 6),
-        limits = c(-2, 6)
+        breaks = c(-2, 0, 2, 4),
+        limits = c(-2, 4)
     ) &
     scale_x_continuous(
         breaks = c(-4, -2, 0, 2, 4),
         limits = c(-4, 4)
     )
 
-fSaveImages(p, "model-qq", w = 8, h = 5)
+fSaveImages(p, "model-qq", w = 10, h = 4)
 
 # Recipes ------------------------------
 r_model$rec_intercept_only <-
     recipe(costs ~ 1, data = r_model$train_data) %>%
-    step_log(costs, base = 10, skip = TRUE) %>%
-    prep(training = r_model$train_data)
+    step_log(costs, base = 10, skip = TRUE)
+# %>%
+# prep(training = r_model$train_data)
 
 r_model$rec_base <-
     recipe(costs ~ hives_winter, data = r_model$train_data) %>%
     step_log(hives_winter, base = 10) %>%
-    step_log(costs, base = 10, skip = TRUE) %>%
-    prep(training = r_model$train_data)
+    step_log(costs, base = 10, skip = TRUE)
+# %>%
+# prep(training = r_model$train_data)
 
-r_model$rec_operational <-
+r_model$rec_org <-
+    recipe(costs ~ hives_winter + op_cert_org_beek, data = r_model$train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    step_log(costs, base = 10, skip = TRUE) %>%
+    step_dummy(where(is.factor))
+# %>%
+# prep(training = r_model$train_data)
+
+r_model$rec_mig <-
     recipe(costs ~ hives_winter + op_cert_org_beek + op_migratory_beekeeper, data = r_model$train_data) %>%
     step_log(hives_winter, base = 10) %>%
     step_log(costs, base = 10, skip = TRUE) %>%
-    prep(training = r_model$train_data)
+    step_dummy(where(is.factor))
+# %>%
+# prep(training = r_model$train_data)
 
 r_model$rec_treatment <-
     recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
         T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
-        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + op_cert_org_beek + op_migratory_beekeeper, data = r_model$train_data) %>%
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter, data = r_model$train_data) %>%
     step_log(hives_winter, base = 10) %>%
-    step_log(costs, base = 10, skip = TRUE) %>%
-    prep(training = r_model$train_data)
+    step_dummy(where(is.factor)) %>%
+    step_log(costs, base = 10, skip = TRUE)
+# %>%
+# prep(training = r_model$train_data)
 
 r_model$rec_state <-
     recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
         T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
-        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + op_cert_org_beek + op_migratory_beekeeper + state, data = r_model$train_data) %>%
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + state, data = r_model$train_data) %>%
     step_log(hives_winter, base = 10) %>%
-    step_log(costs, base = 10, skip = TRUE) %>%
-    prep(training = r_model$train_data)
+    step_dummy(where(is.factor)) %>%
+    step_log(costs, base = 10, skip = TRUE) # %>%
+# prep(training = r_model$train_data)
+
+r_model$rec_year <-
+    recipe(costs ~ T_hyperthermia_total_yn + T_biotechnical_total_yn + T_formic_short_total_yn + T_formic_long_total_yn +
+        T_lactic_total_yn + T_oxalic_trickle_pure_total_yn + T_oxalic_vapo_total_yn + T_oxalic_trickle_mix_total_yn +
+        T_thymol_total_yn + T_synthetic_total_yn + T_other_total_yn + hives_winter + year, data = r_model$train_data) %>%
+    step_log(hives_winter, base = 10) %>%
+    step_dummy(where(is.factor)) %>%
+    step_log(costs, base = 10, skip = TRUE)
 
 # Models -----------------------------
 r_model$lm_mod <-
     linear_reg() %>%
     set_engine("lm")
+
+# r_model$glmnet_mod <- linear_reg(penalty = 1) %>%
+#    set_engine("glmnet")
 
 # Calculating ------------------------
 r_model$data_wflows <-
@@ -105,12 +132,15 @@ r_model$data_wflows <-
         preproc = list(
             Intercept = r_model$rec_intercept_only,
             Base = r_model$rec_base,
-            Operational = r_model$rec_operational,
+            Org = r_model$rec_org,
+            Mig = r_model$rec_mig,
             Treatment = r_model$rec_treatment,
-            State = r_model$rec_state
+            State = r_model$rec_state,
+            Year = r_model$rec_year
         ),
         models = list(
             lm = r_model$lm_mod
+            # glmnet = r_model$glmnet_mod
         ),
         cross = FALSE
     )
@@ -128,9 +158,12 @@ r_model$fitted <- r_model$data_wflows %>%
     ) %>%
     unnest(stat_values)
 
+extract_fit_parsnip(r_model$fitted$fitted[[4]]) %>% tidy()
+extract_fit_parsnip(r_model$fitted$fitted[[6]]) %>% tidy()
+
 # Manually selected best model based on AIC and BIC
 # filter(AIC == min(AIC) & BIC == min(BIC))
-(r_model$best_model <- r_model$fitted$fitted[[4]])
+(r_model$best_model <- r_model$fitted$fitted[[5]])
 
 # Model Residuals Distribution ------------------------
 p <- pull_workflow_fit(r_model$best_model)$fit$residuals %>%
@@ -138,12 +171,13 @@ p <- pull_workflow_fit(r_model$best_model)$fit$residuals %>%
     ggplot(aes(sample = value)) +
     geom_qq() +
     geom_qq_line() +
+    coord_equal() +
     labs(
         x = "Theoretical Quantiles (Normal Distribution)",
         y = "Training Dataset - Model Residuals Quantiles"
     )
 
-fSaveImages(p, "model-qq-residuals", w = 8, h = 5)
+fSaveImages(p, "model-qq-residuals", w = 8, h = 4)
 
 # Performance Tests ------------------------
 # library(performance)
@@ -180,9 +214,11 @@ r_model$vi_scores <- r_model$fitted[2:5, ] %>%
 r_model$coeff <- extract_fit_parsnip(r_model$best_model) %>%
     tidy() %>%
     mutate(
-        name = str_remove_all(term, "_yn1"),
+        name = str_remove_all(term, "_yn_X1"),
         estimate_conv = 10^abs(estimate) * ifelse(estimate < 0, -1, 1),
         error_conv = 10^std.error,
+        estimate_p = ifelse(name == "hives_winter", (1.10^(estimate) - 1) * 100, (10^(estimate) - 1) * 100),
+        error_p = ifelse(name == "hives_winter", (1.10^(std.error) - 1) * 100, (10^(std.error) - 1) * 100),
         direction = ifelse(estimate < 0, "Negative", "Positive"),
         direction = ifelse(name == "(Intercept)", "Neutral", direction)
     ) %>%
@@ -190,7 +226,7 @@ r_model$coeff <- extract_fit_parsnip(r_model$best_model) %>%
     mutate(
         tname = case_when(
             name == "(Intercept)" ~ "(Intercept)",
-            name == "hives_winter" ~ "Number of colonies",
+            name == "hives_winter" ~ "Number of colonies [$\\log_{10}$]",
             name == "op_cert_org_beekJa" ~ "Certified Organic",
             name == "op_migratory_beekeeperJa" ~ "Migratory Beekeeper",
             TRUE ~ paste0("T. ", tname)
@@ -200,33 +236,39 @@ r_model$coeff <- extract_fit_parsnip(r_model$best_model) %>%
 
 r_model$coeff_intercept <- r_model$coeff %>%
     filter(name == "(Intercept)") %>%
-    pull(estimate_conv, error_conv)
-
+    select(estimate_conv, error_conv)
 p <- r_model$coeff %>%
     filter(name != "(Intercept)") %>%
-    ggplot(aes(x = estimate_conv, y = tname, color = direction)) +
+    mutate(
+        pname = ifelse(name == "hives_winter", "Number of colonies [+10%]", as.character(tname)),
+        pname = forcats::fct_reorder(pname, estimate_p)
+    ) %>%
+    # ggplot(aes(x = estimate_conv, y = tname, color = direction)) +
+    ggplot(aes(x = estimate_p, y = pname, color = direction)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
     geom_pointrange(
         aes(
-            xmin = estimate_conv - error_conv,
-            xmax = estimate_conv + error_conv
+            xmin = estimate_p - error_p,
+            xmax = estimate_p + error_p
         ),
         show.legend = FALSE
     ) +
     scale_x_continuous(
-        breaks = scales::pretty_breaks()
+        breaks = scales::pretty_breaks(10),
+        limits = c(-20, NA),
+        expand = c(-20, NA)
     ) +
     scale_colour_manual(
         values = c("#D55E00", "#009E73")
     ) +
-    xlab("Estimate + Standard Error [Euro]") +
+    # xlab("Estimate + Standard Error [EUR]") +
+    xlab("Increase of Estimate + Standard Error [%]") +
     ylab("Coefficients") +
     theme(
         panel.grid.major.y = element_line(),
         panel.grid.major.x = element_line(),
         axis.text.y = element_text(hjust = 0)
     )
-
 fSaveImages(p, "model-whisker", w = 8, h = 5)
 
 # Other Model Params Extractions ------------------------
@@ -249,13 +291,13 @@ r_model$prediction <-
         prediction_test = map(fitted, ~ tibble(.fitted = predict(.x, r_model$test_data, type = "raw"), costs = r_model$test_data$costs) %>%
             mutate(
                 type = "Testing",
-                costs = log(costs)
+                costs = log10(costs)
             )),
         prediction_train = map(fitted, ~ augment(extract_model(.x), r_model$train_data) %>%
             select(costs, .fitted) %>%
             mutate(
                 type = "Training",
-                costs = log(costs)
+                costs = log10(costs)
             ))
     )
 
@@ -289,8 +331,8 @@ p <- bind_rows(r_model$prediction %>% unnest(prediction_test), r_model$predictio
     left_join(r_model$prediction_stats) %>%
     mutate(label = glue("{type} (RMSE: {round(.estimate,2)})")) %>%
     ggplot(aes(costs, .fitted, color = wflow_id, group = wflow_id)) +
-    ylab("Prediction [log(Euro)]") +
-    xlab("Survey [log(Euro)]") +
+    ylab(TeX("Prediction \\[$\\log_{10}$ EUR\\]")) +
+    xlab(TeX("Survey \\[$\\log_{10}$ EUR\\]")) +
     geom_point(alpha = .15, show.legend = FALSE, color = "black") +
     geom_smooth(method = "lm") +
     geom_abline(color = colorBlindBlack8[8]) +
