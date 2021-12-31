@@ -37,7 +37,7 @@ r_network[["data"]] <- as_tbl_graph(r_network[["matrix"]]) %>%
             TRUE ~ "-"
         ),
     ) %>%
-    left_join(diag_temp)
+    left_join(r_network[["diag"]])
 p <- r_network[["data"]] %>%
     ggraph("stress") +
     geom_edge_link0(aes(edge_width = weight, alpha = weight, color = weight)) +

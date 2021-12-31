@@ -1,9 +1,11 @@
 # (APPENDIX) Appendix {-}
 # Appendix
 
-(ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red line is the point estimate for the median difference with yellow area as the 95% confidence interval. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. If *p*-value is reported as "\*\*\*" more permutation would be needed to calculate a precise *p*-value.
+(ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red line is the point estimate for the median difference with yellow area as the 95% confidence interval. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. 
 
-```{r size-permutation, out.width="100%", include=T, fig.cap="Two level factor analysis statistical test results for 'Operation Size'. (ref:size-permutation)"}
+(ref:size-permutation2) The *p*-values reported as "\*\*\*" would need more permutation to calculate a precise *p*-value.
+
+```{r size-permutation, out.width="100%", include=T, fig.cap="Two level factor analysis statistical test results for 'Operation Size'. (ref:size-permutation) (ref:size-permutation2)"}
 include_custom("output/figs/size-permutation.png")
 ```
 

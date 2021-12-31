@@ -15,7 +15,10 @@ cn <- c("Year", "Total", "Survey", "%", "Total", "Survey", "%")
 c <- "Percentage of survey participants in relation to the number of beekeepers in Austria as reported by the national beekeeping association 'Biene Österreich'."
 tab <- knitr::kable(
   r_survey$response %>%
-    select(year, beekeeper, survey_beekeeper, rate_beekeeper, colonies, survey_colonies, rate_colonies),
+    select(year, beekeeper, survey_beekeeper, rate_beekeeper, colonies, survey_colonies, rate_colonies) %>%
+    mutate(
+      across(-year, ft)
+    ),
   booktabs = TRUE,
   row.names = FALSE,
   col.names = cn,
@@ -46,7 +49,8 @@ tab <- knitr::kable(
   dplyr::bind_rows(r_survey$summary$survey_table, r_survey$summary$survey_total) %>%
     select(-type) %>%
     mutate(
-      year = ifelse(year == "total", "All Years", paste0("20", year))
+      year = ifelse(year == "total", "All Years", paste0("20", year)),
+      n = ft(n)
     ),
   align = c("l", rep("r", 5)),
   booktabs = TRUE,
