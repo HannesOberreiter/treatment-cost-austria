@@ -1,5 +1,5 @@
 # Description -------------------------------------------------------------
-# Loading of Libraries, settings and some standard constants (eg. colors)
+# Loading of Libraries, settings and some standard constants (e.g.colors)
 
 # knitr Setup -------------------------------------------------------------
 knitr::opts_chunk$set(
@@ -43,7 +43,7 @@ libs <- c(
 # Load Libraries with function, install binary if not installed (mac binaries are defined!)
 # x = Libraries name as String
 fLoadLibs <- function(x) {
-  #if (!require(x, character.only = TRUE)) install.packages(x, type = "mac.binary")
+  # if (!require(x, character.only = TRUE)) install.packages(x, type = "mac.binary")
   library(x, character.only = TRUE)
   return(T)
 }

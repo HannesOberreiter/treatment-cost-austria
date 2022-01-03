@@ -1,6 +1,6 @@
 # Description -------------------------------------------------------------
 # Cleanup of survey answers which must be wrong
-# or not logical (eg. more than possible)
+# or not logical (e.g.more than possible)
 # also code snippets for reporting on material and methods section
 mmList <- list()
 

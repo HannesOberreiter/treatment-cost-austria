@@ -1,7 +1,7 @@
 # Description -------------------------------------------------------------
 # Calculate an estimate cost for treatment methods
 # based on different online resources and standard
-# applying practices, eg. from course materials
+# applying practices, e.g.from course materials
 
 # Dependent Files ---------------------------------------------------------
 # source("src/partials/list-treatments.R")
@@ -10,7 +10,7 @@
 # Create Temporary Vector of "Standard" Calculated Costs
 # investment cost, will be divided by the number of colonies
 # material cost, will be multiplied by the number of colonies, but could be used multiple years
-# ongoing costs, will be multiplied by number of colonies (eg. amount of formic acid)
+# ongoing costs, will be multiplied by number of colonies (e.g.amount of formic acid)
 investmentCost <- c(rep(0, nrow(treatmentList)))
 materialCost <- c(rep(0, nrow(treatmentList)))
 ongoingCost <- c(rep(0, nrow(treatmentList)))
@@ -86,7 +86,7 @@ materialCost["Formic acid - long term"] <- mean(
     6.90, 19.90, 8.20
   )
 )
-# small amount material cost for short time treatment (eg. cleaning sponge)
+# small amount material cost for short time treatment (e.g.cleaning sponge)
 materialCost["Formic acid - short term"] <- mean(
   c(
     1
