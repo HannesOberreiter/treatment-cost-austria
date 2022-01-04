@@ -24,7 +24,7 @@ Over the three survey years the extrapolation with the geometric mean sums up in
 
 ```{r extrapolation-tab, include=T}
 c <- "Multiplication of the average treatment expenses per colony with the total number of honeybee colonies wintered from the survey participants and extrapolation for Austria with the number of colonies as reported from the national beekeeping association 'Biene Österreich'. Column 'Real Sum' is the observed total sum from the survey, where the total expenses for each participant was calculated by reported expenses multiplied by colonies going into winter and afterwards summarised for each year. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean."
-cn <- c("Year", "Mean [EUR]", "CI Lower", "CI Higher", "Colonies [n]", "Mean Sum [EUR]", "Real Sum [EUR]", "Colonies [n]", "Mean Sum [EUR]")
+cn <- c("Year", "Mean [EUR]", "CI Lower", "CI Higher", "Colonies [n]", "Mean Sum [EUR]", "Real Sum [EUR]", "Colonies [N]", "Mean Sum [EUR]")
 kable(
     r_extrapolation$data %>%
         select(year, statistic, conf.low, conf.high, colonies_survey, survey_estimate, survey_real, colonies, extrapolation_estimate) %>%
