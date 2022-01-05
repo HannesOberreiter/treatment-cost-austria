@@ -235,3 +235,9 @@ Generate Mixed Model to check if factor treatment type is relevant for costs.
 - Varianzanalyse
   - https://www.beratung-statistik.de/statistik-beratung-infos/r-tutorial/r-varianzanalyse-post-hoc/
 
+
+```{r}
+dfData %>%
+  filter(varroa_treated == "Nein") %>%
+  count(varroa_treated, year)
+```
