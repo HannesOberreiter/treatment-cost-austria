@@ -9,7 +9,7 @@ if (file.exists("output/r-extrapolation.rds")) {
 }
 ```
 
-The rough extrapolation of the survey means expenses with the total sum of honeybee colonies in Austria are based on the reported numbers by the national beekeeping association 'Biene Österreich'[^r-vis].
+The rough extrapolation of the survey mean expenses with the total sum of honeybee colonies in Austria are based on the reported numbers by the national beekeeping association 'Biene Österreich'[^r-vis].
 This extrapolation with the arithmetic mean sums up in
 2018/19 to EUR&nbsp;`r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[1], big.mark = ",")` (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[1], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[1], big.mark = ",")`),
 2019/20 to EUR&nbsp;`r format(r_extrapolation$data %>% pull(extrapolation_estimate)%>% .[2], big.mark = ",")` (95% CI: `r format(r_extrapolation$data %>% pull(extrapolation_estimate_lower)%>% .[2], big.mark = ",")` - `r format(r_extrapolation$data %>% pull(extrapolation_estimate_upper)%>% .[2], big.mark = ",")`) and

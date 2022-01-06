@@ -150,13 +150,15 @@ p <- r_treatment$top %>%
     geom_hline(aes(yintercept = year_costs), color = "#0072B2", linetype = "dashed") +
     geom_linerange(
         aes(ymin = observed_costs - observed_costs_se, ymax = observed_costs + observed_costs_se),
-        color = "gray",
-        alpha = 0.5
+        # color = "gray",
+        alpha = 0.15,
+        show.legend = FALSE
     ) +
     geom_linerange(
         aes(xmin = loss_lower_ci, xmax = loss_upper_ci),
-        color = "gray",
-        alpha = 0.5
+        # color = "gray",
+        alpha = 0.15,
+        show.legend = FALSE
     ) +
     geom_point(size = 0.5) +
     geom_text_repel(
@@ -188,7 +190,7 @@ p <- r_treatment$top %>%
         legend.position = "bottom",
         axis.line.x = element_blank(),
         axis.title.x.bottom = element_blank(),
-        panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
+        #panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
     ) +
     guides(colour = guide_legend(override.aes = list(size = 8)))
 
@@ -240,13 +242,15 @@ p <- dummy_df %>%
     ) +
     geom_linerange(
         aes(ymin = observed_costs - observed_costs_se, ymax = observed_costs + observed_costs_se),
-        color = "gray",
-        alpha = 0.5
+        #color = "gray",
+        alpha = 0.5,
+        show.legend = FALSE
     ) +
     geom_linerange(
         aes(xmin = loss_lower_ci, xmax = loss_upper_ci),
-        color = "gray",
-        alpha = 0.5
+        #color = "gray",
+        alpha = 0.5,
+        show.legend = FALSE
     ) +
     geom_text_repel(
         aes(label = label_color),
@@ -291,7 +295,7 @@ p <- dummy_df %>%
         legend.position = "bottom",
         axis.line.x = element_blank(),
         axis.title.x.bottom = element_blank(),
-        panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
+        #panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
     ) +
     guides(colour = guide_legend(override.aes = list(size = 8)))
 

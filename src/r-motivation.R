@@ -4,7 +4,6 @@ r_motivation <- list()
 r_motivation$answers <- length(unique(dfMotivation$id))
 
 # Operation Size and Common Selection
-
 p <- dfData %>%
     filter(year == "20/21" & submitted == "Internet") %>%
     filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
@@ -25,7 +24,7 @@ p <- dfData %>%
     summarise(
         count = nn,
         perc = count / n * 100,
-        perc_f = format(round(perc), nsmall = 1)
+        perc_f = format(round(perc, 1), nsmall = 1)
     ) %>%
     arrange(desc(count)) %>%
     ungroup() %>%
@@ -43,7 +42,7 @@ p <- dfData %>%
     ggplot2::ggplot(aes(x = desc, y = perc, fill = operation)) +
     geom_col(position = "dodge") +
     geom_text(
-        aes(y = text_position * 1.05, label = paste0(perc_f, "% (", count, ")")),
+        aes(y = text_position + 2, label = paste0(perc_f, " (", count, ")")),
         # nudge_y = 30,
         hjust = 0,
         colour = "grey20",
@@ -51,17 +50,18 @@ p <- dfData %>%
         position = position_dodge(width = .9)
     ) +
     ggplot2::scale_y_continuous(
+        limits = c(0, 80),
         breaks = scales::breaks_pretty()
     ) +
     ggplot2::scale_fill_manual(values = c("#0072B2", "#009E73")) +
     xlab("") +
     ylab("Count [%]") +
     labs(fill = "Operation Size") +
-    coord_flip(ylim = c(0, 100), expand = FALSE) +
+    coord_flip(ylim = c(0, 85), expand = FALSE) +
     ggplot2::theme(
         legend.position = "top",
-        panel.grid.major.x = element_line(),
-        panel.grid.minor.x = element_line(),
+        # panel.grid.major.x = element_line(),
+        # panel.grid.minor.x = element_line(),
         axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
         axis.text.y = ggplot2::element_text(color = "black")
@@ -93,7 +93,8 @@ r_motivation$counts <- dfMotivation %>%
     group_by(desc, short) %>%
     summarise(
         count = n(),
-        percentage_of_participants = format(round(count / r_motivation$answers * 100, 1), nsmall = 1)
+        p = round(count / r_motivation$answers * 100, 1),
+        percentage_of_participants = format(p, nsmall = 1)
     ) %>%
     arrange(desc(count)) %>%
     ungroup() %>%
@@ -132,6 +133,8 @@ p2 <- r_motivation$counts_state %>%
     filter(first(total_count) > 400) %>%
     ungroup() %>%
     mutate(
+        # short = as.character(short),
+        short = ifelse(short == "Side effects on bees", "Side effects\n on bees", short),
         short = forcats::fct_reorder(short, desc(total_count))
     ) %>%
     ggplot(aes(
@@ -162,10 +165,11 @@ p2 <- r_motivation$counts_state %>%
     ylab("Percentage of answers for each state") +
     ggplot2::theme(
         axis.text.y = element_blank(),
-        axis.text.x = element_text(vjust = 8),
+        axis.text.x = element_text(margin = margin(t = -15, r = 0, b = 25, l = 0, unit = "pt")),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
     )
+
 fSaveImages(p2, "motivation-state", h = 5.5)
 
 p <- r_motivation$counts %>%
@@ -175,29 +179,32 @@ p <- r_motivation$counts %>%
         desc = stringr::str_trunc(desc, width = 47),
         desc = forcats::fct_reorder(desc, count, .desc = FALSE),
     ) %>%
-    ggplot2::ggplot(aes(x = desc, y = count)) +
+    ggplot2::ggplot(aes(x = desc, y = p)) +
     geom_col() +
     geom_text(
-        aes(label = paste0(percentage_of_participants, "% (", count, ")")),
-        nudge_y = 30,
+        aes(y = p + 2, label = paste0(percentage_of_participants, " (", count, ")")),
+        # aes(label = paste0(percentage_of_participants, "% (", count, ")")),
+        # nudge_y = 30,
         hjust = 0,
         colour = "grey20",
         size = 3.5
     ) +
     ggplot2::scale_y_continuous(
+        limits = c(0, 80),
         breaks = scales::breaks_pretty()
     ) +
     xlab("") +
-    ylab("Count [#]") +
-    coord_flip(ylim = c(0, 1100), expand = FALSE) +
+    ylab("Count [%]") +
+    coord_flip(ylim = c(0, 85), expand = FALSE) +
     ggplot2::theme(
         legend.position = "none",
-        panel.grid.major.x = element_line(),
-        panel.grid.minor.x = element_line(),
+        # panel.grid.major.x = element_line(),
+        # panel.grid.minor.x = element_line(),
         axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
         axis.text.y = ggplot2::element_text(color = "black")
     )
+
 fSaveImages(p, "motivation-count", h = 5.5)
 
 
