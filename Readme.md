@@ -9,7 +9,7 @@ Statistical analysis of the treatment expenses against **Varroa Destructor** wit
 ## Folder Structure
 
 - data: folder which would contain the data, see data availability section
-- latex: LaTeX template style `.sty` and pages which are written purely in LaTeX, eg. titlepages, preface
+- latex: LaTeX template style `.sty` and pages which are written purely in LaTeX, e.g.titlepages, preface
 - output: helper folder for plots created from R
 - playground: junk stuff and testing of various methods
 - src: main folder for R code

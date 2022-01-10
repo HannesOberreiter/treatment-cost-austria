@@ -29,7 +29,7 @@ rm(mapDataPath)
 
 # Data Cleanup
 temp <- dfClean %>%
-  drop_na(longitude, latitude) %>%
+  # drop_na(longitude, latitude) %>%
   filter(
     # Drop "In mehr as einem Bezirk" because we cannot know which one it belongs to
     district != "In mehr als einem Bezirk"

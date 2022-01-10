@@ -21,6 +21,13 @@ dfData <- bind_rows(dfData)
 dfData <- dfData %>% select(-starts_with("...")) # Drop empty cols
 rm(i, files)
 
+# Hash --------------------------------------------------------
+# We salt and digest personal fields for data protection
+dfData <- dfData %>%
+  mutate(
+    across(c("IP", "address", "contact", "latitude", "longitude"), fHash)
+  )
+
 # Mutating Columns --------------------------------------------------------
 
 ## Set Numeric Cols --------------------------------------------------------

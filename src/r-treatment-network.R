@@ -63,10 +63,10 @@ p <- r_network[["data"]] %>%
         range = c(1, 6)
     ) +
     scale_fill_manual(
-        values = c("Spring" = "#CC79A7", "Summer" = "#D55E00", "Winter" = "#56B4E9")
+        values = c("Spring" = "#009E73", "Summer" = "#464343", "Winter" = "#56B4E9")
     ) +
     scale_color_manual(
-        values = c("Spring" = "#CC79A7", "Summer" = "#D55E00", "Winter" = "#56B4E9")
+        values = c("Spring" = "#009E73", "Summer" = "#464343", "Winter" = "#56B4E9")
     ) +
     labs(color = "Season", fill = "Season", size = "Total [n]") +
     # theme_graph() +
@@ -76,6 +76,8 @@ p <- r_network[["data"]] %>%
     )
 
 fSaveImages(p, "treatment-network", w = 7, h = 5.5)
+
+
 
 
 # View(as_tibble(r_network[["data"]]))
