@@ -151,7 +151,7 @@ The two approaches did mostly overlap in their results and the lists were combin
 include_custom("output/figs/isolation_forest.png")
 ```
 
-### Final Data Count
+## Final Data Count
 
 After the afore mentioned data cleaning steps, which filtered survey responses with valid answers for expenses per colony, the number of answer was reduced by around 21-24% (Table&nbsp;\@ref(tab:reports)).
 

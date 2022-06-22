@@ -1,5 +1,5 @@
 \newpage
-## Efficacy & Economical
+## Efficacy & Economic
 ```{r, include=FALSE}
 if (file.exists("output/r-treatment.rds")) {
     r_treatment <- readRDS("output/r-treatment.rds")
