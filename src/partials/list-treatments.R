@@ -37,7 +37,7 @@ treatmentList <- tibble(
     "Oxal acid - mixture",
     "Thymol",
     "Synthetic methods",
-    "Another methods"
+    "Another method"
   ),
   tshort = c(
     "V-check",

@@ -9,6 +9,6 @@ motivationList <- tibble(
         "Habit", "Costs", "Marketing", "Subsidies", "Prescription", "Philosophy", "Efficacy", "With and without brood", "Season", "Colony strength", "Infestation Level", "Environmental conditions", "Reccomendations", "Legal status", "Availability", "Resistances", "Residues", "Side effects on bees", "Equipment", "Time and Repeats", "Other"
     ),
     desc = c(
-        "Habit", "Economic costs", "Marketing", "Subsidies", "Prescription", "Philosophy", "Efficacy", "Method applicable with and without brood", "Time of season where they can be applied", "Colony strength", "Colony infestation level (Varroa)", "Environmental conditions", "Recommendations from beekeeping associations, extension workers, veterinarians, magazines, etc.", "Legal status (regulatory framework)", "Availability of products", "Resistances", "Residues", "Side effects on bees", "Level of difficulty and needed equipment", "Time and number of applications", "Other"
+        "Habit", "Economic costs", "Marketing", "Subsidies", "Prescription", "Philosophy", "Efficacy", "Method applicable with and without brood", "Time of season where they can be applied", "Colony strength", "Colony infestation level (varroa)", "Environmental conditions", "Recommendations from beekeeping associations, extension workers, veterinarians, magazines, etc.", "Legal status (regulatory framework)", "Availability of products", "Resistances", "Residues", "Side effects on bees", "Level of difficulty and needed equipment", "Time and number of applications", "Other"
     )
 )
