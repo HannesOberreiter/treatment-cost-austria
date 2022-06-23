@@ -4,7 +4,6 @@ library(tidygraph)
 library(ggraph)
 # Select data from original dataset
 # filter columns with less than 30 answers in total over all three years
-
 r_network[["raw"]] <-
     dfData %>%
     select(contains("totalyn")) %>%
@@ -80,8 +79,18 @@ fSaveImages(p, "treatment-network", w = 7, h = 5.5)
 
 
 
-# View(as_tibble(r_network[["data"]]))
-#
-# View(r_network[["data"]] %>%
+# Calculate diagonale for single treatment
+# temp <- r_network[["data"]] %>%
+#    as_tibble() %>%
+#    mutate(p = value / nrow(dfClean) * 100)
+# temp %>%
+#    filter(season == "Summer") %>%
+#    arrange(desc(value))
+## Gives us edge values
+# r_network[["data"]] %>%
 #    activate("edges") %>%
-#    as_tibble())
+#    as_tibble() %>%
+#    arrange(desc(weight)) %>%
+#    left_join(temp %>% select(from = .tidygraph_node_index, from_name = name), by = c("from")) %>%
+#    left_join(temp %>% select(to = .tidygraph_node_index, to_name = name), by = c("to")) %>%
+#    mutate(p = weight / nrow(dfClean) * 100)
