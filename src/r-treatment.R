@@ -19,7 +19,7 @@ r_treatment$heat_data <- dfClean %>%
         season = case_when(
             between(month, 1, 2) ~ "Spring",
             between(month, 3, 7) ~ "Summer",
-            between(month, 8, 10) ~ "Winter",
+            between(month, 8, 12) ~ "Winter",
             TRUE ~ "-"
         ),
         season = forcats::fct_relevel(season, "-", after = Inf)
@@ -190,7 +190,7 @@ p <- r_treatment$top %>%
         legend.position = "bottom",
         axis.line.x = element_blank(),
         axis.title.x.bottom = element_blank(),
-        #panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
+        # panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
     ) +
     guides(colour = guide_legend(override.aes = list(size = 8)))
 
@@ -242,13 +242,13 @@ p <- dummy_df %>%
     ) +
     geom_linerange(
         aes(ymin = observed_costs - observed_costs_se, ymax = observed_costs + observed_costs_se),
-        #color = "gray",
+        # color = "gray",
         alpha = 0.5,
         show.legend = FALSE
     ) +
     geom_linerange(
         aes(xmin = loss_lower_ci, xmax = loss_upper_ci),
-        #color = "gray",
+        # color = "gray",
         alpha = 0.5,
         show.legend = FALSE
     ) +
@@ -295,7 +295,7 @@ p <- dummy_df %>%
         legend.position = "bottom",
         axis.line.x = element_blank(),
         axis.title.x.bottom = element_blank(),
-        #panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
+        # panel.grid.major = element_line(color = "gray80", linetype = "dotted", size = 0.1)
     ) +
     guides(colour = guide_legend(override.aes = list(size = 8)))
 

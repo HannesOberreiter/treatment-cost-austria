@@ -87,7 +87,9 @@ dfData$submitted[grepl("Z", dfData$id, fixed = TRUE)] <- "Newspaper"
 # Helper, change this do change months for grouping
 seasons <- tibble(
   name = c("spring", "summer", "winter"),
-  rcol = c("0[1-2]", "0[3-7]", "[0,1][8-9,0]"),
+  # rcol = c("0[1-2]", "0[3-7]", "[[0,1][8-9,0]"),
+  # winter with Februar and March
+  rcol = c("0[1-2]", "0[3-7]", "([0,1][8-9,0]|(12|11))"),
   short = c("SP", "SU", "WI"),
   desc = c("SPRING", "SUMMER", "WINTER")
 )

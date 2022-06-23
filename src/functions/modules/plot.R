@@ -32,8 +32,8 @@ fPlotFactor <- function(df, col, statistic, sigY) {
     # col is column for groups
     # statistics test result from permutation kruskal wallis test
     # sigY is position of pairwise Statistics
-    facetLabels <- tibble(
-        year_long = df %>% pull(year_long) %>% sort() %>% unique(),
+    facetLabels <- tibble::tibble(
+        year_long = df %>% dplyr::pull(year_long) %>% sort() %>% unique(),
         label = fPermFacetLabel(statistic),
         # label = fCoinLabel(statistic)
     )
@@ -43,7 +43,7 @@ fPlotFactor <- function(df, col, statistic, sigY) {
         group_by(.data[[col]], year_long) %>%
         summarize(mean = mean(costs), median = median(costs)) %>%
         ungroup() %>%
-        group_split(year_long, remove = F) %>%
+        group_split(year_long, remove = FALSE) %>%
         map_dfr(~ fPairwiseMM(.x))
 
     countLabel <- df %>%
