@@ -10,6 +10,52 @@ if (file.exists("output/r_estimate.rds")) {
 }
 ```
 
+A calculation of the estimate for an imaginary beekeeper with 10 colonies (median number of colonies in the survey) and the average months of usage for each treatment results in highest per colony expenses for 'Hyperthermia' followed by 'Thymol' with over 10 EUR per colony per year (Table&nbsp;\@ref(tab:common)). 'Drone brood removal' does not cause any material expenses in my estimate and for 'Another method' it was not feasible and therefore both have an estimate of zero EUR.
+
+```{r common, include=T}
+# colonies based for estimate
+m_colonies <- 10
+col <- dfData %>%
+    select(!!(paste0(treatmentList$ttotal, "12")))
+# Get number of participates using the single treatment methods
+sin <- col %>%
+    mutate(across(.cols = everything(), as.logical)) %>%
+    colSums()
+# get the average amount for number of months
+nu <- col %>%
+    na_if(0) %>%
+    colMeans(na.rm = TRUE)
+
+common_single <- tibble(
+    tname = treatmentList$tname,
+    n = sin %>% ft(),
+    p = round(sin * 100 / nrow(dfData), 2),
+    nu = round(nu, 2),
+    est = round(treatmentList$investment / m_colonies + treatmentList$material + treatmentList$consumables * nu, 2)
+) %>%
+    filter(tname != "Varroa monitoring") %>%
+    arrange(desc(est))
+
+c <- paste0("Treatment methods ordered by estimated expenses over the survey years, months indicating the average of months the corresponding method was used. Estimated expenses per colony are calculated with ", m_colonies, " colonies, which represents the median number of colonies in the survey. The average months are based on the average number of reported months for each treatment method separately. Percentage does show relative distribution of total survey participants (\\textit{n} = ", nrow(dfClean) %>% ft(), ") answers.")
+
+cn <- c("Method", "Percent [%]", "Average Months [n]", "Estimated expenses [EUR]")
+kable(
+    align = c("l", rep("r", 4)),
+    common_single[, -2],
+    booktabs   = TRUE,
+    row.names = FALSE,
+    col.names  = cn,
+    # format = "markdown",
+    caption    = c,
+    linesep = c("", "", "\\addlinespace"),
+) %>%
+    kable_styling(latex_options = c("HOLD_position", "scale_down"))
+
+rm(cn, c, common_single, nu, sin, col, m_colonies)
+```
+
+
+
 The self calculated estimated expenses, based on online research of product prices, central tendency values are similar to the survey responses in each year. The estimate mean is on average EUR&nbsp;`r round(mean(as.numeric(r_estimate$table$mean[1:3]) - as.numeric(r_estimate$table$mean[4:6])), 2)` higher than the survey mean and the estimate median is on average EUR&nbsp;`r round(mean(as.numeric(r_estimate$table$median[1:3]) - as.numeric(r_estimate$table$median[4:6])), 2)` higher than the survey median (Table&nbsp;\@ref(tab:table-estimates)).
 
 ```{r table-estimates, include=T}
@@ -57,7 +103,7 @@ kable(
     linesep = c("", "", "", "", "\\addlinespace"),
 ) %>%
     add_header_above(c(" " = 3, "Survey" = 2, "Estimate" = 2)) %>%
-    footnote(threeparttable = T, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.") %>%
+    footnote(threeparttable = TRUE, general = "SP/SU/WI = Spring/Summer/Winter || AS-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.") %>%
     kable_styling(font_size = 8)
 rm(c, cn, d)
 ```
