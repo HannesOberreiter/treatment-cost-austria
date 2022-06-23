@@ -32,7 +32,7 @@ fPairwiseMM <- function(d) {
                 "$\\Delta | \\bar{x} |$ = $%.1f$",
                 x$mean_diff
             )
-        )
+        )[1]
     )
     return(x)
 }
