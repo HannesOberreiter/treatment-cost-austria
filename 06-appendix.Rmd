@@ -1,6 +1,12 @@
 # (APPENDIX) Appendix {-}
 # Appendix
 
+(ref:extrapolation-estimate) Multiplication of the mean estimated treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants and extrapolation for Austria with the number of colonies as reported from the national beekeeping association 'Biene Österreich'. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean. Basis of the calculation are the estimated mean expenses for one colony..
+
+```{r extrapolation-estimate, out.width="100%", include=T, fig.cap="(ref:extrapolation-estimate)"}
+include_custom("output/figs/extrapolation-estimate.png")
+```
+
 (ref:size-permutation) Median difference null distribution (gray bars) based on 5,000 permutations. Red line is the point estimate for the median difference with yellow area as the 95% confidence interval. Red shadow indicating the calculated two-sided *p*-value range on the null distribution. 
 
 (ref:size-permutation2) The *p*-values reported as "\*\*\*" would need more permutation to calculate a precise *p*-value.
