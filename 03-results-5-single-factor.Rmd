@@ -23,7 +23,7 @@ include_custom("output/figs/size-distr.png")
 
 ```{r size-table, include=T}
 c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeeper' and with more are 'Professional Beekeeper' ('>25')."
-cn <- c("Operation Size", "Beekeeper [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Operation Size", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$size$table %>%
         select(-year) %>%
@@ -58,7 +58,7 @@ Certified organic beekeeping operation spend on average and in median less per c
 
 ```{r organic-table, include=T}
 c <- "Distribution of answers on questions 'Certified Organic Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Certified Organic", "Beekeeper [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Certified Organic", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$organic$table %>%
         select(-year) %>%
@@ -93,7 +93,7 @@ Migratory beekeeping operations spend on average and in the median less per colo
 
 ```{r migratory-table, include=T}
 c <- "Distribution of answers on questions 'Migratory Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Migratory Beekeeper", "Beekeeper [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Migratory Beekeeper", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$migratory$table %>%
         select(-year) %>%

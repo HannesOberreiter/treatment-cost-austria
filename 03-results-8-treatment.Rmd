@@ -26,6 +26,7 @@ cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
 
 tab <- kbl(
     r_treatment$tab %>%
+        select(-quantile_efficient, -quantile_economical) %>%
         mutate(
             c_short_od = str_replace_all(c_short_od, "&", " \\\\& "),
             across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
@@ -35,11 +36,11 @@ tab <- kbl(
             letter = cell_spec(letter, bold = TRUE),
             efficient = cell_spec(
                 efficient,
-                background = cell_colors_loss[efficient]
+                background = ifelse(efficient != "", cell_colors_loss[efficient], "cwhite!80")
             ),
             economical = cell_spec(
                 economical,
-                background = cell_colors_price[economical]
+                background = ifelse(economical != "", cell_colors_price[economical], "cwhite!80")
             )
         ),
     linesep = c("", "", "\\addlinespace"),
@@ -50,7 +51,85 @@ tab <- kbl(
     caption = "(ref:ee-table)",
     escape = FALSE
 ) %>%
-    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\\\%]" = 3, " " = 2)) %>%
+    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\%]" = 3, " " = 2)) %>%
+    # landscape()
+    kable_styling(latex_option = "scale_down")
+tab
+rm(cn, c, tab)
+```
+
+```{r ee-table-big, include=T}
+cn <- c(" ", "Treatment", "Year", "\\textit{n}", "Median", "Mean", "SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
+cell_colors_price <- c("high-expense" = "cred!80", "low-expense" = "cgreen!80")
+cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
+
+tab <- kbl(
+    r_treatment$tab_big %>%
+        select(-quantile_efficient, -quantile_economical) %>%
+        mutate(
+            c_short_od = str_replace_all(c_short_od, "&", " \\\\& "),
+            across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
+            across(observed_costs:observed_costs_sd, ~ ifelse(lag(.x, default = 0) == .x, "", round(.x, 2)))
+        ) %>%
+        mutate(
+            letter = cell_spec(letter, bold = TRUE),
+            efficient = cell_spec(
+                efficient,
+                background = ifelse(efficient != "", cell_colors_loss[efficient], "cwhite!80")
+            ),
+            economical = cell_spec(
+                economical,
+                background = ifelse(economical != "", cell_colors_price[economical], "cwhite!80")
+            )
+        ),
+    linesep = c("", "", "\\addlinespace"),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", "l", "c", rep("r", 6), "c", "c"),
+    caption = "(ref:ee-table)",
+    escape = FALSE
+) %>%
+    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\%]" = 3, " " = 2)) %>%
+    # landscape()
+    kable_styling(latex_option = "scale_down")
+tab
+rm(cn, c, tab)
+```
+
+```{r ee-table-small, include=T}
+cn <- c(" ", "Treatment", "Year", "\\textit{n}", "Median", "Mean", "SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
+cell_colors_price <- c("high-expense" = "cred!80", "low-expense" = "cgreen!80")
+cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
+
+tab <- kbl(
+    r_treatment$tab_small %>%
+        select(-quantile_efficient, -quantile_economical) %>%
+        mutate(
+            c_short_od = str_replace_all(c_short_od, "&", " \\\\& "),
+            across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
+            across(observed_costs:observed_costs_sd, ~ ifelse(lag(.x, default = 0) == .x, "", round(.x, 2)))
+        ) %>%
+        mutate(
+            letter = cell_spec(letter, bold = TRUE),
+            efficient = cell_spec(
+                efficient,
+                background = ifelse(efficient != "", cell_colors_loss[efficient], "cwhite!80")
+            ),
+            economical = cell_spec(
+                economical,
+                background = ifelse(economical != "", cell_colors_price[economical], "cwhite!80")
+            )
+        ),
+    linesep = c("", "", "\\addlinespace"),
+    booktabs = TRUE,
+    col.names = cn,
+    digits = 1,
+    align = c("c", "l", "c", rep("r", 6), "c", "c"),
+    caption = "(ref:ee-table)",
+    escape = FALSE
+) %>%
+    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\%]" = 3, " " = 2)) %>%
     # landscape()
     kable_styling(latex_option = "scale_down")
 tab
