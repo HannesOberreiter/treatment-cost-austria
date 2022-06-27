@@ -64,7 +64,8 @@ p <- r_extrapolation$data %>%
   geom_text(
     aes(
       y = 500000,
-      label = round(colonies) %>% format(big.mark = ",") %>%
+      label = round(colonies) %>%
+        format(big.mark = ",") %>%
         paste0("Colonies:\n", .)
     ),
     position = position_dodge()
