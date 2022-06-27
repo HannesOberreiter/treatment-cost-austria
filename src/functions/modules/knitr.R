@@ -6,5 +6,5 @@ include_custom <- function(p) {
 }
 
 ft <- function(x, ...) {
-    format(x, big.mark = ",", ...)
+    base::format(x, big.mark = ",", ...)
 }
