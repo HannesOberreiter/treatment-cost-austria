@@ -4,6 +4,18 @@ r_motivation <- list()
 r_motivation$answers <- length(unique(dfMotivation$id))
 
 # Operation Size and Common Selection
+
+r_motivation$countOperation <- dfData %>%
+    filter(year == "20/21" & submitted == "Internet") %>%
+    filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
+    select(starts_with("motivation_"), hives_winter) %>%
+    mutate(
+        operation = ifelse(hives_winter > 25, "> 25 Colonies", "<= 25 Colonies"),
+        operation = as.factor(operation)
+    ) %>%
+    select(-hives_winter) %>%
+    count(operation)
+
 p <- dfData %>%
     filter(year == "20/21" & submitted == "Internet") %>%
     filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
@@ -38,6 +50,7 @@ p <- dfData %>%
         short = forcats::fct_reorder(short, order_sum, .desc = FALSE),
         desc = stringr::str_trunc(desc, width = 47),
         desc = forcats::fct_reorder(desc, order_sum, .desc = FALSE),
+        operation = forcats::fct_relevel(operation, "> 25 Colonies", "<= 25 Colonies")
     ) %>%
     ggplot2::ggplot(aes(x = desc, y = perc, fill = operation)) +
     geom_col(position = "dodge") +
@@ -53,20 +66,22 @@ p <- dfData %>%
         limits = c(0, 80),
         breaks = scales::breaks_pretty()
     ) +
-    ggplot2::scale_fill_manual(values = c("#0072B2", "#009E73")) +
+    ggplot2::scale_fill_manual(
+        values = c("<= 25 Colonies" = "#0072B2", "> 25 Colonies" = "#009E73"),
+        labels = c("<= 25 Colonies" = glue::glue("<= 25 Colonies (n={r_motivation$countOperation$n[1]})"), "> 25 Colonies" = glue::glue("> 25 Colonies (n={r_motivation$countOperation$n[2]})"))
+    ) +
     xlab("") +
     ylab("Count [%]") +
     labs(fill = "Operation Size") +
     coord_flip(ylim = c(0, 85), expand = FALSE) +
     ggplot2::theme(
-        legend.position = "top",
+        legend.position = c(0.75, 0.3),
         # panel.grid.major.x = element_line(),
         # panel.grid.minor.x = element_line(),
         axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
         axis.text.y = ggplot2::element_text(color = "black")
     )
-
 fSaveImages(p, "motivation-operation", h = 6.5)
 
 # Table most common combinations
