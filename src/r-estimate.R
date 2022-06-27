@@ -76,7 +76,7 @@ p <- ggplot() +
             colour = I(c(colorBlindBlack8[3], colorBlindBlack8[5], colorBlindBlack8[3])),
             slope = c(rep(0, 3))
         ),
-        show.legend = F
+        show.legend = FALSE
     ) +
     geom_abline(
         aes(
