@@ -11,11 +11,11 @@ The application of treatment methods follows a seasonal pattern with 'Drone broo
 
 (ref:treatment-heat) Absolute numbers of reported treatments in each month over the three survey years (*n*=`r nrow(dfClean) %>% ft()`). Colour coded as heatmap with darker colours representing more answers and no answers in white.
 
-```{r treatment-heat, include=T, fig.cap="(ref:treatment-heat)", out.width="70%"}
+```{r treatment-heat, include=T, fig.cap="(ref:treatment-heat)", out.width="65%"}
 include_custom("output/figs/treatment-heat.png")
 ```
 
-```{r treatment-network, include=T, fig.cap="(ref:treatment-network)", out.width="70%"}
+```{r treatment-network, include=T, fig.cap="(ref:treatment-network)", out.width="65%"}
 include_custom("output/figs/treatment-network.png")
 ```
 
