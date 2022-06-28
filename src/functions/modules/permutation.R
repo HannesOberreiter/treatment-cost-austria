@@ -18,6 +18,7 @@ fPermPoint <- function(df, form, stat) {
         infer::calculate(stat)
 }
 fPermCI <- function(df, form, stat, point) {
+    set.seed(1337)
     data <- df %>%
         infer::specify(form)
     boot <- data %>%
@@ -40,8 +41,8 @@ fPermPvalue <- function(point, distribution) {
 fPermMedianLabel <- function(point_estimate, point_ci) {
     latex2exp::TeX(
         sprintf(
-            "$\\Delta | \\tilde{x} |$ = $%s$ (95%s CI: $%.1f$ - $%.1f$)",
-            format(round(point_estimate$stat, 1), nsmall = 1),
+            "$\\Delta | \\tilde{x} |$ = %.1f (95%s CI: %.1f - %.1f)",
+            round(point_estimate$stat, 1),
             "%",
             point_ci$lower_ci,
             point_ci$upper_ci
@@ -68,9 +69,9 @@ fPermFacetLabel <- function(stat) {
 
     latex2exp::TeX(
         sprintf(
-            "$\\textit{p}$ = $%s$, $\\Delta | \\tilde{x} |$ = $%s$ (95%s CI: $%.1f$ - $%.1f$)",
+            "$\\textit{p}$ = %s, $\\Delta | \\tilde{x} |$ = %.1f (95%s CI: %.1f - %.1f)",
             p_value,
-            format(round(point_estimate, 1), nsmall = 1),
+            point_estimate,
             "%",
             lower_ci,
             upper_ci
@@ -84,13 +85,12 @@ fPlotPermutation <- function(year_long, data, point_estimate, point_ci, null_dis
     # Returns ggplot
     lab <- latex2exp::TeX(
         sprintf(
-            "Year: %s, $\\textit{p}$ = $%s$",
+            "Year: %s, $\\textit{p}$ = %s",
             year_long,
-            as.character(ifelse(p_value == 0, "***", p_value))
+            ifelse(p_value == 0, "***", format(round(as.numeric(p_value), 4), nsmall = 4))
         )
     )
     lab2 <- fPermMedianLabel(point_estimate, point_ci)
-
     null_distr %>%
         infer::visualise() +
         infer::shade_confidence_interval(point_ci, fill = colorBlindBlack8[5], color = colorBlindBlack8[2]) +
@@ -100,7 +100,7 @@ fPlotPermutation <- function(year_long, data, point_estimate, point_ci, null_dis
         ggplot2::xlab("Median Difference [EUR]") +
         ggplot2::labs(
             title = lab,
-            subtitle = lab2
+            subtitle = lab2[1]
         ) +
         ggplot2::theme(
             panel.grid.major.y = element_line(),

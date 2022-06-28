@@ -63,9 +63,9 @@ fPlotFactor <- function(df, col, statistic, sigY) {
             color = colorBlindBlack8[1],
             alpha = 0.1,
         ) +
-        geom_boxplot(outlier.alpha = 0, show.legend = F, alpha = 0) +
+        geom_boxplot(outlier.alpha = 0, show.legend = FALSE, alpha = 0) +
         stat_summary(
-            fun = mean, geom = "point", show.legend = F, color = colorBlindBlack8[[8]], shape = 18, size = 4
+            fun = mean, geom = "point", show.legend = FALSE, color = colorBlindBlack8[[8]], shape = 18, size = 4
         ) +
         geom_text(
             data = countLabel,

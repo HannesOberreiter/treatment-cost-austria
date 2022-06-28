@@ -7,13 +7,13 @@ if (file.exists("output/r-operational.rds")) {
 }
 ```
 
-The separate analysis of each of the three selected operational questions are shown in following factor analysis with two levels each for each year. Interpretation of the results need to factor in possible interactions and the different cohort sizes in the survey [Section \@ref(operational-survey)].
+The separate analysis of each of the three selected operational questions are shown in the following factor analysis with two levels each for each year.
 
 ### Operation Size {#operational-size-single}
 
-The number of honey bee colonies managed by participants follow a heavy tailed count distribution (Mean = 21-23 Colonies, Median = 11 Colonies), with most participants managing less than 20 colonies and a few extensive operation with over one hundred colonies (Fig.&nbsp;\@ref(fig:size-distr)). The participants were grouped into two levels for factor analysis. The 'Professional Beekeeper' with more than 25 colonies (>25) and beekeepers with 25 or less colonies (<=25) as 'Recreational Beekeeper'. Over the survey years the 'Recreational Beekeeper' made up the majority of the survey responses with 78% in 2018/19, 80% in 2019/20 and 76% in 2020/21 (Table&nbsp;\@ref(tab:size-table)).
+The number of honey bee colonies managed by participants follow a heavy tailed count distribution (Mean = 21-23 Colonies, Median = 11 Colonies), with most participants managing less than 20 colonies and a few extensive operations with over one hundred colonies (Fig.&nbsp;\@ref(fig:size-distr)). The participants were grouped into two levels for factor analysis. The 'Professional Beekeeper' with more than 25 colonies (>25) and beekeepers with 25 or less colonies (<=25) as 'Recreational Beekeeper'. Over the survey years the 'Recreational Beekeeper' made up the majority of the survey responses with 78% in 2018/19, 80% in 2019/20 and 76% in 2020/21 (Table&nbsp;\@ref(tab:size-table)).
 
-Comparing these two levels and the reported expenses per colony on treatment, shows that the 'Recreational Beekeeper' spend on average and in median more per colony as the 'Professional Beekeeper'. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (*p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: EUR&nbsp;4.1-5.9; 2019/20: EUR&nbsp;2.6-5.4; 2020/21: EUR&nbsp;2.6-5.4) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:size-stats)).
+Comparing these two levels and the reported expenses per colony on treatment, shows that the 'Recreational Beekeeper' spend on average and on median more per colony as the 'Professional Beekeeper'. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$size$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$size$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant differences in all years (*p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: EUR&nbsp;4.1-5.9; 2019/20: EUR&nbsp;2.5-5.5; 2020/21: EUR&nbsp;2.7-5.3) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:size-stats)).
 
 (ref:size-distr) Distribution of operation size/number of colonies over the three survey years. Numbers are based on the reported colonies going into winter, as reported by survey participants. Different years are colour coded (orange = 2018/19, green = 2019/20, blue = 2020/21). Total number of participants and colonies are reported in each years plot header.
 
@@ -23,10 +23,10 @@ include_custom("output/figs/size-distr.png")
 
 ```{r size-table, include=T}
 c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeeper' and with more are 'Professional Beekeeper' ('>25')."
-cn <- c("Operation Size", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Operation Size", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$size$table %>%
-        select(-year) %>%
+        select(-year, -beekeeper, -year_label) %>%
         mutate(
             colonies = ft(colonies)
         ),
@@ -36,15 +36,15 @@ tab <- kable(
     align = c("c", rep("r", 4)),
     caption = c
 ) %>%
-    pack_rows("2018/19", 1, 2) %>%
-    pack_rows("2019/20", 3, 4) %>%
-    pack_rows("2020/21", 5, 6) %>%
+    pack_rows(r_operational$size$table$year_label[1], 1, 2) %>%
+    pack_rows(r_operational$size$table$year_label[3], 3, 4) %>%
+    pack_rows(r_operational$size$table$year_label[5], 5, 6) %>%
     kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
 
-(ref:size-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median difference between the given operation size groups, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:size-permutation). Survey answers above EUR 80 per colony are not shown.  
+(ref:size-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the given operation size groups, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:size-permutation). Survey answers above EUR 80 per colony are not shown.  
 
 ```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="100%"}
 include_custom("output/figs/size-stats.png")
@@ -54,14 +54,14 @@ include_custom("output/figs/size-stats.png")
 
 The survey question 'Certified Organic Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' and participants which did not answer to this question were ignored in the statistical two levels factor analysis. The majority of the survey participants is uncertified (`r r_operational$organic$summary$np[[2]]`%) and `r r_operational$organic$summary$np[[1]]`% report to be certified organic. Only `r r_operational$organic$summary$np[[3]]`% did answer with 'Uncertain' and `r r_operational$organic$summary$np[[4]]`% did answer not at all (Table&nbsp;\@ref(tab:organic-table)).
 
-Certified organic beekeeping operation spend on average and in median less per colony on treatment expenses. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$organic$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (2018/19 & 2019/20: *p* < 0.01; 2020/21: *p* = 0.03 ) and 95% CI (bootstrap, R = 1,000; 2018/19: 2.5-5.9; 2019/20: 1.9-6.1; 2020/21: EUR&nbsp;2.2-5.8) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:organic-stats)).
+Certified organic beekeeping operations spend on average and on median less per colony on treatment expenses. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$organic$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (2018/19 & 2020/21: *p* = 0.02; 2019/20: *p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: EUR&nbsp;2.3-5.7; 2019/20: EUR&nbsp;1.7-6.3; 2020/21: EUR&nbsp;2.2-5.8) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:organic-stats)).
 
 ```{r organic-table, include=T}
 c <- "Distribution of answers on questions 'Certified Organic Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Certified Organic", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Certified Organic", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$organic$table %>%
-        select(-year) %>%
+        select(-year, -beekeeper, -year_label) %>%
         mutate(
             colonies = ft(colonies)
         ),
@@ -71,15 +71,15 @@ tab <- kable(
     align = c("l", rep("r", 4)),
     caption = c
 ) %>%
-    pack_rows("2018/19", 1, 4) %>%
-    pack_rows("2019/20", 5, 8) %>%
-    pack_rows("2020/21", 9, 12) %>%
+    pack_rows(r_operational$organic$table$year_label[1], 1, 4) %>%
+    pack_rows(r_operational$organic$table$year_label[5], 5, 8) %>%
+    pack_rows(r_operational$organic$table$year_label[9], 9, 12) %>%
     kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
 
-(ref:organic-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median difference between the two level factor analysis if 'Organic Certified Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:organic-permutation). Survey answers above EUR 80 per colony are not shown.  
+(ref:organic-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Organic Certified Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:organic-permutation). Survey answers above EUR 80 per colony are not shown.  
 
 ```{r organic-stats, include=T, fig.cap="(ref:organic-stats)", out.width="100%"}
 include_custom("output/figs/organic-stats.png")
@@ -87,18 +87,17 @@ include_custom("output/figs/organic-stats.png")
 
 ### Migratory Beekeeper
 
-The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). The question 'Migratory Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' answers were ignored in the statistical two levels factor analysis. A total of 14.9% of the survey participants are migrating with their honey bee colonies but the majority is not migrating (`r r_operational$migratory$summary$np[[2]]`%). Only `r r_operational$migratory$summary$np[[3]]`% did answer 'Unsure' on this question (Table&nbsp;\@ref(tab:migratory-table)).
+The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). The question 'Migratory Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' answers were ignored in the statistical two levels factor analysis. A total of 14.9% of the survey participants are migrating with their honey bee colonies but the majority is not migrating (`r r_operational$migratory$summary$np[[2]]`%). Only `r r_operational$migratory$summary$np[[3]]`% did answer 'Uncertain' on this question (Table&nbsp;\@ref(tab:migratory-table)).
 
-Migratory beekeeping operations spend on average and in the median less per colony on treatment expenses in comparison to survey participants who do not migrate. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (2018/19: *p* = 0.05; 2019/20: *p* < 0.01, 2020/21: *p* = 0.02 ) and 95% CI (bootstrap, R = 1,000; 2018/19: 0.4-5.6; 2019/20: 2.2-5.8; 2020/21: EUR&nbsp;1.1-5.9) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:migratory-stats)).
+Migratory beekeeping operations spend on average and on median less per colony on treatment expenses in comparison to survey participants who do not migrate. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in one year (2018/19: *p* = 0.07; 2019/20: *p* < 0.01, 2020/21: *p* = 0.15 ) and 95% CI (bootstrap, R = 1,000; EUR&nbsp;2018/19: 0.6-5.4; 2019/20: EUR&nbsp;2.0-6.0; 2020/21: EUR&nbsp;0.8-5.2) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:migratory-stats)).
 
 ```{r migratory-table, include=T}
 c <- "Distribution of answers on questions 'Migratory Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Migratory Beekeeper", "Beekeepers [n]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Migratory Beekeeper", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$migratory$table %>%
-        select(-year) %>%
+        select(-year, -year_label, -beekeeper) %>%
         mutate(
-            beekeeper = ft(beekeeper),
             colonies = ft(colonies)
         ),
     booktabs = TRUE,
@@ -107,15 +106,15 @@ tab <- kable(
     align = c("l", rep("r", 4)),
     caption = c
 ) %>%
-    pack_rows("2018/19", 1, 3) %>%
-    pack_rows("2019/20", 4, 6) %>%
-    pack_rows("2020/21", 7, 9) %>%
+    pack_rows(r_operational$migratory$table$year_label[1], 1, 3) %>%
+    pack_rows(r_operational$migratory$table$year_label[4], 4, 6) %>%
+    pack_rows(r_operational$migratory$table$year_label[7], 7, 9) %>%
     kable_styling(latex_options = "scale_down")
 tab
 rm(cn, c, tab)
 ```
 
-(ref:migratory-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median difference between the two level factor analysis if 'Migratory Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:organic-permutation). Survey answers above EUR 80 per colony are not shown. 
+(ref:migratory-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Migratory Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:migratory-permutation). Survey answers above EUR 80 per colony are not shown. 
 
 ```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="100%"}
 include_custom("output/figs/migratory-stats.png")
