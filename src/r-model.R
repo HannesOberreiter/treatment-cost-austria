@@ -262,7 +262,7 @@ p <- r_model$coeff %>%
         values = c("#D55E00", "#009E73")
     ) +
     # xlab("Estimate + Standard Error [EUR]") +
-    xlab("Increase of Estimate + Standard Error [%]") +
+    xlab("Change of Estimate + Standard Error [%]") +
     ylab("Coefficients") +
     theme(
         panel.grid.major.y = element_line(),
