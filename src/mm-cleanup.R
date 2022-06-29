@@ -82,7 +82,7 @@ dfClean <- dfClean %>%
 
 ## Outliers / High Costs --------------------------------------------------------------
 mmList$cost_upper <- list()
-mmList$cost_upper$upper_limit <- (quantile(dfClean$costs, probs = 0.75, names = F) + 3 * IQR(dfClean$costs)) * 2
+mmList$cost_upper$upper_limit <- (quantile(dfClean$costs, probs = 0.75, names = FALSE) + 3 * IQR(dfClean$costs)) * 2
 mmList$cost_upper$data <- dfClean %>%
   filter(costs >= mmList$cost_upper$upper_limit) %>%
   select(c("id", "varroa_treated", "comments", "year", "t_amount", "c_short", "costs", "t_estimated", "hives_winter")) %>%
@@ -93,16 +93,20 @@ mmList$cost_upper$data <- dfClean %>%
 # Anomaly Detection based on isolation forest method
 # if we set output_score = TRUE is will overwrite smaple_size to use all rows
 mmList$cost_upper$iso_ext <- isotree::isolation.forest(
-  dfClean %>% select(costs, t_short_od),
-  ndim = 1,
-  # sample_size = NULL,
-  ntrees = 100,
-  nthreads = 1,
-  prob_pick_pooled_gain = 0,
-  prob_pick_avg_gain = 0,
-  output_score = TRUE
+  dfClean %>% select(costs, t_short_od_lump),
+  seed = 1337,
+  ndim = 2,
+  # standardize_data = TRUE,
+  nthreads = -1,
+  ntrees = 10,
+  recode_categ = TRUE,
+  sample_size = 256,
+  # prob_pick_pooled_gain = 0,
+  # prob_pick_avg_gain = 0,
+  missing_action = "fail"
 )
-dfClean$outlier_score <- mmList$cost_upper$iso_ext$scores
+
+dfClean$outlier_score <- predict(mmList$cost_upper$iso_ext, dfClean)
 
 mmList$cost_upper$forest <- dfClean %>%
   filter(outlier_score >= 0.6) %>%
@@ -136,7 +140,7 @@ print("isolation Forest:")
 nrow(mmList$cost_upper$forest)
 print("Overlapping:")
 nrow(inner_join(mmList$cost_upper$forest, mmList$cost_upper$data))
-# Combine the two lists they overlap a lot actually
+# Combine the two lists
 mmList$cost_upper$combined_list <- bind_rows(mmList$cost_upper$forest, mmList$cost_upper$data) %>%
   distinct(id, .keep_all = TRUE)
 
