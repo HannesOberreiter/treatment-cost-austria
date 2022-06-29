@@ -80,12 +80,12 @@ fSaveImages(p, "treatment-network", w = 7, h = 5.5)
 
 
 # Calculate diagonale for single treatment
-# temp <- r_network[["data"]] %>%
-#    as_tibble() %>%
-#    mutate(p = value / nrow(dfClean) * 100)
-# temp %>%
-#    filter(season == "Summer") %>%
-#    arrange(desc(value))
+temp <- r_network[["data"]] %>%
+    as_tibble() %>%
+    mutate(p = value / nrow(dfClean) * 100)
+temp %>%
+    filter(season == "Spring") %>%
+    arrange(desc(value))
 ## Gives us edge values
 # r_network[["data"]] %>%
 #    activate("edges") %>%
