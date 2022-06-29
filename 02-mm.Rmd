@@ -203,15 +203,15 @@ The observed total loss rate was calculated based on equation \@ref(eq:lossrate)
 ```
 
 
-### Efficacy & Economical
+### Effectiveness & Economic
 
-To test if varroa treatment combinations, with at least 30 answers over all three years, are efficient and also economical the observed loss rates and reported mean expenses were plotted and grouped into nine categories. The categories comprise the combination of low, intermediate or high losses (colony winter losses) and low, intermediate or high expenses (expenses per colony) for each method combination (Fig. \@ref(fig:efficient-economic-mm)). The calculation and assignment to these categories is based on the value for each combination in comparison to the quantile distribution of these combinations observed loss rate and mean expense per colony. If the mean expenses for a method is equal or between the middle 33-57% quantile range, it will get the category 'Intermediate'. If it is in the lower it will be declared as 'Low-Expense' and if higher 'High-Expense'. The identical method applies to the loss rate, but here the treatment methods loss rates are used. The separation for each year was performed because the loss rate does change between years [@brodschneider2019a;@oberreiter2020]. Although, the expenses could probably be summarised over all three years as they will not change drastically in this timeframe, but I also have no assumption if the same beekeepers employed the same methods and participated in more than one survey, which could bias the result.
+To test if varroa treatment combinations, with at least 30 answers over all three years, are effective and also economic the observed loss rates and reported mean expenses were plotted and grouped into nine categories. The categories comprise the combination of low, intermediate or high losses (colony winter losses) and low, intermediate or high expenses (expenses per colony) for each method combination (Fig. \@ref(fig:efficient-economic-mm)). The calculation and assignment to these categories is based on the value for each combination in comparison to the quantile distribution of these combinations observed loss rate and mean expense per colony. If the mean expenses for a method is equal or between the middle 33-57% quantile range, it will get the category 'Intermediate'. If it is in the lower it will be declared as 'Low-Expense' and if higher 'High-Expense'. The identical method applies to the loss rate, but here the treatment methods loss rates are used. The separation for each year was performed because the loss rate does change between years [@brodschneider2019a;@oberreiter2020]. Although, the expenses could probably be summarised over all three years as they will not change drastically in this timeframe, but I also have no assumption if the same beekeepers employed the same methods and participated in more than one survey, which could bias the result.
 
 <!--
 # we could do the geometric mean for costs to reduce effects of outliers, but the result is not straightforward interpretable and the mean is maybe more true in this case, as we already to a lot of pre filtering to reduce the outliers.
 -->
 
-(ref:efficient-economic-mm) Graphical explanation of the assignment of efficacy and economical categories for the treatment method combinations. This assignment was done for each year separately.
+(ref:efficient-economic-mm) Graphical explanation of the assignment of effectiveness and economic categories for the treatment method combinations. This assignment was done for each year separately.
 ```{r efficient-economic-mm, include=T, fig.cap="(ref:efficient-economic-mm)"}
 include_custom("output/figs/efficient-economic-mm.png")
 ```
