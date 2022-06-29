@@ -10,7 +10,7 @@ if (file.exists("output/r_estimate.rds")) {
 }
 ```
 
-A calculation of the estimate for an imaginary beekeeper with 10 colonies (median number of colonies in the survey) and the average months of usage for each treatment results in highest per colony expenses for 'Hyperthermia' followed by 'Thymol' with over 10 EUR per colony per year (Table&nbsp;\@ref(tab:common)). 'Drone brood removal' does not cause any material expenses in my estimate and for 'Another method' it was not feasible and therefore both have an estimate of zero EUR.
+A calculation of the estimate for an imaginary beekeeper with 10 colonies (median number of colonies in the survey) and the average number of months of usage for each treatment results in highest per colony expenses for 'Hyperthermia' followed by 'Thymol' with over 10 EUR per colony per year (Table&nbsp;\@ref(tab:common)). 'Drone brood removal' does not cause any material expenses in my estimate and for 'Another method' it was not feasible and therefore both have an estimate of zero EUR.
 
 ```{r common, include=T}
 # colonies based for estimate
@@ -36,7 +36,7 @@ common_single <- tibble(
     filter(tname != "Varroa monitoring") %>%
     arrange(desc(est))
 
-c <- paste0("Treatment methods ordered by estimated expenses over the survey years, months indicating the average of months the corresponding method was used. Estimated expenses per colony are calculated with ", m_colonies, " colonies, which represents the median number of colonies in the survey. The average months are based on the average number of reported months for each treatment method separately. Percentage does show relative distribution of total survey participants (\\textit{n} = ", nrow(dfClean) %>% ft(), ") answers.")
+c <- paste0("Treatment methods ordered by estimated expenses over the survey years, months indicating the average number of months the corresponding method was used. Estimated expenses per colony are calculated with ", m_colonies, " colonies, which represents the median number of colonies in the survey. The average months are based on the average number of reported months for each treatment method separately. Percentage does show relative distribution of total survey participants (\\textit{n} = ", nrow(dfClean) %>% ft(), ") answers.")
 
 cn <- c("Method", "Percent [%]", "Average Months [n]", "Estimated expenses [EUR]")
 kable(
