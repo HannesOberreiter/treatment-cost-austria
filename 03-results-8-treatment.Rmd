@@ -1,5 +1,5 @@
 \newpage
-## Efficacy & Economical
+## Effectiveness & Economic
 ```{r, include=FALSE}
 if (file.exists("output/r-treatment.rds")) {
     r_treatment <- readRDS("output/r-treatment.rds")
@@ -8,24 +8,37 @@ if (file.exists("output/r-treatment.rds")) {
     saveRDS(r_treatment, "output/r-treatment.rds")
 }
 ```
+<!--
+The total observed loss rate over the three survey years was in 2018/19 `r round(r_treatment$year_loss$year_loss[1], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[1], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[1], 1)`%), in 2019/20 `r round(r_treatment$year_loss$year_loss[2], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[2], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[2], 1)`%) and in 2020/21 `r round(r_treatment$year_loss$year_loss[3], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[3], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[3], 1)`%) (Fig.&nbsp;\@ref(fig:efficient-economic), blue dashed vertical lines). Over the three survey years there were 17 different treatment method combinations (without drone brood removal) which had in sum at least 30 participants employing it (Table&nbsp;\@ref(tab:ee-table)). The most common treatment combination is long term formic acid in summer followed by oxalic acid trickling in winter (**A** 'SU-Fa-LT & WI-Ox-pure'). It showed in each year on mean a lower loss rate compared to the total loss rate but only in one year a low expenses category. In comparison the application of short term formic acid treatment in summer and oxalic acid sublimation in summer and winter (**K** 'SU-Fa-ST & SU/WI-Ox-Sub') was observed with a low loss rate category in each year and low expense category in two out of three years. A total of three combinations showed in all three years in mean a higher loss rate than the annual total loss rate, which are formic acid short term in summer followed by oxalic acid trickling pure or ready-made mixture in winter (**E** 'SU-Fa-ST & WI-Ox-pure'; **L** 'SU-Fa-ST & WI-Ox-mix') and the sole application of formic acid long term method in summer, without winter treatment, which also showed high expenses in each year (**M** 'SU-Fa-LT'). The three combinations with biotechnical method (without drone brood removal or hyperthermia) in summer showed low expenses in each year (**G** 'SU-Biot. & SU-Ox-sub & WI-Ox-sub'; **P** 'SU-Biot. & SU-Fa-LT & WI-Ox-pure'; **Q** 'SU-Biot. & SU-Fa-ST & WI-Ox-pure'). Additionally the treatment method of oxalic acid sublimation in summer and winter resulted in low mean expenses each year (**F** 'SU-Ox-sub & WI-Ox-sub') (Fig.&nbsp;\@ref(fig:efficient-economic)).
+-->
 
-The total observed loss rate over the three survey years was in 2018/19 `r round(r_treatment$year_loss$year_loss[1], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[1], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[1], 1)`%), in 2019/20 `r round(r_treatment$year_loss$year_loss[2], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[2], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[2], 1)`%) and in 2020/21 `r round(r_treatment$year_loss$year_loss[3], 1)`% (95% CI: `r round(r_treatment$year_loss$loss_lower_ci[3], 1)`-`r round(r_treatment$year_loss$loss_upper_ci[3], 1)`%) (Fig.&nbsp;\@ref(fig:efficient-economic), blue dashed vertical lines). Over the three survey years there were 17 different treatment method combinations (without drone brood removal) which had in sum at least 30 participants employing it (Table&nbsp;\@ref(tab:ee-table)). The most common treatment combination is long term formic acid in summer followed by oxalic acid trickling in winter (**A** 'SU-Fa-LT & WI-Ox-pure'). It showed in each year on mean a lower loss rate compared to the total loss rate but only in one year a low expenses category. In comparison the application of short term formic acid treatment in summer and oxalic acid sublimation in summer and winter (**K** 'SU-Fa-ST & SU/WI-Ox-Sub') was observed with a low loss rate category in each year and low expense category in two out of three years. A total of three combinations showed in all three years in mean a higher loss rate than the yearly total loss rate, which are formic acid short term in summer followed by oxalic acid trickling pure or ready-made mixture in winter (**E** 'SU-Fa-ST & WI-Ox-pure'; **L** 'SU-Fa-ST & WI-Ox-mix') and the sole application of formic acid long term method in summer, without winter treatment, which also showed high expenses in each year (**M** 'SU-Fa-LT'). The three combinations with biotechnical method (without drone brood removal or hyperthermia) in summer showed low expenses in each year (**G** 'SU-Biot. & SU-Ox-sub & WI-Ox-sub'; **P** 'SU-Biot. & SU-Fa-LT & WI-Ox-pure'; **Q** 'SU-Biot. & SU-Fa-ST & WI-Ox-pure'). Additionally the treatment method of oxalic acid sublimation in summer and winter resulted in low mean expenses each year (**F** 'SU-Ox-sub & WI-Ox-sub') (Fig.&nbsp;\@ref(fig:efficient-economic)).
+The intermediate loss rate of the treatment combinations, which is the inner quantile range of 33-67%, was in 2018/19 `r fr(r_treatment$quantile[1,2][[1]])`-`r fr(r_treatment$quantile[1,3][[1]])`%, in 2019/20 `r fr(r_treatment$quantile[2,2][[1]])`-`r fr(r_treatment$quantile[2,3][[1]])`% and in 2020/21 `r fr(r_treatment$quantile[3,2][[1]])`-`r fr(r_treatment$quantile[3,3][[1]])`% (Fig.&nbsp;\@ref(fig:efficient-economic), blue dashed vertical lines).. The same range for the expenses of the combinations was in 2018/19 EUR&nbsp;`r fr(r_treatment$quantile[1,4][[1]])`-`r fr(r_treatment$quantile[1,5][[1]])`, in 2019/20 EUR&nbsp;`r fr(r_treatment$quantile[2,4][[1]])`-`r fr(r_treatment$quantile[2,5][[1]])` and in 2020/21 EUR&nbsp;`r fr(r_treatment$quantile[3,4][[1]])`-`r fr(r_treatment$quantile[3,5][[1]])` (Fig.&nbsp;\@ref(fig:efficient-economic), blue dashed horizontal lines).
 
-(ref:efficient-economic) Efficiency and economical plot for treatment method combinations with at least *n* = 30 as sum over the three survey years. Letters corresponding to different treatment methods, see Table \@ref(tab:ee-table). Vertical axis the mean expense for each treatment combination with standard error (SE). Horizontal axis the mean observed winter colony loss rates for each treatment combination with 95% confidence interval (CI). The blue dashed line indicate mean total expense (horizontal) and total observed winter colony loss rates (vertical) per year. Categorizing of treatment combinations based on location in relation to the blue dashed lines (Fig.&nbsp;\@ref(fig:efficient-economic-mm)). The four categories are colour coded as seen in the plot legend.
+Over the three survey years there were 17 different treatment method combinations (without drone brood removal) which had in sum at least 30 participants employing it (Table&nbsp;\@ref(tab:ee-table)). The most common treatment combination is long term formic acid in summer followed by oxalic acid trickling in winter (**A** 'SU-Fa-LT & WI-Ox-pure'). It showed in one year an intermediate loss rate and in the first two years a lower loss rate compared to the intermediate range. As for expenses the combination was categorized in two years as high expense category and only in one year in the intermediate category. In comparison the same combination but with formic acid short term application (**E** 'SU-Fa-ST & WI-Ox-pure') showed in the last two years a higher than intermediate loss rate and in the first year an intermediate categorized loss rate. Expenses were lower than the intermediate range in the first year and the two following years in the intermediate category. The sole application of formic acid long term method in summer, without winter treatment, was categorized as high expense in each year and in the first two years the loss rate was higher than the intermediate range (**M** 'SU-Fa-LT').
+
+Only two combinations were categorized in each year with low loss rates (**J** SU-Fa-ST & SU-Ox-sub & Wi-Ox-sub; **O** SU-Fa-ST & SU-Fa-LT & SU-Ox-sub & WI-Ox-sub). Both have in common that they used oxalic acid sublimation in summer in addition to an formic acid treatment and the oxalic acid sublimation as winter treatment. The first variant (**J** SU-Fa-ST & SU-Ox-sub & Wi-Ox-sub) did show intermediate to low expenses and the second variant (**O** SU-Fa-ST & SU-Fa-LT & SU-Ox-sub & WI-Ox-sub) was in the first year in the low expense category and the last two years in the high expense category. 
+
+The treatment combination of oxalic acid sublimation in summer and winter (**F** SU-Ox-sub & WI-Ox-sub) was in the first year categorized as low loss rate and in the following two years as intermediate category. In addition the expenses were in each year lower than the intermediate range. All three combinations with biotechnical methods (without drone brood removal or hyperthermia) in summer were categorized as low expenses in close to all survey years (**G** 'SU-Biot. & SU-Ox-sub & WI-Ox-sub'; **P** 'SU-Biot. & SU-Fa-LT & WI-Ox-pure'; **Q** 'SU-Biot. & SU-Fa-ST & WI-Ox-pure'). But loss rates were varying between high and low category (Fig.&nbsp;\@ref(fig:efficient-economic)).
+
+
+(ref:efficient-economic) Effectiveness and economic plot for treatment method combinations with at least 30 participants as sum over the three survey years. Letters corresponding to different treatment methods, see Table \@ref(tab:ee-table). Vertical axis the mean expense for each treatment combination with standard error (SE). Horizontal axis the mean observed winter colony loss rates for each treatment combination with 95% confidence interval (CI). The blue dashed line indicate the intermediate range (quantile 33-67%) of the treatment combinations expenses (horizontal) and the combinations observed winter colony loss rates (vertical) per year. Categorizing of treatment combinations based on location in relation to the blue dashed lines (Fig.&nbsp;\@ref(fig:efficient-economic-mm)). The nine categories are colour coded as seen in the plot legend.
+
+<!-- The blue dashed line indicate mean total expense (horizontal) and total observed winter colony loss rates (vertical) per year. Categorizing of treatment combinations based on location in relation to the blue dashed lines (Fig.&nbsp;\@ref(fig:efficient-economic-mm)). The four categories are colour coded as seen in the plot legend. -->
 
 ```{r efficient-economic, include=T, fig.cap="(ref:efficient-economic)"}
 include_custom("output/figs/efficient-economic.png")
 ```
 
-(ref:ee-table) Treatment combinations with at least *n*=30 as sum over the three survey years. Ordered by number of participants applying the combinations. 'Efficient' and 'Economical' are colour coded based on low (teal) and high (orange), categorized based to total loss rates and total mean expenses (Fig.&nbsp;\@ref(fig:efficient-economic)). Abbrevations: SP/SU/WI = Spring/Summer/Winter || Fa-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods.
+(ref:ee-table) Treatment combinations with at least 30 participants as sum over the three survey years. Ordered by number of participants (#) applying the combinations. 'Effectiveness' and 'Economic' are colour coded based on intermediate (grey), low (teal) and high (orange). Categorized based on their mean expense and mean loss rate compared to the other combinations (Fig.&nbsp;\@ref(fig:efficient-economic)). Abbreviations: SP/SU/WI = Spring/Summer/Winter || Fa-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical methods. 
 
 ```{r ee-table, include=T}
-cn <- c(" ", "Treatment", "Year", "\\textit{n}", "Median", "Mean", "SD", "Mean", "Lower CI", "Upper CI", "Efficient", "Economical")
+cn <- c(" ", "Treatment", "Year", "\\#", "Median", "Mean", "SD", "Mean", "Lower CI", "Upper CI", "Effectiveness", "Economic")
 cell_colors_price <- c("high-expense" = "cred!80", "low-expense" = "cgreen!80")
 cell_colors_loss <- c("high-loss" = "cred!80", "low-loss" = "cgreen!80")
 
 tab <- kbl(
     r_treatment$tab %>%
+        select(-quantile_efficient, -quantile_economical) %>%
         mutate(
             c_short_od = str_replace_all(c_short_od, "&", " \\\\& "),
             across(letter:c_short_od, ~ ifelse(lag(as.character(.x), default = "0") == .x, "", .x)),
@@ -35,11 +48,11 @@ tab <- kbl(
             letter = cell_spec(letter, bold = TRUE),
             efficient = cell_spec(
                 efficient,
-                background = cell_colors_loss[efficient]
+                background = ifelse(efficient != "", cell_colors_loss[efficient], "cwhite!80")
             ),
             economical = cell_spec(
                 economical,
-                background = cell_colors_price[economical]
+                background = ifelse(economical != "", cell_colors_price[economical], "cwhite!80")
             )
         ),
     linesep = c("", "", "\\addlinespace"),
@@ -50,7 +63,7 @@ tab <- kbl(
     caption = "(ref:ee-table)",
     escape = FALSE
 ) %>%
-    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\\\%]" = 3, " " = 2)) %>%
+    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\%]" = 3, " " = 2)) %>%
     # landscape()
     kable_styling(latex_option = "scale_down")
 tab

@@ -26,16 +26,19 @@ r_operational$size$stats <- dfClean %>%
         colonies_median = median(hives_winter),
         colonies_max = max(hives_winter),
         colonies_label = glue::glue("Mean: {colonies_mean}, Median: {colonies_median}, Maximum: {colonies_max}"),
-        year_label = glue::glue("20{year} - Beekeeper: {n}, Colonies: {colonies_total}")
+        year_label = glue::glue("20{year} - Beekeepers: {n %>% ft()} / Colonies: {colonies_total %>% ft()}")
     ) %>%
     ungroup() %>%
     glimpse()
 
 
 r_operational$size$table <- dfClean %>%
+    add_count(year) %>%
     group_by(year, operation) %>%
     summarise(
+        year_label = glue::glue("20{year} (n={n %>% ft()})")[1],
         beekeeper = n(),
+        beekeeper_p = format(round(mean((beekeeper / n[1] * 100)), 1), nsmall = 1),
         colonies = sum(hives_winter),
         expenses_mean = format(round(mean(costs), 1), nsmall = 1),
         expenses_median = format(round(median(costs), 1), nsmall = 1)
@@ -56,7 +59,7 @@ r_operational$size$p <- r_operational$size$stats %>%
         ),
         size = 3
     ) +
-    ylab("Beekeeper [n]") +
+    ylab("Beekeepers [#]") +
     xlab("Colonies [#]") +
     scale_color_manual(
         values = colorBlindBlack8[c(2, 4, 6)], aesthetics = "fill"
@@ -125,12 +128,15 @@ r_operational$organic$summary <- dfClean %>%
 r_operational$organic$table <- dfClean %>%
     mutate(
         op_cert_org_beek = stringr::str_replace_na(op_cert_org_beek, "Not Answered"),
-        op_cert_org_beek = stringr::str_replace_all(op_cert_org_beek, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Unsure")),
-        op_cert_org_beek = forcats::fct_relevel(op_cert_org_beek, "No", "Yes", "Unsure")
+        op_cert_org_beek = stringr::str_replace_all(op_cert_org_beek, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Uncertain")),
+        op_cert_org_beek = forcats::fct_relevel(op_cert_org_beek, "No", "Yes", "Uncertain")
     ) %>%
+    add_count(year) %>%
     group_by(year, op_cert_org_beek) %>%
     summarise(
+        year_label = glue::glue("20{year} (n={n %>% ft()})")[1],
         beekeeper = n(),
+        beekeeper_p = format(round(mean((beekeeper / n[1] * 100)), 1), nsmall = 1),
         colonies = sum(hives_winter),
         expenses_mean = format(round(mean(costs), 1), nsmall = 1),
         expenses_median = format(round(median(costs), 1), nsmall = 1)
@@ -174,12 +180,15 @@ r_operational$migratory$summary <- dfClean %>%
 r_operational$migratory$table <- dfClean %>%
     mutate(
         op_migratory_beekeeper = stringr::str_replace_na(op_migratory_beekeeper, "Not Answered"),
-        op_migratory_beekeeper = stringr::str_replace_all(op_migratory_beekeeper, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Unsure")),
-        op_migratory_beekeeper = forcats::fct_relevel(op_migratory_beekeeper, "No", "Yes", "Unsure")
+        op_migratory_beekeeper = stringr::str_replace_all(op_migratory_beekeeper, c("Ja" = "Yes", "Nein" = "No", "Unsicher" = "Uncertain")),
+        op_migratory_beekeeper = forcats::fct_relevel(op_migratory_beekeeper, "No", "Yes", "Uncertain")
     ) %>%
+    add_count(year) %>%
     group_by(year, op_migratory_beekeeper) %>%
     summarise(
+        year_label = glue::glue("20{year} (n={n %>% ft()})")[1],
         beekeeper = n(),
+        beekeeper_p = format(round(mean((beekeeper / n[1] * 100)), 1), nsmall = 1),
         colonies = sum(hives_winter),
         expenses_mean = format(round(mean(costs), 1), nsmall = 1),
         expenses_median = format(round(median(costs), 1), nsmall = 1)

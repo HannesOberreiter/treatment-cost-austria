@@ -26,6 +26,7 @@ biblatexoptions: [
 	urldate=long,
 	maxbibnames=99,
 	maxcitenames=2,
+	uniquename=false,
 	uniquelist=false
     ]
 link-citations: yes

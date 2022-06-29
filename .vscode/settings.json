@@ -1,0 +1,3 @@
+{
+    "r.rmarkdown.knit.command": "bookdown::render_book('index.Rmd', 'pdf_document2')"
+}

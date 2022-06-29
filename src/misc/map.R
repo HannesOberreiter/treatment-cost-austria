@@ -83,7 +83,7 @@ p <- temp %>%
     option = "inferno",
     direction = -1
   ) +
-  labs(fill = "TeilnehmerInnen [#]") +
+  labs(fill = "Participants [#]") +
   facet_wrap(
     ~year,
     ncol = 1,

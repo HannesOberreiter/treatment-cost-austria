@@ -29,10 +29,10 @@ fPairwiseMM <- function(d) {
             sprintf(
                 # "$\\Delta | \\tilde{x} |$ = $%.1f$",
                 # x$median_diff
-                "$\\Delta | \\bar{x} |$ = $%.1f$",
+                "$\\Delta | \\bar{x} |$ = %.1f",
                 x$mean_diff
             )
-        )
+        )[1]
     )
     return(x)
 }

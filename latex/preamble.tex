@@ -11,11 +11,11 @@
 % **************************************************
 %\newcommand{\thesisTitle}{Austrian Beekeeper Citizen Science Survey, the Financial Burden to Fight *Varroa Destructor*}
 %\newcommand{\thesisTitle}{Analysis of varroacide expenses and honey bee colony winter mortality on operation level in Austria}
-\newcommand{\thesisTitle}{Beekeeper Citizen Science Survey, comparing Expenses and Efficiency of Treatment Methods against the introduced Varroa Mite.}
+\newcommand{\thesisTitle}{Financial Expenses and Efficiency of Treatment Methods against the introduced Varroa Mite in Austria.}
 \newcommand{\thesisName}{Hannes Oberreiter (01619771)}
 \newcommand{\thesisSubject}{Master Thesis}
-\newcommand{\thesisDate}{2021}
-\newcommand{\thesisVersion}{0.2}
+\newcommand{\thesisDate}{\today}
+\newcommand{\thesisVersion}{1.1}
 
 \newcommand{\thesisFirstReviewer}{}
 \newcommand{\thesisFirstReviewerUniversity}{\protect{ }}
@@ -33,7 +33,7 @@
 \newcommand{\thesisUniversityInstitute}{Institute of Biology}
 \newcommand{\thesisUniversityGroup}{}
 \newcommand{\thesisUniversityCity}{Graz}
-\newcommand{\thesisUniversityStreetAddress}{Universitätsplatz 3}
+\newcommand{\thesisUniversityStreetAddress}{Universitätsplatz 2}
 \newcommand{\thesisUniversityPostalCode}{8010}
 
 
@@ -61,8 +61,8 @@
     %bibfile=bib-refs,%
     %bibstyle=alphabetic,%
     %bibsorting=nty,%
-}{cleanthesis}
-\usepackage{latex/cleanthesis}
+}{custom}
+\usepackage{latex/custom}
 
 \hypersetup{% setup the hyperref-package options
     pdftitle={\thesisTitle},    %   - title (PDF meta)
@@ -73,7 +73,7 @@
     pdfborder={0 0 0},          %   -
     breaklinks=true,            %   - allow line break inside links
     bookmarksnumbered=true,     %
-    bookmarksopen=true          %
+    bookmarksopen=true,         %
     colorlinks = true,
     linkcolor=.,
     urlcolor=blue,
@@ -89,6 +89,7 @@
 % colors for table
 \definecolor{cred}{cmyk}{0,0.47,0.84,0.16}
 \definecolor{cgreen}{cmyk}{0.62, 0, 0.17, 0.38}
+\definecolor{cwhite}{cmyk}{0, 0, 0, 0.5}
 
 %% This did solve a lot of problems for me when twosides and tables jumping around and going ashtray
 \raggedbottom

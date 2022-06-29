@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-
+_main.*
 
 *.log
 *.html

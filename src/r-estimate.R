@@ -76,7 +76,7 @@ p <- ggplot() +
             colour = I(c(colorBlindBlack8[3], colorBlindBlack8[5], colorBlindBlack8[3])),
             slope = c(rep(0, 3))
         ),
-        show.legend = F
+        show.legend = FALSE
     ) +
     geom_abline(
         aes(
@@ -104,10 +104,59 @@ p <- ggplot() +
     ) +
     xlab("Mean of Estimate and Survey [EUR]") +
     ylab(TeX("Difference (Estimate-Survey) \\[EUR\\]")) +
-    labs(size = "Beekeeper [n]") +
+    labs(size = "Beekeepers [#]") +
     ggplot2::scale_size_continuous(breaks = c(min(r_estimate$data$n), 50, 100, 150, max(r_estimate$data$n)), limits = c(min(r_estimate$data$n), max(r_estimate$data$n))) +
     scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-12, 12, 2)) +
     scale_x_continuous(limits = c(0, NA), breaks = seq(0, 100, 2))
 
 fSaveImages(p, "bland-altman", h = 4.5)
+
+# Plotting Size of Answers on X, idea from Robert
+p <- ggplot() +
+    # aes(x = 2^(r_estimate$ba$means), y = r_estimate$ba$diffs) +
+    aes(x = r_estimate$data$n, y = r_estimate$ba$diffs) +
+    geom_abline(
+        aes(
+            intercept = r_estimate$ba$lines,
+            colour = I(c(colorBlindBlack8[3], colorBlindBlack8[5], colorBlindBlack8[3])),
+            slope = c(rep(0, 3))
+        ),
+        show.legend = FALSE
+    ) +
+    geom_abline(
+        aes(
+            intercept = r_estimate$ba$CI.lines,
+            color = I(c(rep(colorBlindBlack8[3], 2), rep(colorBlindBlack8[5], 2), rep(colorBlindBlack8[3], 2))),
+            slope = c(rep(0, 6))
+        ),
+        linetype = "dashed",
+        alpha = 0.5,
+        show.legend = FALSE
+    ) +
+    geom_hline(yintercept = 0, linetype = "dotted") +
+    geom_point(
+        aes(
+            size = r_estimate$data$n,
+            # color = I(colorlogi)
+        ),
+        show.legend = TRUE
+    ) +
+    # geom_density_2d(color = "red", contour_var = "count", adjust = 2, bins = 8) +
+    # ggrepel::geom_label_repel(
+    #    aes(
+    #        # x = 2^r_estimate$ba$means[labellogi],
+    #        x = r_estimate$data$n[labellogi],
+    #        y = r_estimate$ba$diffs[labellogi],
+    #        label = r_estimate$ba$label[labellogi]
+    #    ),
+    #    size = 2
+    # ) +
+    xlab("Beekeepers [#]") +
+    ylab(TeX("Difference (Estimate-Survey) \\[EUR\\]")) +
+    labs(size = "Beekeepers [#]") +
+    ggplot2::scale_size_continuous(breaks = c(min(r_estimate$data$n), 50, 100, 150, max(r_estimate$data$n)), limits = c(min(r_estimate$data$n), max(r_estimate$data$n))) +
+    scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-12, 12, 2)) +
+    scale_x_continuous(limits = c(0, NA), breaks = scales::pretty_breaks())
+fSaveImages(p, "bland-altman-sample-size", h = 4.5)
+
 rm(limit_y, labellogi, colorlogi, p)
