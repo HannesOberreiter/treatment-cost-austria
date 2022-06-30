@@ -27,9 +27,11 @@ include_custom("output/figs/migratory-permutation.png")
 include_custom("output/figs/model-qq-residuals.png")
 ```
 
+
+
 ```{r motivation-state-rank, include=T}
 cn <- c("State", "Category", "Answers [%]", "Rank")
-c <- "Top 7 motivation answers for choosing varroa control method for each state separately. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the relative amount the corresponding category was picked. Rank simply the decreasing order of the relative value in each state."
+c <- "Top 7 motivation answers for choosing \\textit{Varroa} control method for each state separately. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the relative amount the corresponding category was picked. Rank simply the decreasing order of the relative value in each state."
 tab <- knitr::kable(
     r_motivation$state_rank,
     align = c("l", "l", "r", "c"),
@@ -50,7 +52,7 @@ rm(tab, c, cn)
 
 ```{r motivation-comb-full, include=T}
 cn <- c("Motivation", "Answers", "Motivations")
-c <- "Top 25 motivation answers combinations for choosing varroa control method given by participants. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the total number this combination was picked and 'Motivations' are the number of different categories in this combination, whereas 1 would indicate a single answer."
+c <- "Top 25 motivation answers combinations for choosing \\textit{Varroa} control method given by participants. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the total number this combination was picked and 'Motivations' are the number of different categories in this combination, whereas 1 would indicate a single answer."
 tab <- knitr::kable(
     r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 25),
     align = c("l", rep("r", 2)),
