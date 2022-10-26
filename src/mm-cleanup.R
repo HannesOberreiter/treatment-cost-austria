@@ -154,6 +154,47 @@ mmList$cost_upper$new_data <- mmList$cost_upper$combined_list %>%
 # add new calculated costs to our main df
 dfClean$costs[(dfClean$id %in% mmList$cost_upper$new_data$id)] <- mmList$cost_upper$new_data$new_cost
 
+# create plot which shows the differnce
+p1 <- patchwork::wrap_plots(
+  A = mmList$cost_upper$new_data %>%
+    ggplot2::ggplot() +
+    aes(x = hives_winter, y = costs) +
+    geom_point() +
+    xlab("Number of colonies [#]") +
+    ylab("Reported Expenses/Colony [EUR]") +
+    ggplot2::scale_x_continuous(
+      breaks = scales::breaks_width(100),
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = scales::breaks_width(100),
+      limits = c(0, 550)
+    ) +
+    ggplot2::theme(
+      panel.grid.major = element_line()
+    ) +
+    ggplot2::coord_equal(),
+  B = mmList$cost_upper$new_data %>%
+    ggplot2::ggplot() +
+    aes(x = hives_winter, y = new_cost) +
+    geom_point() +
+    xlab("Number of colonies [#]") +
+    ylab("Manipulated Expenses/Colony [EUR]") +
+    ggplot2::scale_x_continuous(
+      breaks = scales::breaks_width(100),
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = scales::breaks_width(100),
+      limits = c(0, 550)
+    ) +
+    ggplot2::theme(
+      panel.grid.major = element_line()
+    ) +
+    ggplot2::coord_equal()
+) + plot_annotation(tag_levels = c("A", "1"))
+
+fSaveImages(p1, "manipulated-costs", h = 7, w = 8)
+
+
 ## Difference --------------------------------------------------------------
 mmList$reports <- dfData %>%
   count(year, name = "survey_n") %>%

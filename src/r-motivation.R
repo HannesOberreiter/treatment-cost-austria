@@ -68,11 +68,11 @@ p <- dfData %>%
     ) +
     ggplot2::scale_fill_manual(
         values = c("<= 25 Colonies" = "#0072B2", "> 25 Colonies" = "#009E73"),
-        labels = c("<= 25 Colonies" = glue::glue("<= 25 Colonies (n={r_motivation$countOperation$n[1]})"), "> 25 Colonies" = glue::glue("> 25 Colonies (n={r_motivation$countOperation$n[2]})"))
+        labels = c("<= 25 Colonies" = glue::glue("<= 25 Colonies ({fr(r_motivation$countOperation$n[1]/r_motivation$answers*100)}%)"), "> 25 Colonies" = glue::glue("> 25 Colonies ({fr(r_motivation$countOperation$n[2]/r_motivation$answers*100)}%)"))
     ) +
     xlab("") +
     ylab("Count [%]") +
-    labs(fill = "Operation Size") +
+    labs(fill = glue::glue("Operation Size (n = {ft(r_motivation$answers)})")) +
     coord_flip(ylim = c(0, 85), expand = FALSE) +
     ggplot2::theme(
         legend.position = c(0.75, 0.3),
@@ -82,6 +82,7 @@ p <- dfData %>%
         axis.line.y = element_blank(),
         axis.text.y = ggplot2::element_text(color = "black")
     )
+
 fSaveImages(p, "motivation-operation", h = 6.5)
 
 # Table most common combinations
@@ -119,15 +120,16 @@ r_motivation$counts_state <- dfMotivation %>%
     filter(value == "Ja") %>%
     group_by(state) %>%
     mutate(
-        state_count = length(unique(id)),
+        participants = length(unique(id)),
+        relative = fr(participants / r_motivation$answers * 100, 1),
         state_de = state,
         state_en = stringr::str_replace_all(state_de, stateList),
-        state_print = glue::glue("{state_en} (n={state_count})"),
+        state_print = glue::glue("{state_en} ({relative}%)"),
     ) %>%
     ungroup() %>%
     add_count(short, name = "total_count") %>%
     add_count(state, name = "state_count") %>%
-    group_by(desc, short, state_print, state_de) %>%
+    group_by(desc, short, state_print, state_de, participants) %>%
     summarise(
         total_count = first(total_count),
         state_count = first(state_count),
@@ -142,6 +144,7 @@ r_motivation$counts_state <- dfMotivation %>%
     ) %>%
     ungroup() %>%
     glimpse()
+
 
 p2 <- r_motivation$counts_state %>%
     group_by(short) %>%
@@ -175,7 +178,7 @@ p2 <- r_motivation$counts_state %>%
         breaks = sort(unique(r_motivation$counts_state$state_print), decreasing = TRUE)
     ) +
     ggplot2::scale_color_identity() +
-    labs(fill = "State") +
+    labs(fill = glue::glue("State (n = {ft(r_motivation$answers)})")) +
     xlab("Top 5 Motivation Answers") +
     ylab("Percentage of answers for each state") +
     ggplot2::theme(
