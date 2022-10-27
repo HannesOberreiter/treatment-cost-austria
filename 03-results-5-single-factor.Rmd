@@ -22,8 +22,8 @@ include_custom("output/figs/size-distr.png")
 ```
 
 ```{r size-table, include=T}
-c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeeper' and with more are 'Professional Beekeeper' ('>25')."
-cn <- c("Operation Size", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeepers' and with more are 'Professional Beekeepers' ('>25')."
+cn <- c("Operation Size", "Beekeepers [%]", "Colonies [#]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$size$table %>%
         select(-year, -beekeeper, -year_label) %>%
@@ -54,11 +54,11 @@ include_custom("output/figs/size-stats.png")
 
 The survey question 'Certified Organic Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' and participants which did not answer to this question were ignored in the statistical two levels factor analysis. The majority of the survey participants is uncertified (`r r_operational$organic$summary$np[[2]]`%) and `r r_operational$organic$summary$np[[1]]`% report to be certified organic. Only `r r_operational$organic$summary$np[[3]]`% did answer with 'Uncertain' and `r r_operational$organic$summary$np[[4]]`% did answer not at all (Table&nbsp;\@ref(tab:organic-table)).
 
-Certified organic beekeeping operations spend on average and on median less per colony on treatment expenses. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$organic$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (2018/19 & 2020/21: *p* = 0.02; 2019/20: *p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: EUR&nbsp;2.5-5.9; 2019/20: EUR&nbsp;1.7-6.3; 2020/21: EUR&nbsp;2.2-5.8) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:organic-stats)).
+Certified organic beekeeping operations spend on average and on median less per colony on treatment expenses. The absolute median difference between the groups is between EUR&nbsp;`r fr(min(r_operational$organic$statistic_perm$point_estimate %>% unlist()))` and EUR&nbsp;`r max(r_operational$organic$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in all years (2018/19 & 2020/21: *p* = 0.02; 2019/20: *p* < 0.01) and 95% CI (bootstrap, R = 1,000; 2018/19: EUR&nbsp;2.5-5.9; 2019/20: EUR&nbsp;1.7-6.3; 2020/21: EUR&nbsp;2.2-5.8) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:organic-stats)).
 
 ```{r organic-table, include=T}
 c <- "Distribution of answers on questions 'Certified Organic Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Certified Organic", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Certified Organic", "Beekeepers [%]", "Colonies [#]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$organic$table %>%
         select(-year, -beekeeper, -year_label) %>%
@@ -89,11 +89,11 @@ include_custom("output/figs/organic-stats.png")
 
 The beekeepers participating in our study were asked whether they transported their bees to sources of honey yields or for pollination service (this excludes movements in the course of breeding or splits). The question 'Migratory Beekeeper' did include as possible answers 'Yes', 'No' and 'Uncertain', whereas 'Uncertain' answers were ignored in the statistical two levels factor analysis. A total of 14.9% of the survey participants are migrating with their honey bee colonies but the majority is not migrating (`r r_operational$migratory$summary$np[[2]]`%). Only `r r_operational$migratory$summary$np[[3]]`% did answer 'Uncertain' on this question (Table&nbsp;\@ref(tab:migratory-table)).
 
-Migratory beekeeping operations spend on average and on median less per colony on treatment expenses in comparison to survey participants who do not migrate. The absolute median difference between the groups is between EUR&nbsp;`r min(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` and EUR&nbsp;`r max(r_operational$migratory$statistic_perm$point_estimate %>% unlist())` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in two years (2018/19: *p* = 0.04; 2019/20: *p* < 0.01, 2020/21: *p* = 0.15 ) and 95% CI (bootstrap, R = 1,000; EUR&nbsp;2018/19: 0.5-5.5; 2019/20: EUR&nbsp;2.1-5.9; 2020/21: EUR&nbsp;0.7-5.3) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:migratory-stats)).
+Migratory beekeeping operations spend on average and on median less per colony on treatment expenses in comparison to survey participants who do not migrate. The absolute median difference between the groups is between EUR&nbsp;`r fr(min(r_operational$migratory$statistic_perm$point_estimate %>% unlist()))` and EUR&nbsp;`r fr(max(r_operational$migratory$statistic_perm$point_estimate %>% unlist()))` per colony. Inference based statistic on the median difference with permutation test (R = 5,000) shows significant difference in two years (2018/19: *p* = 0.04; 2019/20: *p* < 0.01, 2020/21: *p* = 0.15 ) and 95% CI (bootstrap, R = 1,000; EUR&nbsp;2018/19: 0.5-5.5; 2019/20: EUR&nbsp;2.1-5.9; 2020/21: EUR&nbsp;0.7-5.3) is not overlapping with zero difference in any survey year (Fig.&nbsp;\@ref(fig:migratory-stats)).
 
 ```{r migratory-table, include=T}
 c <- "Distribution of answers on questions 'Migratory Beekeeper' and measures of central tendency over the three survey years."
-cn <- c("Migratory Beekeeper", "Beekeepers [%]", "Colonies [n]", "Mean [EUR]", "Median [EUR]")
+cn <- c("Migratory Beekeeper", "Beekeepers [%]", "Colonies [#]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$migratory$table %>%
         select(-year, -year_label, -beekeeper) %>%
