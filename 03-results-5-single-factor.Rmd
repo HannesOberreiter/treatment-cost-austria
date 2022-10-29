@@ -22,7 +22,7 @@ include_custom("output/figs/size-distr.png")
 ```
 
 ```{r size-table, include=T}
-c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are 'Recreational Beekeepers' and with more are 'Professional Beekeepers' ('>25')."
+c <- "Operation size / number of colonies distribution and measures of central tendency over the three survey years. Operation size with 25 or less colonies ('<=25') are denoted as 'Recreational Beekeepers' and with more as 'Professional Beekeepers' ('>25')."
 cn <- c("Operation Size", "Beekeepers [%]", "Colonies [#]", "Mean [EUR]", "Median [EUR]")
 tab <- kable(
     r_operational$size$table %>%
@@ -44,7 +44,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:size-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the given operation size groups, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:size-permutation). Survey answers above EUR 80 per colony are not shown.  
+(ref:size-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicating 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the given operation size groups, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:size-permutation). Survey answers above EUR 80 per colony are not shown.  
 
 ```{r size-stats, include=T, fig.cap="(ref:size-stats)", out.width="100%"}
 include_custom("output/figs/size-stats.png")
@@ -79,7 +79,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:organic-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Organic Certified Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:organic-permutation). Survey answers above EUR 80 per colony are not shown.  
+(ref:organic-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicating 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Organic Certified Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:organic-permutation). Survey answers above EUR 80 per colony are not shown.  
 
 ```{r organic-stats, include=T, fig.cap="(ref:organic-stats)", out.width="100%"}
 include_custom("output/figs/organic-stats.png")
@@ -114,7 +114,7 @@ tab
 rm(cn, c, tab)
 ```
 
-(ref:migratory-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicate 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Migratory Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:migratory-permutation). Survey answers above EUR 80 per colony are not shown. 
+(ref:migratory-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicating 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Migratory Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:migratory-permutation). Survey answers above EUR 80 per colony are not shown. 
 
 ```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="100%"}
 include_custom("output/figs/migratory-stats.png")
