@@ -28,8 +28,9 @@ kable(
     r_extrapolation$data %>%
         select(year, colonies_survey, conf.low, statistic, conf.high, survey_estimate, survey_real) %>%
         mutate(
-            across(statistic:conf.high, round, digits = 2),
-            across(colonies_survey:survey_real, ~ .x %>%
+            across(conf.low:conf.high, fr, r = 1),
+            colonies_survey = ft(colonies_survey),
+            across(survey_estimate:survey_real, ~ .x %>%
                 round() %>%
                 ft())
         ),
