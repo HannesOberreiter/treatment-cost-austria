@@ -65,7 +65,7 @@ tab <- kbl(
     caption = "(ref:ee-table)",
     escape = FALSE
 ) %>%
-    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [\\%]" = 3, " " = 2)) %>%
+    add_header_above(c(" " = 4, "Expenses [EUR]" = 3, "Observed Loss Rate [%]" = 3, " " = 2)) %>%
     # landscape()
     kable_styling(latex_option = "scale_down")
 tab
