@@ -108,7 +108,7 @@ p <- ggplot() +
     ggplot2::scale_size_continuous(breaks = c(min(r_estimate$data$n), 50, 100, 150, max(r_estimate$data$n)), limits = c(min(r_estimate$data$n), max(r_estimate$data$n))) +
     scale_y_continuous(limits = c(-1 * limit_y, limit_y), breaks = seq(-12, 12, 2)) +
     scale_x_continuous(limits = c(0, NA), breaks = seq(0, 100, 2))
-
+p
 fSaveImages(p, "bland-altman", h = 4.5)
 
 # Plotting Size of Answers on X, idea from Robert

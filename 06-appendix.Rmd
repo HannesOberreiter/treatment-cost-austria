@@ -1,7 +1,14 @@
 # (APPENDIX) Appendix {-}
 # Appendix
 
-(ref:extrapolation-estimate) Multiplication of the mean estimated treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants and extrapolation for Austria with the number of colonies as reported from the national beekeeping association 'Biene Österreich'. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean. Basis of the calculation are the estimated mean expenses for one colony..
+(ref:manipulated-costs) Participants answers which were declared as extreme outliers for reported expenses and their number of colonies wintered. (A) Before manipulation of expenses. (B) After calculating new expenses based on reported expenses divided by the number of colonies wintered.
+
+```{r manipulated-costs, out.width="100%", include=T, fig.cap="(ref:manipulated-costs)"}
+include_custom("output/figs/manipulated-costs.png")
+```
+
+
+(ref:extrapolation-estimate) Multiplication of the mean estimated treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants and extrapolation for Austria with the number of colonies as reported from the national beekeeping association 'Biene Österreich'. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean. Basis of the calculation are the estimated mean expenses for one colony.
 
 ```{r extrapolation-estimate, out.width="100%", include=T, fig.cap="(ref:extrapolation-estimate)"}
 include_custom("output/figs/extrapolation-estimate.png")
@@ -27,9 +34,11 @@ include_custom("output/figs/migratory-permutation.png")
 include_custom("output/figs/model-qq-residuals.png")
 ```
 
+
+
 ```{r motivation-state-rank, include=T}
 cn <- c("State", "Category", "Answers [%]", "Rank")
-c <- "Top 7 motivation answers for choosing varroa control method for each state separately. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the relative amount the corresponding category was picked. Rank simply the decreasing order of the relative value in each state."
+c <- "Top 7 motivation answers for choosing \\textit{Varroa} control method for each state separately. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the relative amount the corresponding category was picked. Rank simply the decreasing order of the relative value in each state."
 tab <- knitr::kable(
     r_motivation$state_rank,
     align = c("l", "l", "r", "c"),
@@ -50,7 +59,7 @@ rm(tab, c, cn)
 
 ```{r motivation-comb-full, include=T}
 cn <- c("Motivation", "Answers", "Motivations")
-c <- "Top 25 motivation answers combinations for choosing varroa control method given by participants. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the total number this combination was picked and 'Motivations' are the number of different categories in this combination, whereas 1 would indicate a single answer."
+c <- "Top 25 motivation answers combinations for choosing \\textit{Varroa} control method given by participants. Participants could select out of a pool of 21 categories and where able to pick up to 5 categories maximum. 'Answers' is the total number this combination was picked and 'Motivations' are the number of different categories in this combination, whereas 1 would indicate a single answer."
 tab <- knitr::kable(
     r_motivation$comb_list %>% select(motivation, n, motivations) %>% dplyr::slice_max(n, n = 25),
     align = c("l", rep("r", 2)),
