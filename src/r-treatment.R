@@ -107,7 +107,7 @@ calcTop <- function(df, filter) {
         group_by(year, c_short_od, year_n, year_loss, year_costs, year_loss_ci) %>%
         summarise(
             n = n(),
-            observed_loss = (sum(hives_lost) / sum(hives_winter)) * 100,
+            observed_loss = (sum(hives_lost_e) / sum(hives_winter)) * 100,
             observed_loss_ci = list(fLossCI(hives_lost_e, hives_spring_e)),
             observed_costs = mean(costs),
             observed_costs_sd = sd(costs),
