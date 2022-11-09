@@ -18,7 +18,7 @@ Over the three survey years there were 17 different treatment method combination
 
 Only two combinations were categorized in each year with low loss rates (**J** SU-Fa-ST & SU-Ox-sub & Wi-Ox-sub; **O** SU-Fa-ST & SU-Fa-LT & SU-Ox-sub & WI-Ox-sub). Both have in common that they use oxalic acid sublimation in addition to an formic acid treatment in summer and the use of oxalic acid sublimation as winter treatment. The first variant (**J** SU-Fa-ST & SU-Ox-sub & Wi-Ox-sub) did show intermediate to low expenses and the second variant (**O** SU-Fa-ST & SU-Fa-LT & SU-Ox-sub & WI-Ox-sub) was in the low expense category in the first year and in the high expense category the last two years. 
 
-The treatment combination of oxalic acid sublimation in summer and winter (**F** SU-Ox-sub & WI-Ox-sub) was categorized as low loss rate in the first year and as intermediate category in the following two years. In addition the expenses were lower than the intermediate range in each year.
+The treatment combination of oxalic acid sublimation in summer and winter (**F** SU-Ox-sub & WI-Ox-sub) was categorized as intermediate loss rate in the first two years and as high category in the last year. In addition the expenses were lower than the intermediate range in each year.
 
 All three combinations with another biotechnical method (without drone brood removal or hyperthermia) in summer were categorized as low expenses in close to all survey years (**G** 'SU-Biot. & SU-Ox-sub & WI-Ox-sub'; **P** 'SU-Biot. & SU-Fa-LT & WI-Ox-pure'; **Q** 'SU-Biot. & SU-Fa-ST & WI-Ox-pure'). But loss rates did vary between the high and low category (Fig.&nbsp;\@ref(fig:efficient-economic)).
 
