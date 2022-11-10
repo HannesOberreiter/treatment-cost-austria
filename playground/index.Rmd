@@ -241,3 +241,68 @@ dfData %>%
   filter(varroa_treated == "Nein") %>%
   count(varroa_treated, year)
 ```
+
+# Motivation Inference Tests
+
+Playing around with statistical inference on motivation/operation size difference.
+
+
+```r
+temp <- dfData %>%
+  filter(year == "20/21" & submitted == "Internet") %>%
+  filter(!if_all(starts_with("motivation_"), ~ . == "Nein")) %>%
+  select(starts_with("motivation_"), hives_winter) %>%
+  mutate(
+    operation = ifelse(hives_winter > 25, "> 25 Colonies", "<= 25 Colonies"),
+    operation = as.factor(operation)
+  ) %>%
+  select(-hives_winter) %>%
+  add_count(operation) %>%
+  pivot_longer(starts_with("motivation_")) %>%
+  drop_na(value) %>%
+  filter(value == "Ja") %>%
+  left_join(motivationList, by = c("name" = "cname")) %>%
+  count(short, desc, name, operation, n) %>%
+  glimpse() %>%
+  group_by(operation, desc, short) %>%
+  summarise(
+    count = nn,
+    perc = count / n * 100,
+    perc_f = format(round(perc, 1), nsmall = 1)
+  ) %>%
+  arrange(desc(count)) %>%
+  ungroup() %>%
+  group_by(desc) %>%
+  mutate(
+    text_position = max(perc),
+    order_sum = sum(perc)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    short = forcats::fct_reorder(short, order_sum, .desc = FALSE),
+    desc = stringr::str_trunc(desc, width = 47),
+    desc = forcats::fct_reorder(desc, order_sum, .desc = FALSE),
+    operation = forcats::fct_relevel(operation, "> 25 Colonies", "<= 25 Colonies")
+  )
+
+
+t <- temp %>%
+  select(operation, desc, perc, count) %>%
+  arrange(desc) %>%
+  filter(desc != "Marketing" & desc != "Other")
+t_b <- t %>% filter(operation == "> 25 Colonies")
+t_s <- t %>% filter(operation == "<= 25 Colonies")
+listDummy <- list()
+names <- t$desc %>% unique()
+for (name in names) {
+  dummy <- t %>% filter(desc == name)
+  p <- prop.test(c(dummy[1, 4]$count, dummy[2, 4]$count), c(978, 277), alternative = "two.sided", correct = TRUE) %>% tidy()
+  p$desc <- name
+  listDummy[[name]] <- p
+  print(dummy)
+}
+bind_rows(listDummy) %>%
+  select(desc, p.value) %>%
+  filter(p.value <= 0.05) %>%
+  mutate(bonferroni = ifelse(p.value < (0.05 / 19), TRUE, FALSE))
+```
