@@ -19,7 +19,7 @@ Over the three survey years the extrapolation with the geometric mean sums up to
 
 To evaluate how good the two means capture the expense distribution, the extrapolated mean sum if applied to the survey data was compared to the sum as reported by the participants, by calculating the total expenses for each participant by the reported expenses multiplied by colonies going into winter. It showed that the real survey sum is in-between the arithmetic and geometric mean (Table&nbsp;\@ref(tab:extrapolation-tab-survey)). 
 
-For better comparison between years an extrapolation on a fixed number of 100.000 colonies was done. It showed similar mean sums with a maximum arithmetic mean difference of EUR&nbsp;122.030 and geometric mean maximum difference of EUR&nbsp;53.465 (Table&nbsp;\@ref(tab:extrapolation-tab-extrapolation))
+For better comparison between years an extrapolation on a fixed number of 100.000 colonies was done. It showed similar mean sums with a maximum arithmetic mean difference of EUR&nbsp;122.030 and geometric mean maximum difference of EUR&nbsp;53.465 (Table&nbsp;\@ref(tab:extrapolation-tab-extrapolation)).
 
 ```{r extrapolation-tab-survey, include=T}
 c <- "Column 'Mean' represents the multiplication of the average treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants. Column 'Survey' is the observed total sum from the survey, where the total expenses for each participant was calculated by reported expenses multiplied by colonies going into winter and afterwards summarised for each year. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean."
