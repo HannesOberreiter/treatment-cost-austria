@@ -22,8 +22,8 @@ To evaluate how good the two means capture the expense distribution, the extrapo
 For better comparison between years an extrapolation on a fixed number of 100.000 colonies was done. It showed similar mean sums with a maximum arithmetic mean difference of EUR&nbsp;122.030 and geometric mean maximum difference of EUR&nbsp;53.465 (Table&nbsp;\@ref(tab:extrapolation-tab-extrapolation)).
 
 ```{r extrapolation-tab-survey, include=T}
-c <- "Column 'Mean' represents the multiplication of the average treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants. Column 'Survey' is the observed total sum from the survey, where the total expenses for each participant was calculated by reported expenses multiplied by colonies going into winter and afterwards summarised for each year. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean."
-cn <- c("Year", "Colonies [#]", "CI Lower", "Mean [EUR]", "CI Higher", "Mean [EUR]", "Survey [EUR]")
+c <- "Column 'Sum-Mean' represents the multiplication of the average treatment expenses per colony with the total number of honey bee colonies wintered from the survey participants. Column 'Sum-Survey' is the observed total sum from the survey, where the total expenses for each participant was calculated by reported expenses multiplied by colonies going into winter and afterwards summarised for each year. Confidence intervals for point estimates are calculated with 1,000 bootstrap resamples. Two methods applied arithmetic mean and geometric mean."
+cn <- c("Year", "Colonies [#]", "CI Lower [EUR]", "Mean [EUR]", "CI Higher [EUR]", "Mean [EUR]", "Survey [EUR]")
 kable(
     r_extrapolation$data %>%
         select(year, colonies_survey, conf.low, statistic, conf.high, survey_estimate, survey_real) %>%

@@ -116,6 +116,6 @@ rm(cn, c, tab)
 
 (ref:migratory-stats) Boxplot with median and interquantile range (IQR, $25^{th}$ - $75^{th}$ quantile) and vertical lines indicating 1.5\*IQR. Pink rhombus represents the arithmetic mean. Pairwise difference of the mean ($\bar{x}$) between groups are given as labels above the boxplots. Gray points are the actual data points. Reported inference statistic results on median ($\tilde{x}$) difference between the two level factor analysis if 'Migratory Beekeeper' or not, with *p*-values from permutation test (R = 5,000) and 95% CI (bootstrap, R = 1,000). Exact *p*-values and test results are available in the Appendix Fig.&nbsp;\@ref(fig:migratory-permutation). Survey answers above EUR 80 per colony are not shown. 
 
-```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="100%"}
+```{r migratory-stats, include=T, fig.cap="(ref:migratory-stats)", out.width="90%"}
 include_custom("output/figs/migratory-stats.png")
 ```

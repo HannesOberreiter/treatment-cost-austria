@@ -9,13 +9,13 @@ The application of treatment methods follows a seasonal pattern with most common
 
 (ref:treatment-network) Network graph of the treatment methods over all three survey years (*n*=`r nrow(dfClean) %>% ft()`). Node sizes depict the number of times a method was reported. Node colours represent the seasons 'Spring' (April-May; Green), 'Summer' (June-October; Black) and 'Winter' (November-March; Blue). Edge connections colour and width are the amount each combination was reported. Categories with less than 30 reported answers were not included. Abbreviations: Drone = Drone brood removal || Fa-LT/ST = Formic acid - long/short term || Ox-sub/pure/mix = Oxalic acid - sublimation, pure or mixture || Biot = Another biotechnical method || Thy = Thymol || Hyp = Hyperthermia || syn Met = synthetic Methods.
 
-(ref:treatment-heat) Absolute numbers of reported treatments in each month over the three survey years (*n*=`r nrow(dfClean) %>% ft()`). Colour coded as heatmap with darker colours representing more answers. No answers in white color.
+(ref:treatment-heat) Absolute numbers of reported treatments in each month over the three survey years (*n*=`r nrow(dfClean) %>% ft()`). Colour coded as heatmap with darker colours representing more answers. No answers in white colour.
 
-```{r treatment-heat, include=T, fig.cap="(ref:treatment-heat)", out.width="65%"}
+```{r treatment-heat, include=T, fig.cap="(ref:treatment-heat)", out.width="85%"}
 include_custom("output/figs/treatment-heat.png")
 ```
 
-```{r treatment-network, include=T, fig.cap="(ref:treatment-network)", out.width="65%"}
+```{r treatment-network, include=T, fig.cap="(ref:treatment-network)", out.width="100%"}
 include_custom("output/figs/treatment-network.png")
 ```
 

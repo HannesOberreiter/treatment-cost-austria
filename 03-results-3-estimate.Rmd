@@ -64,7 +64,7 @@ The central tendency values of self calculated estimated expenses, based on onli
 
 ```{r table-estimates, include=T}
 c <- "Comparison of central tendency values for estimated expenses and the expenses as reported by participants in the survey for each year separately. All values are in Euro."
-cn <- c("", "Min.", "Mean", "Median", "Max")
+cn <- c("", "Min.", "Mean", "Median", "Max.")
 
 tab <- kable(
     r_estimate$table %>% select(-type),
