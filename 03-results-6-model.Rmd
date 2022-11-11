@@ -77,10 +77,10 @@ rm(cn, c, tab)
 
 (ref:model-whisker) Dot-and-whiskers plot showing regression coefficients for the selected model ('Base $+$ Treatment Methods'). The coefficients are ordered by the mean estimate value and direction, with highest positive at the top and lowest negative at the bottom. Dots are colour coded if regression direction is negative (green) or positive (red). Coefficients starting with 'T.' are treatment methods. The values are plotted to the mean increase or decrease of the estimate in percent, which means that if the treatment methods are applied they increase/decrease the value of the target by the shown percentage. In the case of 'Number of colonies' [$\log_{10}$] the effect of percentage change on the expenses is shown if the number of colonies increases by 10%.
 
-```{r model-whisker, include=T, fig.cap="(ref:model-whisker)", out.width="100%"}
+```{r model-whisker, include=T, fig.cap="(ref:model-whisker)", out.width="80%"}
 include_custom("output/figs/model-whisker.png")
 ```
 
-```{r model-pred, include=T, fig.cap="Model prediction of expenses on training and testing dataset to the observed data from the survey. Orange and blue lines are the linear fit with standard error of the intercept only model without any predictors and selected best model ('Base $+$ Treatment Methods'). Red line represents the theoretical perfect fit between estimate and observed data.", out.width="100%"}
+```{r model-pred, include=T, fig.cap="Model prediction of expenses on training and testing dataset to the observed data from the survey. Orange and blue lines are the linear fit with standard error of the intercept only model without any predictors and selected best model ('Base $+$ Treatment Methods'). Red line represents the theoretical perfect fit between estimate and observed data.", out.width="80%"}
 include_custom("output/figs/model-pred.png")
 ```
